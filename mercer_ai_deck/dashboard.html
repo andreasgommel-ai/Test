@@ -1,0 +1,531 @@
+<title>AI Careers Europe Monitor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#001A4A; --blue:#002C77; --blue-mid:#016D9E; --teal:#00A8C7; --sky:#A7E2F0;
+  --bg:#F3F6FA; --surface:#FFFFFF; --surface-2:#E9EFF6; --line:#D3DCE8;
+  --ink:#14213D; --ink-2:#4B5A73; --ink-3:#7A889E;
+  --accent:#002C77; --accent-ink:#FFFFFF;
+  --s1:#1F58B8; --s2:#0093B0; --grid:#E2E8F0;
+  --good:#1B7F4C; --warn:#A8660A; --crit:#B3261E;
+  --hero-bg:#001A4A; --hero-ink:#FFFFFF; --hero-sub:#A7E2F0;
+  --shadow:0 1px 2px rgba(0,26,74,.06),0 4px 14px rgba(0,26,74,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0B1322; --surface:#121D33; --surface-2:#1A2740; --line:#2A3A57;
+    --ink:#E8EEF8; --ink-2:#AEBBD1; --ink-3:#7F8EA8;
+    --accent:#7FB0F5; --accent-ink:#0B1322;
+    --s1:#5C82E8; --s2:#0FA3A9; --grid:#243350;
+    --good:#4CC488; --warn:#E3A24A; --crit:#F0736C;
+    --hero-bg:#0F1B33; --hero-ink:#F4F7FC; --hero-sub:#8FD6EA;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0B1322; --surface:#121D33; --surface-2:#1A2740; --line:#2A3A57;
+  --ink:#E8EEF8; --ink-2:#AEBBD1; --ink-3:#7F8EA8;
+  --accent:#7FB0F5; --accent-ink:#0B1322;
+  --s1:#5C82E8; --s2:#0FA3A9; --grid:#243350;
+  --good:#4CC488; --warn:#E3A24A; --crit:#F0736C;
+  --hero-bg:#0F1B33; --hero-ink:#F4F7FC; --hero-sub:#8FD6EA;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--accent)}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero-bg);color:var(--hero-ink);border-bottom:1px solid rgba(255,255,255,.08)}
+.top .wrap{display:flex;align-items:center;gap:18px;min-height:56px;flex-wrap:wrap;padding-block:8px}
+.brand{font-family:"Source Serif 4",Georgia,serif;font-weight:600;letter-spacing:.22em;font-size:15px;color:#fff}
+.brand small{display:block;letter-spacing:.06em;font-family:"Source Sans 3",sans-serif;font-weight:500;font-size:11px;color:var(--hero-sub);text-transform:uppercase;margin-top:2px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--hero-sub);text-decoration:none;font-size:13px;font-weight:600;padding:6px 10px;border-radius:6px;letter-spacing:.02em}
+nav a:hover,nav a:focus-visible{background:rgba(255,255,255,.1);color:#fff;outline:none}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font:600 12px "Source Sans 3",sans-serif;padding:5px 11px;border-radius:999px;cursor:pointer;letter-spacing:.03em}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#001A4A}
+.chip:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+
+/* hero */
+.hero{background:var(--hero-bg);color:var(--hero-ink);padding-block:36px 40px}
+.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:end}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+.hero h1{font-size:clamp(30px,4vw,44px);line-height:1.1;margin-top:10px;color:#fff}
+.hero h1 em{font-style:normal;color:var(--hero-sub)}
+.hero p{margin-top:14px;color:var(--hero-sub);max-width:60ch;font-size:16px}
+.meta{font-size:12.5px;color:var(--hero-sub);margin-top:18px;display:flex;gap:14px;flex-wrap:wrap}
+.meta b{color:#fff;font-weight:600}
+.verdict{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--teal);padding:16px 18px;border-radius:6px}
+.verdict h3{font-size:16px;color:#fff}
+.verdict ul{margin:8px 0 0;padding-left:18px;color:var(--hero-sub);font-size:14px}
+.verdict li{margin:4px 0}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-26px;position:relative;z-index:2}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;border-top:3px solid var(--teal)}
+.kpi .v{font-family:"Source Serif 4",Georgia,serif;font-size:36px;font-weight:600;color:var(--accent);line-height:1;letter-spacing:-.01em}
+.kpi .l{font-size:13.5px;color:var(--ink);font-weight:600}
+.kpi .s{font-size:12px;color:var(--ink-3)}
+.kpi .tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+
+/* sections */
+main{padding-block:28px 56px}
+section{margin-top:34px;scroll-margin-top:80px}
+section[hidden]{display:none}
+.sec-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.sec-h h2{font-size:24px;color:var(--ink)}
+.sec-h .eyebrow{color:var(--blue-mid)}
+:root[data-theme="dark"] .sec-h .eyebrow{color:var(--teal)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sec-h .eyebrow{color:var(--teal)}}
+.sec-h p{color:var(--ink-2);flex-basis:100%;max-width:78ch}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+.card h3{font-size:17px;color:var(--ink)}
+.card .sub{font-size:13px;color:var(--ink-2);margin-top:2px;max-width:60ch}
+.tbtn{border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font:600 11.5px "Source Sans 3",sans-serif;padding:4px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;letter-spacing:.03em}
+.tbtn:hover,.tbtn:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+.chart{position:relative;margin-top:10px}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.src{font-size:11.5px;color:var(--ink-3);margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.dt th,table.dt td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.dt th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+table.dt td.n{text-align:right}
+.tt{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:7px 10px;border-radius:6px;box-shadow:var(--shadow);z-index:50;opacity:0;transition:opacity .08s;max-width:260px;line-height:1.35}
+.tt b{font-weight:700}
+@media (prefers-reduced-motion: reduce){.tt{transition:none}}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:16px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:var(--line)}
+.tl div{position:relative;padding:22px 14px 0 0}
+.tl div::before{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--teal)}
+.tl div.past::before{background:var(--teal)}
+.tl .d{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--blue-mid);text-transform:uppercase}
+:root[data-theme="dark"] .tl .d{color:var(--teal)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tl .d{color:var(--teal)}}
+.tl .t{font-weight:600;margin-top:2px}
+.tl .x{font-size:13px;color:var(--ink-2);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+.pill.now{color:var(--good);border-color:var(--good)}
+.pill.risk{color:var(--crit);border-color:var(--crit)}
+.pill.soon{color:var(--warn);border-color:var(--warn)}
+
+/* facts list */
+.facts{display:grid;gap:10px}
+.fact{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line)}
+.fact:last-child{border-bottom:0}
+.fact .v{font-family:"Source Serif 4",Georgia,serif;font-size:24px;font-weight:600;color:var(--accent);text-align:right}
+.fact .t{font-size:14px}
+.fact .t small{display:block;color:var(--ink-3);font-size:12px}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.svc .card{border-left:4px solid var(--teal);padding:16px}
+.svc h3{font-size:16px}
+.svc .when{font-size:11.5px;color:var(--ink-3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.svc p{font-size:13.5px;color:var(--ink-2);margin-top:8px}
+
+/* pov */
+.pov{background:var(--hero-bg);color:var(--hero-ink);border-radius:10px;padding:28px;display:grid;grid-template-columns:1.1fr 2fr;gap:28px;align-items:start}
+.pov h2{color:#fff;font-size:30px;line-height:1.15}
+.pov .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pov .cols div{border-top:2px solid var(--teal);padding-top:12px}
+.pov h3{color:var(--hero-sub);font-size:16px}
+.pov p{color:#DCE6F5;font-size:13.5px;margin-top:6px}
+
+/* checklist */
+.check{display:grid;gap:8px}
+.check label{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
+.check label:has(input:checked){border-color:var(--good);background:color-mix(in oklab,var(--good) 8%,var(--surface))}
+.check input{margin-top:3px;width:18px;height:18px;accent-color:var(--good)}
+.check b{display:block;font-size:14.5px}
+.check span{font-size:13px;color:var(--ink-2)}
+.prog{font-size:13px;color:var(--ink-2);margin-top:10px}
+
+/* sources */
+.sources ol{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--ink-2);columns:2;column-gap:28px}
+.sources li{margin:3px 0;break-inside:avoid}
+.note{font-size:12.5px;color:var(--ink-3);border-left:3px solid var(--warn);padding:8px 12px;margin-top:14px;background:var(--surface-2);border-radius:0 6px 6px 0}
+footer{color:var(--ink-3);font-size:12px;padding-block:20px;border-top:1px solid var(--line);margin-top:40px}
+
+@media (max-width:980px){.kpis{grid-template-columns:1fr 1fr}.g3,.svc{grid-template-columns:1fr 1fr}.pov{grid-template-columns:1fr}.pov .cols{grid-template-columns:1fr}.hero .wrap{grid-template-columns:1fr}}
+@media (max-width:640px){.kpis,.g2,.g3,.svc,.tl{grid-template-columns:1fr}.tl::before{display:none}.tl div{padding:0 0 12px 22px}.tl div::before{left:0}.sources ol{columns:1}.wrap{padding-inline:16px}nav{display:none}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">MERCER<small>AI Careers Europe Monitor</small></div>
+    <div class="filters" role="group" aria-label="Focus">
+      <button class="chip" data-f="all" aria-pressed="true" id="f-all">All</button>
+      <button class="chip" data-f="wf" aria-pressed="false" id="f-wf">Workforce</button>
+      <button class="chip" data-f="reg" aria-pressed="false" id="f-reg">Regulation</button>
+      <button class="chip" data-f="mercer" aria-pressed="false" id="f-mercer">Mercer</button>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#exposure">Exposure</a><a href="#jobs">Jobs</a><a href="#skills">Skills</a><a href="#europe">Europe</a><a href="#people">People</a><a href="#mercer">Mercer</a><a href="#agenda">Agenda</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Executive briefing · Mercer Career, Europe</div>
+      <h1>AI is reshaping European careers. <em>The constraint is skills, not technology.</em></h1>
+      <p>Where the impact lands, who is exposed, how fast Europe is adopting, and what HR, reward and talent leaders should do now. Evidence from 2024–2026 sources, cross-checked.</p>
+      <div class="meta"><span>Updated <b>26 Sep 2026</b></span><span>Sources <b>11 institutions</b></span><span>Region <b>EU-27 + UK</b></span></div>
+    </div>
+    <div class="verdict">
+      <h3>The one-minute read</h3>
+      <ul>
+        <li>~60% of jobs are exposed to AI, but half of those gain productivity rather than lose work.</li>
+        <li>Europe nets +2M jobs to 2030 (11M created, 9M displaced) with ~12M role transitions.</li>
+        <li>Skills lag: only 56% of EU adults have basic digital skills; 44% of workers doubt they will be trained.</li>
+        <li>The EU AI Act treats hiring, promotion and monitoring AI as high-risk from Aug 2026.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="kpis" id="kpis">
+    <div class="kpi"><span class="tag">Exposure</span><span class="v num">~60%</span><span class="l">of jobs in advanced economies exposed to AI</span><span class="s">Half complemented, half at risk · IMF 2024</span></div>
+    <div class="kpi"><span class="tag">Net jobs, Europe</span><span class="v num">+2M</span><span class="l">11M created vs 9M displaced by 2030</span><span class="s">Largest driver of any technology · WEF 2025</span></div>
+    <div class="kpi"><span class="tag">Skills churn</span><span class="v num">39%</span><span class="l">of core skills change by 2030</span><span class="s">6 in 10 EU workers face task change · WEF, Cedefop</span></div>
+    <div class="kpi"><span class="tag">Adoption</span><span class="v num">20%</span><span class="l">of EU enterprises use AI (2025)</span><span class="s">Up from 13.5% in 2024 · Eurostat</span></div>
+  </div>
+
+  <!-- EXPOSURE -->
+  <section id="exposure" data-g="wf">
+    <div class="sec-h"><span class="eyebrow">01 · Scale</span><h2>Most European jobs are touched. Few are simply replaced.</h2><p>Three institutions measure "exposure" differently, but agree on the shape: broad reach, concentrated risk in clerical and routine work, and a large complementary share.</p></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-h"><div><h3>How exposed is work to AI?</h3><div class="sub">Share of jobs, by institution and measure</div></div><button class="tbtn" data-table="c-exp">Table</button></div>
+        <div class="chart" id="c-exp"></div>
+        <div class="src">IMF Gen-AI &amp; the Future of Work (2024) · Goldman Sachs (2023) · OECD Employment Outlook</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h3>Task automation by occupation, Europe</h3><div class="sub">Share of tasks technically automatable by generative AI</div></div><button class="tbtn" data-table="c-occ">Table</button></div>
+        <div class="chart" id="c-occ"></div>
+        <div class="src">Goldman Sachs (2023); McKinsey 2024 for STEM (13% → 27% by 2030)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOBS -->
+  <section id="jobs" data-g="wf">
+    <div class="sec-h"><span class="eyebrow">02 · Jobs</span><h2>Net positive, heavily churned.</h2><p>Europe gains more jobs than it loses, but the gain hides ~12M people who must change occupation. The productivity upside depends on whether that transition is managed.</p></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-h"><div><h3>Jobs created vs displaced by AI, Europe to 2030</h3><div class="sub">Millions of jobs</div></div><button class="tbtn" data-table="c-jobs">Table</button></div>
+        <div class="chart" id="c-jobs"></div>
+        <div class="legend"><span><i class="sw" style="background:var(--s2)"></i>Created</span><span><i class="sw" style="background:var(--s1)"></i>Displaced</span></div>
+        <div class="src">WEF Future of Jobs Report 2025 (Europe); global: 170M created / 92M displaced</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h3>The productivity fork</h3><div class="sub">Annual productivity growth for Europe to 2030 under two adoption paths</div></div><button class="tbtn" data-table="c-prod">Table</button></div>
+        <div class="chart" id="c-prod"></div>
+        <div class="src">McKinsey, "A new future of work: Europe and beyond" (2024). PwC 2025: +56% wage premium for AI skills; ~4x productivity growth in AI-exposed sectors.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" data-g="wf">
+    <div class="sec-h"><span class="eyebrow">03 · Skills</span><h2>Willing workers, hesitant employers.</h2><p>Demand for AI skills is exploding while the base of digital skills is thin. The gap is a trust gap as much as a training gap.</p></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-h"><div><h3>What EU workers say about AI at work</h3><div class="sub">Share of EU employees, 2024 survey</div></div><button class="tbtn" data-table="c-cede">Table</button></div>
+        <div class="chart" id="c-cede"></div>
+        <div class="src">Cedefop AI Skills Survey (2024, published Jan 2025)</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h3>Digital foundations vs 2030 targets</h3><div class="sub">EU Digital Decade progress</div></div></div>
+        <div class="facts">
+          <div class="fact"><span class="v num">56%</span><span class="t">of EU adults have basic digital skills<small>Target 80% by 2030 · Eurostat</small></span></div>
+          <div class="fact"><span class="v num">9.7M</span><span class="t">shortfall of ICT specialists vs the 20M goal<small>10.3M employed in 2024 · Eurostat</small></span></div>
+          <div class="fact"><span class="v num">80×</span><span class="t">growth in EU professionals adding AI-literacy skills, 2022→2023<small>LinkedIn Economic Graph</small></span></div>
+          <div class="fact"><span class="v num">+56%</span><span class="t">wage premium for roles requiring AI skills<small>Up from 25% a year earlier · PwC 2025</small></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EUROPE -->
+  <section id="europe" data-g="reg">
+    <div class="sec-h"><span class="eyebrow">04 · Europe</span><h2>A two-speed continent that regulates first.</h2><p>Enterprise adoption is racing ahead in the Nordics and lagging in the East and South, while the EU AI Act sets the world's strictest rules for AI in HR.</p></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-h"><div><h3>Enterprises using AI, 2025</h3><div class="sub">Share of enterprises with 10+ employees</div></div><button class="tbtn" data-table="c-ctry">Table</button></div>
+        <div class="chart" id="c-ctry"></div>
+        <div class="src">Eurostat, Dec 2025. By size: large ~55%, medium ~30%, small ~17%.</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h3>EU AI Act: what applies when</h3><div class="sub">Obligations relevant to HR and workforce use of AI</div></div></div>
+        <div class="tl">
+          <div class="past"><div class="d">Aug 2024</div><div class="t">In force</div><div class="x">Regulation enters into force; phased application begins.</div></div>
+          <div class="past"><div class="d">Feb 2025</div><div class="t">Prohibitions apply</div><div class="x">Emotion-recognition AI banned in the workplace. Fines up to 7% of global turnover.</div></div>
+          <div class="past"><div class="d">Aug 2026</div><div class="t">High-risk rules apply</div><div class="x">Recruitment, promotion, termination, task allocation and performance-monitoring AI are high-risk (Annex III).</div></div>
+          <div><div class="d">Aug 2027</div><div class="t">Remaining categories</div><div class="x">Extended deadline for certain high-risk systems embedded in regulated products.</div></div>
+        </div>
+        <p style="margin-top:16px;font-size:13.5px;color:var(--ink-2)"><span class="pill now">Applies now</span>&nbsp; Employers must ensure human oversight, keep logs for at least 6 months and inform workers' representatives before deploying high-risk AI (Art. 26).</p>
+        <div class="src">European Commission · EU AI Act Art. 5, Art. 26, Annex III</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section id="people" data-g="mercer">
+    <div class="sec-h"><span class="eyebrow">05 · People</span><h2>Anxiety up, thriving down. Ambition ahead of readiness.</h2><p>Mercer's Global Talent Trends tracks the human side. The lines have moved the wrong way in two years, and the readiness gap is widest inside HR itself.</p></div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="card-h"><div><h3>Employee sentiment, 2024 → 2026</h3><div class="sub">Share of employees, global survey (~12,000 respondents)</div></div><button class="tbtn" data-table="c-slope">Table</button></div>
+        <div class="chart" id="c-slope"></div>
+        <div class="legend"><span><i class="sw" style="background:var(--s1)"></i>Thriving at work</span><span><i class="sw" style="background:var(--s2)"></i>Concerned about AI job loss</span></div>
+        <div class="src">Mercer Global Talent Trends 2024 &amp; 2026</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h3>Ambition vs readiness</h3><div class="sub">Executives and HR leaders, Mercer GTT</div></div><button class="tbtn" data-table="c-ready">Table</button></div>
+        <div class="chart" id="c-ready"></div>
+        <div class="src">Mercer Global Talent Trends 2024 &amp; 2026; Mercer "Year of agentic AI" (2025)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POV -->
+  <section id="pov" data-g="mercer">
+    <div class="pov">
+      <div><div class="eyebrow">Mercer's point of view</div><h2 style="margin-top:8px">Redesign work, not just jobs.</h2><p style="margin-top:12px;color:var(--hero-sub);font-size:14.5px">Leading "human-centric productivity" firms report efficiency gains from AI of 67% vs 54% for laggards, and innovation gains of 59% vs 31%.</p></div>
+      <div class="cols">
+        <div><h3>Decompose and redesign</h3><p>Break jobs into tasks to decide what AI automates, what it augments and what stays human, then rebuild roles around the new mix.</p></div>
+        <div><h3>Go skills-based</h3><p>One skills taxonomy, skills mapped to jobs, pay for skills. 55% of firms now map skills to jobs, up from 47% in 2023.</p></div>
+        <div><h3>Lead human-centric</h3><p>Pair adoption with trust, transparency and funded reskilling. 63% of employees would trade a 10% raise for AI upskilling.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MERCER SERVICES -->
+  <section id="mercer" data-g="mercer">
+    <div class="sec-h"><span class="eyebrow">06 · Mercer's own transformation</span><h2>AI is now embedded in Mercer's Career services.</h2><p>Verified launches and offerings, 2024–2026.</p></div>
+    <div class="svc">
+      <div class="card"><h3>Workforce Insights + Aida</h3><div class="when">Launched Oct 2025</div><p>AI-powered benchmarking across 100+ countries and 20,000 organisations. Aida answers natural-language questions on pay, talent and compliance inside the Talent All Access Portal.</p></div>
+      <div class="card"><h3>Skills Edge &amp; Skills Library</h3><div class="when">2024 HR Tech Award</div><p>Skills-based talent management; AI matches jobs to skills using partner databases that scan millions of job profiles.</p></div>
+      <div class="card"><h3>AI Pathmaker</h3><div class="when">Consulting service</div><p>Responsible AI adoption: work redesign, AI ROI cases and building a future-fit, reskilled workforce.</p></div>
+      <div class="card"><h3>Data Connector &amp; IPE</h3><div class="when">Compensation surveys</div><p>AI-assisted job matching and grading tied to Mercer's global compensation data and the International Position Evaluation framework.</p></div>
+    </div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="agenda" data-g="all">
+    <div class="sec-h"><span class="eyebrow">07 · Agenda</span><h2>Five moves for HR, reward and talent leaders.</h2><p>Tick what is already underway in your organisation. Progress is stored in this browser only.</p></div>
+    <div class="check" id="check">
+      <label><input type="checkbox" id="a1"><div><b>Map exposure and redesign work</b><span>Assess which roles and tasks AI augments vs automates; redesign the highest-impact roles before scaling tools.</span></div></label>
+      <label><input type="checkbox" id="a2"><div><b>Build a skills-based foundation</b><span>One skills taxonomy, skills mapped to jobs, and a path to paying for skills.</span></div></label>
+      <label><input type="checkbox" id="a3"><div><b>Invest visibly in reskilling</b><span>Close the trust gap with concrete, funded commitments. 44% of EU workers doubt training will come.</span></div></label>
+      <label><input type="checkbox" id="a4"><div><b>Get AI-in-HR governance right</b><span>Treat hiring, promotion and monitoring AI as high-risk: human oversight, worker notification, logging, bias testing.</span></div></label>
+      <label><input type="checkbox" id="a5"><div><b>Lead human-centric productivity</b><span>Pair adoption with transparency, manager capability and pay equity to convert AI into productivity and engagement.</span></div></label>
+    </div>
+    <div class="prog" id="prog">0 of 5 moves underway</div>
+  </section>
+
+  <!-- SOURCES -->
+  <section id="sources" class="sources" data-g="all">
+    <div class="sec-h"><span class="eyebrow">Sources</span><h2>Evidence base</h2></div>
+    <div class="card">
+      <ol>
+        <li>IMF, <em>Gen-AI: Artificial Intelligence and the Future of Work</em>, Jan 2024</li>
+        <li>World Economic Forum, <em>Future of Jobs Report 2025</em></li>
+        <li>McKinsey Global Institute, <em>A new future of work: Europe and beyond</em>, 2024</li>
+        <li>PwC, <em>Global AI Jobs Barometer 2025</em></li>
+        <li>OECD, <em>Employment Outlook</em>; <em>Bridging the AI Skills Gap</em>, 2025</li>
+        <li>Cedefop, <em>AI Skills Survey</em>, 2024 (published Jan 2025)</li>
+        <li>Eurostat, <em>Digital Decade targets</em>; <em>Use of AI in enterprises</em>, Dec 2025</li>
+        <li>European Commission, <em>EU AI Act</em> (Art. 5, 26; Annex III)</li>
+        <li>EY, <em>European AI Barometer 2025</em></li>
+        <li>Goldman Sachs, <em>Generative AI could raise global GDP by 7%</em>, 2023</li>
+        <li>Mercer, <em>Global Talent Trends 2024 &amp; 2026</em>; <em>Skills Snapshot Survey</em>; newsroom (Workforce Insights, Aida)</li>
+      </ol>
+      <div class="note">Several primary PDFs were corroborated through document extracts rather than direct fetches. WEF skills figures (39%) are global; Cedefop and Eurostat provide the Europe-specific numbers. Confirm exact wording against the source documents before external publication.</div>
+    </div>
+  </section>
+
+  <footer>Mercer · AI Careers Europe Monitor · Compiled Sep 2026. Mercer is a business of Marsh; this page uses Mercer's established visual identity.</footer>
+</main>
+
+<div class="tt" id="tt" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
+  const tt=$('#tt');
+  function hover(node,html){
+    node.addEventListener('mousemove',e=>{tt.innerHTML=html;tt.style.opacity=1;
+      const w=tt.offsetWidth,h=tt.offsetHeight;let x=e.clientX+14,y=e.clientY+14;
+      if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;
+      tt.style.left=x+'px';tt.style.top=y+'px';});
+    node.addEventListener('mouseleave',()=>tt.style.opacity=0);
+  }
+  const tables={};
+  function tableToggle(id,rows,cols){
+    tables[id]={rows,cols};
+  }
+  document.querySelectorAll('[data-table]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const id=b.dataset.table,host=document.getElementById(id);const t=tables[id];if(!t)return;
+      let tb=host.nextElementSibling;
+      if(tb&&tb.classList.contains('dt')){tb.remove();host.hidden=false;b.textContent='Table';return;}
+      const tbl=document.createElement('table');tbl.className='dt';
+      tbl.innerHTML='<thead><tr>'+t.cols.map((c,i)=>'<th'+(i?' class="n"':'')+'>'+c+'</th>').join('')+'</tr></thead><tbody>'+
+        t.rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(i?' class="n num"':'')+'>'+c+'</td>').join('')+'</tr>').join('')+'</tbody>';
+      host.hidden=true;host.after(tbl);b.textContent='Chart';
+    });
+  });
+
+  // ---- horizontal bar chart (single series, sorted) ----
+  function hbar(id,data,{max=100,unit='%',color='var(--s1)',height=null,fmt=v=>v+unit,note=''}={}){
+    const host=document.getElementById(id);const W=560,rowH=30,padL=222,padR=64,H=data.length*rowH+8;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':note||'bar chart'});
+    const x=v=>padL+(v/max)*(W-padL-padR);
+    [0,25,50,75,100].filter(v=>v<=max).forEach(v=>{svg.append(el('line',{x1:x(v),x2:x(v),y1:0,y2:H-8,stroke:'var(--grid)','stroke-width':1}));});
+    data.forEach((d,i)=>{const y=i*rowH+4;const g=el('g');
+      g.append(el('text',{x:padL-10,y:y+15,'text-anchor':'end',fill:'var(--ink)','font-size':12.5,'font-weight':d.bold?700:500},d.label));
+      const w=Math.max(0,x(d.v)-padL);
+      g.append(el('rect',{x:padL,y:y+4,width:w,height:rowH-12,fill:d.color||color,rx:0}));
+      g.append(el('rect',{x:padL+w-4,y:y+4,width:4,height:rowH-12,fill:d.color||color,rx:3}));
+      g.append(el('text',{x:padL+w+8,y:y+15,fill:'var(--ink-2)','font-size':12.5,'font-weight':600},fmt(d.v)));
+      hover(g,`<b>${d.label}</b><br>${fmt(d.v)}${d.note?'<br>'+d.note:''}`);svg.append(g);});
+    host.append(svg);
+  }
+
+  // ---- Exposure (dot + bar) ----
+  hbar('c-exp',[
+    {label:'Exposed to AI · IMF',v:60,note:'Advanced economies, 2024 · ~half complemented, half at risk'},
+    {label:'Exposed to automation · Goldman',v:66,note:'US + Europe, 2023 · "two-thirds"'},
+    {label:'Highest automation risk · OECD',v:28,note:'Occupations at highest risk',color:'var(--s2)'},
+    {label:'Work hours automatable · McKinsey',v:27,note:'Europe, by 2030',color:'var(--s2)'},
+  ],{note:'Share of jobs exposed to AI by institution'});
+  tableToggle('c-exp',[['Exposed to AI, advanced economies (IMF)','60%'],['Exposed to some automation, US+EU (Goldman)','~66%'],['Highest automation risk (OECD)','28%'],['Work hours automatable, Europe 2030 (McKinsey)','27%']],['Measure','Share']);
+
+  hbar('c-occ',[
+    {label:'Clerical / office support',v:45,note:'Most exposed'},
+    {label:'STEM professionals (2030, gen-AI)',v:27,note:'Up from 13% · McKinsey'},
+    {label:'Average, all occupations',v:25,note:'Approximate, Goldman Sachs'},
+    {label:'Crafts & related trades',v:4,note:'Least exposed'},
+  ],{max:50,note:'Task automation share by occupation group'});
+  tableToggle('c-occ',[['Clerical / office support','45%'],['STEM professionals, 2030','27%'],['Average, all occupations','~25%'],['Crafts & trades','4%']],['Occupation','Automatable tasks']);
+
+  // ---- Jobs created vs displaced: paired bars ----
+  (function(){
+    const host=document.getElementById('c-jobs');const W=560,H=210;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Jobs created and displaced in Europe'});
+    const padL=40,padB=34,padT=14,max=12;const y=v=>padT+(1-v/max)*(H-padT-padB);
+    [0,3,6,9,12].forEach(v=>{svg.append(el('line',{x1:padL,x2:W-10,y1:y(v),y2:y(v),stroke:'var(--grid)'}));svg.append(el('text',{x:padL-8,y:y(v)+4,'text-anchor':'end',fill:'var(--ink-3)','font-size':11},v+'M'));});
+    const groups=[{l:'Created',v:11,c:'var(--s2)',n:'WEF 2025 · 11 million jobs created in Europe'},{l:'Displaced',v:9,c:'var(--s1)',n:'WEF 2025 · 9 million jobs displaced in Europe'},{l:'Net',v:2,c:'var(--s2)',n:'Net effect: +2 million · plus ~12M occupational transitions (McKinsey)'}];
+    const bw=90,gap=60,x0=padL+40;
+    groups.forEach((g,i)=>{const x=x0+i*(bw+gap);const h=y(0)-y(g.v);const gg=el('g');
+      gg.append(el('rect',{x,y:y(g.v)+4,width:bw,height:Math.max(0,h-4),fill:g.c}));
+      gg.append(el('rect',{x,y:y(g.v),width:bw,height:6,rx:3,fill:g.c}));
+      if(g.l==='Net'){gg.append(el('rect',{x,y:y(g.v)+4,width:bw,height:Math.max(0,h-4),fill:'url(#hatch)'}));}
+      gg.append(el('text',{x:x+bw/2,y:y(g.v)-8,'text-anchor':'middle',fill:'var(--ink)','font-size':14,'font-weight':700},(g.l==='Net'?'+':'')+g.v+'M'));
+      gg.append(el('text',{x:x+bw/2,y:H-12,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5},g.l));
+      hover(gg,`<b>${g.l}</b><br>${g.n}`);svg.append(gg);});
+    const defs=el('defs');const p=el('pattern',{id:'hatch',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'});p.append(el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'var(--surface)','stroke-width':2,'stroke-opacity':.55}));defs.append(p);svg.prepend(defs);
+    host.append(svg);
+  })();
+  tableToggle('c-jobs',[['Created','11M'],['Displaced','9M'],['Net','+2M']],['Effect','Jobs']);
+
+  // ---- Productivity fork ----
+  hbar('c-prod',[
+    {label:'Fast adoption + redeployment',v:3.0,note:'McKinsey high scenario',bold:true,color:'var(--s2)'},
+    {label:'Slow adoption',v:0.3,note:'McKinsey low scenario'},
+  ],{max:3.5,unit:' pp',fmt:v=>v.toFixed(1)+'% p.a.',note:'Annual productivity growth to 2030'});
+  tableToggle('c-prod',[['Fast adoption + redeployment','3.0% p.a.'],['Slow adoption','0.3% p.a.']],['Scenario','Productivity growth']);
+
+  // ---- Cedefop ----
+  hbar('c-cede',[
+    {label:'Expect to need new skills',v:61},
+    {label:'Face AI-related task change',v:60,note:'"6 in 10"'},
+    {label:'Doubt employer will train them',v:44,color:'var(--s2)'},
+    {label:'Already interact with AI at work',v:28},
+    {label:'Fear AI job loss within 5 years',v:15,color:'var(--s2)',note:'Greece 24%, Poland 19%, Slovakia 19%'},
+  ],{note:'EU worker attitudes to AI'});
+  tableToggle('c-cede',[['Expect to need new skills','61%'],['Face AI-related task change','60%'],['Doubt employer will train them','44%'],['Already interact with AI at work','28%'],['Fear AI job loss within 5 years','15%']],['Statement','Share of EU workers']);
+
+  // ---- Countries ----
+  hbar('c-ctry',[
+    {label:'Denmark',v:42.0,note:'+14.5 pp vs 2024'},
+    {label:'Finland',v:37.8,note:'+13.5 pp vs 2024'},
+    {label:'Sweden',v:35.0},
+    {label:'EU-27 average',v:20.0,bold:true,color:'var(--s2)',note:'Up from 13.5% in 2024'},
+    {label:'Bulgaria',v:8.5},
+    {label:'Poland',v:8.4},
+    {label:'Romania',v:5.2,note:'Lowest in the EU'},
+  ],{max:50,fmt:v=>v.toFixed(1)+'%',note:'Enterprises using AI by country'});
+  tableToggle('c-ctry',[['Denmark','42.0%'],['Finland','37.8%'],['Sweden','35.0%'],['EU-27 average','20.0%'],['Bulgaria','8.5%'],['Poland','8.4%'],['Romania','5.2%']],['Country','Enterprises using AI, 2025']);
+
+  // ---- Slope chart ----
+  (function(){
+    const host=document.getElementById('c-slope');const W=560,H=230;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Employee sentiment 2024 to 2026'});
+    const xL=150,xR=410,padT=18,padB=30,max=80;const y=v=>padT+(1-v/max)*(H-padT-padB);
+    [0,20,40,60,80].forEach(v=>{svg.append(el('line',{x1:xL,x2:xR,y1:y(v),y2:y(v),stroke:'var(--grid)'}));svg.append(el('text',{x:xL-56,y:y(v)+4,'text-anchor':'end',fill:'var(--ink-3)','font-size':11},v+'%'));});
+    svg.append(el('text',{x:xL,y:H-8,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5,'font-weight':600},'2024'));
+    svg.append(el('text',{x:xR,y:H-8,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5,'font-weight':600},'2026'));
+    const S=[{l:'Thriving at work',a:66,b:44,c:'var(--s1)'},{l:'Concerned about AI job loss',a:28,b:40,c:'var(--s2)'}];
+    S.forEach(s=>{const g=el('g');
+      g.append(el('line',{x1:xL,y1:y(s.a),x2:xR,y2:y(s.b),stroke:s.c,'stroke-width':2.5}));
+      [[xL,s.a],[xR,s.b]].forEach(([x,v])=>{g.append(el('circle',{cx:x,cy:y(v),r:5,fill:s.c,stroke:'var(--surface)','stroke-width':2}));});
+      g.append(el('text',{x:xL-12,y:y(s.a)+4,'text-anchor':'end',fill:'var(--ink)','font-size':12.5,'font-weight':600},s.a+'%'));
+      g.append(el('text',{x:xR+12,y:y(s.b)+4,fill:'var(--ink)','font-size':12.5,'font-weight':600},s.b+'%'));
+      hover(g,`<b>${s.l}</b><br>2024: ${s.a}% → 2026: ${s.b}% (${s.b-s.a>0?'+':''}${s.b-s.a} pp)`);svg.append(g);});
+    host.append(svg);
+  })();
+  tableToggle('c-slope',[['Thriving at work','66%','44%'],['Concerned about AI job loss','28%','40%']],['Measure','2024','2026']);
+
+  // ---- Readiness ----
+  hbar('c-ready',[
+    {label:'Plan org-design changes (2 yrs)',v:98,note:'Executives · GTT 2026'},
+    {label:'Expect 11–30% reskilled/redeployed',v:65,note:'Executives · GTT 2026'},
+    {label:'Adopted tech without work redesign',v:67,color:'var(--s2)',note:'HR leaders · GTT 2024'},
+    {label:'Tech outpaces retraining',v:58,color:'var(--s2)',note:'Executives · GTT 2024'},
+    {label:'Use GenAI regularly',v:31,note:'Companies · GTT 2026'},
+    {label:'HR says AI drove a fundamental shift',v:6,color:'var(--s2)',note:'HR leaders · GTT 2026'},
+  ],{note:'Ambition versus readiness'});
+  tableToggle('c-ready',[['Plan org-design changes within 2 years','98%'],['Expect 11–30% of workforce reskilled/redeployed','65%'],['Deployed technology without redesigning work','67%'],['Technology advancing faster than retraining','58%'],['Use GenAI regularly','31%'],['HR says AI drove a fundamental shift','6%']],['Statement','Share']);
+
+  // ---- Filter chips ----
+  const chips=document.querySelectorAll('.chip');
+  function applyFilter(f){
+    chips.forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.f===f)));
+    document.querySelectorAll('main section').forEach(s=>{const g=s.dataset.g;s.hidden=!(f==='all'||g==='all'||g===f);});
+    try{localStorage.setItem('mcm-filter',f)}catch(e){}
+  }
+  chips.forEach(c=>c.addEventListener('click',()=>applyFilter(c.dataset.f)));
+  let saved='all';try{saved=localStorage.getItem('mcm-filter')||'all'}catch(e){}
+  applyFilter(saved);
+
+  // ---- Checklist persistence ----
+  const boxes=document.querySelectorAll('#check input');
+  function upd(){const n=[...boxes].filter(b=>b.checked).length;$('#prog').textContent=`${n} of 5 moves underway`;
+    try{localStorage.setItem('mcm-check',JSON.stringify([...boxes].map(b=>b.checked)))}catch(e){}}
+  try{const s=JSON.parse(localStorage.getItem('mcm-check')||'[]');boxes.forEach((b,i)=>b.checked=!!s[i]);}catch(e){}
+  boxes.forEach(b=>b.addEventListener('change',upd));upd();
+})();
+</script>
