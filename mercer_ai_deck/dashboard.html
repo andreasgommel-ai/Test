@@ -1,0 +1,746 @@
+<title>AI Careers Europe Monitor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#001A4A; --blue:#002C77; --blue-mid:#016D9E; --teal:#00A8C7; --sky:#A7E2F0;
+  --bg:#F3F6FA; --surface:#FFFFFF; --surface-2:#E9EFF6; --line:#D3DCE8;
+  --ink:#14213D; --ink-2:#4B5A73; --ink-3:#7A889E;
+  --accent:#002C77; --accent-ink:#FFFFFF; --eyebrow:#016D9E;
+  --s1:#1F58B8; --s2:#0093B0; --grid:#E2E8F0;
+  --good:#1B7F4C; --warn:#A8660A; --crit:#B3261E;
+  --hero-bg:#001A4A; --hero-ink:#FFFFFF; --hero-sub:#A7E2F0;
+  --shadow:0 1px 2px rgba(0,26,74,.06),0 4px 14px rgba(0,26,74,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0B1322; --surface:#121D33; --surface-2:#1A2740; --line:#2A3A57;
+    --ink:#E8EEF8; --ink-2:#AEBBD1; --ink-3:#7F8EA8;
+    --accent:#7FB0F5; --accent-ink:#0B1322; --eyebrow:#00A8C7;
+    --s1:#5C82E8; --s2:#0FA3A9; --grid:#243350;
+    --good:#4CC488; --warn:#E3A24A; --crit:#F0736C;
+    --hero-bg:#0F1B33; --hero-ink:#F4F7FC; --hero-sub:#8FD6EA;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0B1322; --surface:#121D33; --surface-2:#1A2740; --line:#2A3A57;
+  --ink:#E8EEF8; --ink-2:#AEBBD1; --ink-3:#7F8EA8;
+  --accent:#7FB0F5; --accent-ink:#0B1322; --eyebrow:#00A8C7;
+  --s1:#5C82E8; --s2:#0FA3A9; --grid:#243350;
+  --good:#4CC488; --warn:#E3A24A; --crit:#F0736C;
+  --hero-bg:#0F1B33; --hero-ink:#F4F7FC; --hero-sub:#8FD6EA;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3,h4{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--accent)}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero-bg);color:var(--hero-ink);border-bottom:1px solid rgba(255,255,255,.08)}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:56px;flex-wrap:wrap;padding-block:8px}
+.brand{font-family:"Source Serif 4",Georgia,serif;font-weight:600;letter-spacing:.22em;font-size:15px;color:#fff}
+.brand small{display:block;letter-spacing:.06em;font-family:"Source Sans 3",sans-serif;font-weight:500;font-size:11px;color:var(--hero-sub);text-transform:uppercase;margin-top:2px}
+nav{display:flex;gap:2px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--hero-sub);text-decoration:none;font-size:13px;font-weight:600;padding:6px 9px;border-radius:6px;letter-spacing:.02em}
+nav a:hover,nav a:focus-visible{background:rgba(255,255,255,.1);color:#fff;outline:none}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font:600 12px "Source Sans 3",sans-serif;padding:5px 11px;border-radius:999px;cursor:pointer;letter-spacing:.03em}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#001A4A}
+.seg{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:#fff;font:700 12px "Source Sans 3",sans-serif;padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:#001A4A}
+.linkbtn{color:#fff;text-decoration:none;font:600 12px "Source Sans 3",sans-serif;border:1px solid rgba(255,255,255,.25);padding:5px 11px;border-radius:999px;display:inline-flex;gap:6px;align-items:center;background:transparent;cursor:pointer}
+.linkbtn:hover{background:rgba(255,255,255,.1)}
+
+/* hero */
+.hero{background:var(--hero-bg);color:var(--hero-ink);padding-block:36px 40px}
+.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:end}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+.hero h1{font-size:clamp(30px,4vw,44px);line-height:1.1;margin-top:10px;color:#fff}
+.hero h1 em{font-style:normal;color:var(--hero-sub)}
+.hero p{margin-top:14px;color:var(--hero-sub);max-width:60ch;font-size:16px}
+.meta{font-size:12.5px;color:var(--hero-sub);margin-top:18px;display:flex;gap:14px;flex-wrap:wrap}
+.meta b{color:#fff;font-weight:600}
+.verdict{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-left:4px solid var(--teal);padding:16px 18px;border-radius:6px}
+.verdict h3{font-size:16px;color:#fff}
+.verdict ul{margin:8px 0 0;padding-left:18px;color:var(--hero-sub);font-size:14px}
+.verdict li{margin:4px 0}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-26px;position:relative;z-index:2}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;border-top:3px solid var(--teal)}
+.kpi .v{font-family:"Source Serif 4",Georgia,serif;font-size:36px;font-weight:600;color:var(--accent);line-height:1;letter-spacing:-.01em}
+.kpi .l{font-size:13.5px;color:var(--ink);font-weight:600}
+.kpi .s{font-size:12px;color:var(--ink-3)}
+.kpi .tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+
+/* sections */
+main{padding-block:28px 56px}
+section{margin-top:34px;scroll-margin-top:80px}
+section[hidden]{display:none}
+.sec-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.sec-h h2{font-size:24px;color:var(--ink)}
+.sec-h .eyebrow{color:var(--eyebrow)}
+.sec-h p{color:var(--ink-2);flex-basis:100%;max-width:78ch}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+.card h3{font-size:17px;color:var(--ink)}
+.card .sub{font-size:13px;color:var(--ink-2);margin-top:2px;max-width:60ch}
+.tbtn{border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font:600 11.5px "Source Sans 3",sans-serif;padding:4px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;letter-spacing:.03em}
+.tbtn:hover{border-color:var(--accent);color:var(--accent)}
+.chart{position:relative;margin-top:10px}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.src{font-size:11.5px;color:var(--ink-3);margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.dt th,table.dt td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.dt th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+table.dt td.n{text-align:right}
+.tt{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:7px 10px;border-radius:6px;box-shadow:var(--shadow);z-index:50;opacity:0;transition:opacity .08s;max-width:260px;line-height:1.35}
+.tt b{font-weight:700}
+@media (prefers-reduced-motion: reduce){.tt{transition:none}}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:16px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:var(--line)}
+.tl div{position:relative;padding:22px 14px 0 0}
+.tl div::before{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--teal)}
+.tl div.past::before{background:var(--teal)}
+.tl .d{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--eyebrow);text-transform:uppercase}
+.tl .t{font-weight:600;margin-top:2px}
+.tl .x{font-size:13px;color:var(--ink-2);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+.pill.now{color:var(--good);border-color:var(--good)}
+.pill.risk{color:var(--crit);border-color:var(--crit)}
+.pill.soon{color:var(--warn);border-color:var(--warn)}
+.pill.mid{color:var(--blue-mid);border-color:var(--blue-mid)}
+
+/* facts list */
+.facts{display:grid;gap:10px}
+.fact{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line)}
+.fact:last-child{border-bottom:0}
+.fact .v{font-family:"Source Serif 4",Georgia,serif;font-size:24px;font-weight:600;color:var(--accent);text-align:right}
+.fact .t{font-size:14px}
+.fact .t small{display:block;color:var(--ink-3);font-size:12px}
+
+/* countries */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:600 13px "Source Sans 3",sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ckpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.ckpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;border-top:3px solid var(--teal)}
+.ckpi .v{font-family:"Source Serif 4",Georgia,serif;font-size:30px;font-weight:600;color:var(--accent);line-height:1}
+.ckpi .l{font-size:13px;color:var(--ink);font-weight:600;margin-top:6px}
+.ckpi .s{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.ccols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ccols .card h4{font-size:15px;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ccols ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.ccols li{margin:6px 0}
+.ccols li b{color:var(--ink)}
+.flag{font-size:10.5px;font-weight:700;color:var(--warn);letter-spacing:.05em;text-transform:uppercase}
+.cverdict{margin-top:14px;border-left:4px solid var(--teal);background:var(--surface);border:1px solid var(--line);border-left-width:4px;border-radius:6px;padding:12px 16px;font-size:14px}
+.cverdict b{color:var(--accent)}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1fr 1.4fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.field select{font:15px "Source Sans 3",sans-serif;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.gauge{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin-top:6px}
+.gauge .big{font-family:"Source Serif 4",Georgia,serif;font-size:56px;font-weight:600;color:var(--accent);line-height:1}
+.gauge .big small{display:block;font-family:"Source Sans 3",sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+.bar{height:14px;background:var(--surface-2);border-radius:7px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:var(--s1);border-radius:7px 0 0 7px}
+.bar i.aug{background:var(--s2);position:absolute;left:0;top:0;border-radius:7px 0 0 7px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.split div{background:var(--surface-2);border-radius:6px;padding:10px 12px}
+.split .v{font-family:"Source Serif 4",Georgia,serif;font-size:24px;font-weight:600;line-height:1}
+.split .l{font-size:12px;color:var(--ink-2);margin-top:4px}
+.moves{margin-top:14px;display:grid;gap:8px}
+.move{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.move .n{font-family:"Source Serif 4",Georgia,serif;font-weight:600;color:var(--teal);font-size:18px;line-height:1.2}
+.move b{display:block;font-size:14px}
+.move span{font-size:12.5px;color:var(--ink-2)}
+.method{font-size:12px;color:var(--ink-3);margin-top:12px;border-top:1px solid var(--line);padding-top:8px;line-height:1.45}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.svc .card{border-left:4px solid var(--teal);padding:16px}
+.svc h3{font-size:16px}
+.svc .when{font-size:11.5px;color:var(--ink-3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.svc p{font-size:13.5px;color:var(--ink-2);margin-top:8px}
+
+/* pov */
+.pov{background:var(--hero-bg);color:var(--hero-ink);border-radius:10px;padding:28px;display:grid;grid-template-columns:1.1fr 2fr;gap:28px;align-items:start}
+.pov h2{color:#fff;font-size:30px;line-height:1.15}
+.pov .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pov .cols div{border-top:2px solid var(--teal);padding-top:12px}
+.pov h3{color:var(--hero-sub);font-size:16px}
+.pov p{color:#DCE6F5;font-size:13.5px;margin-top:6px}
+.pov .lead{color:var(--hero-sub);font-size:14.5px;margin-top:12px}
+
+/* checklist */
+.check{display:grid;gap:8px}
+.check label{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
+.check label:has(input:checked){border-color:var(--good);background:color-mix(in oklab,var(--good) 8%,var(--surface))}
+.check input{margin-top:3px;width:18px;height:18px;accent-color:var(--good)}
+.check b{display:block;font-size:14.5px}
+.check span{font-size:13px;color:var(--ink-2)}
+.prog{font-size:13px;color:var(--ink-2);margin-top:10px}
+
+/* sources */
+.sources ol{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--ink-2);columns:2;column-gap:28px}
+.sources li{margin:3px 0;break-inside:avoid}
+.note{font-size:12.5px;color:var(--ink-3);border-left:3px solid var(--warn);padding:8px 12px;margin-top:14px;background:var(--surface-2);border-radius:0 6px 6px 0}
+footer{color:var(--ink-3);font-size:12px;padding-block:20px;border-top:1px solid var(--line);margin-top:40px}
+
+/* present mode */
+body.present{overflow:hidden}
+body.present .top{display:none}
+body.present #stage{position:fixed;inset:0;background:var(--bg);overflow-y:auto;scroll-snap-type:y mandatory;z-index:30}
+body.present #stage > *{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-block:56px}
+body.present #stage .hero{margin:0}
+body.present #stage .kpis{margin-top:0}
+body.present #stage section{margin-top:0}
+body.present #stage section[hidden]{display:none}
+.pbar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--hero-bg);color:#fff;padding:8px 16px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));font-size:12.5px;align-items:center;gap:12px;justify-content:center}
+body.present .pbar{display:flex}
+.pbar button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font:600 12px "Source Sans 3",sans-serif}
+.pbar .cnt{color:var(--hero-sub);font-variant-numeric:tabular-nums;min-width:60px;text-align:center}
+
+@media (max-width:980px){.kpis,.ckpis{grid-template-columns:1fr 1fr}.g3,.svc,.ccols{grid-template-columns:1fr 1fr}.pov{grid-template-columns:1fr}.pov .cols{grid-template-columns:1fr}.hero .wrap{grid-template-columns:1fr}.calc{grid-template-columns:1fr}}
+@media (max-width:640px){.kpis,.ckpis,.g2,.g3,.svc,.tl,.ccols{grid-template-columns:1fr}.tl::before{display:none}.tl div{padding:0 0 12px 22px}.tl div::before{left:0}.sources ol{columns:1}.wrap{padding-inline:16px}nav{display:none}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">MERCER<small data-i="brand">AI Careers Europe Monitor</small></div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Language">
+        <button id="lang-en" aria-pressed="true">EN</button><button id="lang-de" aria-pressed="false">DE</button>
+      </div>
+      <button class="chip" data-f="all" aria-pressed="true" id="f-all" data-i="f_all">All</button>
+      <button class="chip" data-f="wf" aria-pressed="false" id="f-wf" data-i="f_wf">Workforce</button>
+      <button class="chip" data-f="reg" aria-pressed="false" id="f-reg" data-i="f_reg">Regulation</button>
+      <button class="chip" data-f="mercer" aria-pressed="false" id="f-mercer">Mercer</button>
+      <button class="linkbtn" id="present-btn" data-i="present">Present</button>
+      <a class="linkbtn" href="https://claude.ai/artifact/1oM6TU6YkHHFTLhowEG7Fk" data-i="deck">Slide deck</a>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#exposure" data-i="n1">Exposure</a><a href="#jobs" data-i="n2">Jobs</a><a href="#skills" data-i="n3">Skills</a><a href="#europe" data-i="n4">Europe</a><a href="#countries" data-i="n5">Countries</a><a href="#calc" data-i="n6">Calculator</a><a href="#people" data-i="n7">People</a><a href="#mercer">Mercer</a><a href="#agenda" data-i="n8">Agenda</a>
+    </nav>
+  </div>
+</header>
+
+<div id="stage">
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" data-i="h_eye">Executive briefing · Mercer Career, Europe</div>
+      <h1 id="h_title">AI is reshaping European careers. <em>The constraint is skills, not technology.</em></h1>
+      <p data-i="h_p">Where the impact lands, who is exposed, how fast Europe is adopting, and what HR, reward and talent leaders should do now. Evidence from 2024–2026 sources, cross-checked.</p>
+      <div class="meta"><span><span data-i="h_upd">Updated</span> <b>26 Sep 2026</b></span><span><span data-i="h_src">Sources</span> <b>20+ <span data-i="h_inst">institutions</span></b></span><span><span data-i="h_reg">Region</span> <b>EU-27 + UK + Nordics</b></span></div>
+    </div>
+    <div class="verdict">
+      <h3 data-i="v_h">The one-minute read</h3>
+      <ul id="v_list"></ul>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <section id="exposure" data-g="wf">
+    <div class="sec-h"><span class="eyebrow" data-i="s1_e">01 · Scale</span><h2 data-i="s1_h">Most European jobs are touched. Few are simply replaced.</h2><p data-i="s1_p">Three institutions measure "exposure" differently, but agree on the shape: broad reach, concentrated risk in clerical and routine work, and a large complementary share.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3 data-i="c_exp_h">How exposed is work to AI?</h3><div class="sub" data-i="c_exp_s">Share of jobs, by institution and measure</div></div><button class="tbtn" data-table="c-exp" data-i="tbl">Table</button></div><div class="chart" id="c-exp"></div><div class="src">IMF Gen-AI &amp; the Future of Work (2024) · Goldman Sachs (2023) · OECD Employment Outlook</div></div>
+      <div class="card"><div class="card-h"><div><h3 data-i="c_occ_h">Task automation by occupation, Europe</h3><div class="sub" data-i="c_occ_s">Share of tasks technically automatable by generative AI</div></div><button class="tbtn" data-table="c-occ" data-i="tbl">Table</button></div><div class="chart" id="c-occ"></div><div class="src">Goldman Sachs (2023); McKinsey 2024 (STEM 13% → 27% by 2030)</div></div>
+    </div>
+  </section>
+
+  <section id="jobs" data-g="wf">
+    <div class="sec-h"><span class="eyebrow" data-i="s2_e">02 · Jobs</span><h2 data-i="s2_h">Net positive, heavily churned.</h2><p data-i="s2_p">Europe gains more jobs than it loses, but the gain hides ~12M people who must change occupation. The productivity upside depends on whether that transition is managed.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3 data-i="c_jobs_h">Jobs created vs displaced by AI, Europe to 2030</h3><div class="sub" data-i="c_jobs_s">Millions of jobs</div></div><button class="tbtn" data-table="c-jobs" data-i="tbl">Table</button></div><div class="chart" id="c-jobs"></div><div class="legend"><span><i class="sw" style="background:var(--s2)"></i><span data-i="lg_created">Created</span></span><span><i class="sw" style="background:var(--s1)"></i><span data-i="lg_displaced">Displaced</span></span></div><div class="src">WEF Future of Jobs Report 2025 (Europe); global: 170M / 92M</div></div>
+      <div class="card"><div class="card-h"><div><h3 data-i="c_prod_h">The productivity fork</h3><div class="sub" data-i="c_prod_s">Annual productivity growth for Europe to 2030 under two adoption paths</div></div><button class="tbtn" data-table="c-prod" data-i="tbl">Table</button></div><div class="chart" id="c-prod"></div><div class="src">McKinsey (2024). PwC 2025: +56% wage premium for AI skills; ~4× productivity growth in AI-exposed sectors.</div></div>
+    </div>
+  </section>
+
+  <section id="skills" data-g="wf">
+    <div class="sec-h"><span class="eyebrow" data-i="s3_e">03 · Skills</span><h2 data-i="s3_h">Willing workers, hesitant employers.</h2><p data-i="s3_p">Demand for AI skills is exploding while the base of digital skills is thin. The gap is a trust gap as much as a training gap.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3 data-i="c_cede_h">What EU workers say about AI at work</h3><div class="sub" data-i="c_cede_s">Share of EU employees, 2024 survey</div></div><button class="tbtn" data-table="c-cede" data-i="tbl">Table</button></div><div class="chart" id="c-cede"></div><div class="src">Cedefop AI Skills Survey (2024, published Jan 2025)</div></div>
+      <div class="card"><div class="card-h"><div><h3 data-i="c_dig_h">Digital foundations vs 2030 targets</h3><div class="sub" data-i="c_dig_s">EU Digital Decade progress</div></div></div><div class="facts" id="facts"></div></div>
+    </div>
+  </section>
+
+  <section id="europe" data-g="reg">
+    <div class="sec-h"><span class="eyebrow" data-i="s4_e">04 · Europe</span><h2 data-i="s4_h">A two-speed continent that regulates first.</h2><p data-i="s4_p">Enterprise adoption is racing ahead in the Nordics and lagging in the East and South, while the EU AI Act sets the world's strictest rules for AI in HR.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3 data-i="c_ctry_h">Enterprises using AI, 2025</h3><div class="sub" data-i="c_ctry_s">Share of enterprises with 10+ employees</div></div><button class="tbtn" data-table="c-ctry" data-i="tbl">Table</button></div><div class="chart" id="c-ctry"></div><div class="src" data-i="c_ctry_src">Eurostat, Dec 2025. By size: large ~55%, medium ~30%, small ~17%.</div></div>
+      <div class="card"><div class="card-h"><div><h3 data-i="c_act_h">EU AI Act: what applies when</h3><div class="sub" data-i="c_act_s">Obligations relevant to HR and workforce use of AI</div></div></div><div class="tl" id="tl"></div><p style="margin-top:16px;font-size:13.5px;color:var(--ink-2)"><span class="pill now" data-i="applies">Applies now</span>&nbsp; <span data-i="art26">Employers must ensure human oversight, keep logs for at least 6 months and inform workers' representatives before deploying high-risk AI (Art. 26).</span></p><div class="src">European Commission · EU AI Act Art. 5, Art. 26, Annex III</div></div>
+    </div>
+  </section>
+
+  <section id="countries" data-g="reg">
+    <div class="sec-h"><span class="eyebrow" data-i="s5_e">05 · Country deep-dive</span><h2 data-i="s5_h">Four labour markets, four speeds, four rulebooks.</h2><p data-i="s5_p">Germany, France, the UK and the Nordics differ in adoption, in what workers actually use, and in who must be consulted before AI touches a job.</p></div>
+    <div class="tabs" role="tablist" id="ctabs"></div>
+    <div id="cpanel"></div>
+  </section>
+
+  <section id="calc" data-g="all">
+    <div class="sec-h"><span class="eyebrow" data-i="s6_e">06 · Exposure calculator</span><h2 data-i="s6_h">How exposed is a role in your organisation?</h2><p data-i="s6_p">Pick a job function, an industry and a market. The estimate combines occupation-level task exposure with sector and country context, and points to the moves that matter most.</p></div>
+    <div class="calc">
+      <div class="card">
+        <div class="field"><label for="f-func" data-i="cf_func">Job function</label><select id="f-func"></select></div>
+        <div class="field"><label for="f-ind" data-i="cf_ind">Industry</label><select id="f-ind"></select></div>
+        <div class="field"><label for="f-mkt" data-i="cf_mkt">Market</label><select id="f-mkt"></select></div>
+        <div class="method" id="method"></div>
+      </div>
+      <div class="card" id="calc-out"></div>
+    </div>
+  </section>
+
+  <section id="people" data-g="mercer">
+    <div class="sec-h"><span class="eyebrow" data-i="s7_e">07 · People</span><h2 data-i="s7_h">Anxiety up, thriving down. Ambition ahead of readiness.</h2><p data-i="s7_p">Mercer's Global Talent Trends tracks the human side. The lines have moved the wrong way in two years, and the readiness gap is widest inside HR itself.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3 data-i="c_slope_h">Employee sentiment, 2024 → 2026</h3><div class="sub" data-i="c_slope_s">Share of employees, global survey (~12,000 respondents)</div></div><button class="tbtn" data-table="c-slope" data-i="tbl">Table</button></div><div class="chart" id="c-slope"></div><div class="legend"><span><i class="sw" style="background:var(--s1)"></i><span data-i="lg_thr">Thriving at work</span></span><span><i class="sw" style="background:var(--s2)"></i><span data-i="lg_fear">Concerned about AI job loss</span></span></div><div class="src">Mercer Global Talent Trends 2024 &amp; 2026</div></div>
+      <div class="card"><div class="card-h"><div><h3 data-i="c_ready_h">Ambition vs readiness</h3><div class="sub" data-i="c_ready_s">Executives and HR leaders, Mercer GTT</div></div><button class="tbtn" data-table="c-ready" data-i="tbl">Table</button></div><div class="chart" id="c-ready"></div><div class="src">Mercer Global Talent Trends 2024 &amp; 2026; Mercer "Year of agentic AI" (2025)</div></div>
+    </div>
+  </section>
+
+  <section id="pov" data-g="mercer">
+    <div class="pov">
+      <div><div class="eyebrow" data-i="pov_e">Mercer's point of view</div><h2 style="margin-top:8px" data-i="pov_h">Redesign work, not just jobs.</h2><p class="lead" data-i="pov_lead">Leading "human-centric productivity" firms report efficiency gains from AI of 67% vs 54% for laggards, and innovation gains of 59% vs 31%.</p></div>
+      <div class="cols" id="povcols"></div>
+    </div>
+  </section>
+
+  <section id="mercer" data-g="mercer">
+    <div class="sec-h"><span class="eyebrow" data-i="s8_e">08 · Mercer's own transformation</span><h2 data-i="s8_h">AI is now embedded in Mercer's Career services.</h2><p data-i="s8_p">Verified launches and offerings, 2024–2026.</p></div>
+    <div class="svc" id="svc"></div>
+  </section>
+
+  <section id="agenda" data-g="all">
+    <div class="sec-h"><span class="eyebrow" data-i="s9_e">09 · Agenda</span><h2 data-i="s9_h">Five moves for HR, reward and talent leaders.</h2><p data-i="s9_p">Tick what is already underway in your organisation. Progress is stored in this browser only.</p></div>
+    <div class="check" id="check"></div>
+    <div class="prog" id="prog"></div>
+  </section>
+
+  <section id="sources" class="sources" data-g="all">
+    <div class="sec-h"><span class="eyebrow" data-i="src_e">Sources</span><h2 data-i="src_h">Evidence base</h2></div>
+    <div class="card">
+      <ol>
+        <li>IMF, <em>Gen-AI: Artificial Intelligence and the Future of Work</em>, Jan 2024</li>
+        <li>World Economic Forum, <em>Future of Jobs Report 2025</em></li>
+        <li>McKinsey Global Institute, <em>A new future of work: Europe and beyond</em>, 2024; <em>The economic potential of generative AI</em>, 2023</li>
+        <li>PwC, <em>Global AI Jobs Barometer 2025</em>; <em>UK AI Jobs Barometer 2026</em></li>
+        <li>OECD, <em>Employment Outlook 2023</em>; <em>Bridging the AI Skills Gap</em>, 2025</li>
+        <li>Cedefop, <em>AI Skills Survey</em>, 2024</li>
+        <li>Eurostat, <em>Digital Decade targets</em>; <em>Use of AI in enterprises</em>, Dec 2025</li>
+        <li>European Commission, <em>EU AI Act</em> (Art. 5, 26; Annex III)</li>
+        <li>EY, <em>European AI Barometer 2025</em>; <em>AI Sentiment Index 2026</em></li>
+        <li>Goldman Sachs, <em>The potentially large effects of AI on economic growth</em>, 2023; <em>An AI job apocalypse?</em>, 2025</li>
+        <li>ILO, <em>Generative AI and jobs</em>, WP 96 (2023) and 2025 update</li>
+        <li>Destatis IKT-Erhebung 2025; ifo; Bitkom; IAB Kurzberichte 5/2024, 6/2025, 8/2026; Stifterverband/McKinsey 2025</li>
+        <li>INSEE Première 2061/2120; Ifop/Talan Barometer 2025; Coface/OEM 2025; Cour des comptes 2026; CNIL</li>
+        <li>ONS, <em>AI in UK businesses 2023–2026</em>; DSIT; CIPD Labour Market Outlook 2025; IPPR 2024; DfE 2023; ICO; TUC</li>
+        <li>Statistics Denmark; Danmarks Nationalbank 2026; IMF Denmark SIP 2025; Solita/Kantar 2025; Tieto 2026; FAOS; Unionen</li>
+        <li>Indeed Hiring Lab 2026; LinkedIn Economic Graph; Stanford AI Index 2025; Bruegel WP 06/2024</li>
+        <li>Mercer, <em>Global Talent Trends 2024 &amp; 2026</em>; <em>HR Technology's Impact on the Workforce 2025</em>; Skills Snapshot; newsroom</li>
+      </ol>
+      <div class="note" data-i="src_note">Several primary PDFs were corroborated through document extracts rather than direct fetches. Global figures (WEF 39%, Goldman occupation series) are applied to Europe where no European series exists; Cedefop, Eurostat and national statistics provide the Europe-specific numbers. Items marked "verify" rest on secondary reporting. Confirm exact wording against source documents before external publication.</div>
+    </div>
+  </section>
+
+  <footer data-i="foot">Mercer · AI Careers Europe Monitor · Compiled Sep 2026. Mercer is a business of Marsh; this page uses Mercer's established visual identity.</footer>
+</main>
+</div>
+
+<div class="pbar" id="pbar"><button id="p-prev">←</button><span class="cnt" id="p-cnt">1 / 12</span><button id="p-next">→</button><button id="p-exit" data-i="exit">Exit (Esc)</button></div>
+<div class="tt" id="tt" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+// ===================== i18n =====================
+let L='en';
+const I={
+brand:['AI Careers Europe Monitor','AI Careers Europe Monitor'],
+f_all:['All','Alle'],f_wf:['Workforce','Arbeitswelt'],f_reg:['Regulation','Regulierung'],
+present:['Present','Präsentieren'],deck:['Slide deck','Foliendeck'],exit:['Exit (Esc)','Beenden (Esc)'],tbl:['Table','Tabelle'],
+n1:['Exposure','Exposure'],n2:['Jobs','Jobs'],n3:['Skills','Skills'],n4:['Europe','Europa'],n5:['Countries','Länder'],n6:['Calculator','Rechner'],n7:['People','Menschen'],n8:['Agenda','Agenda'],
+h_eye:['Executive briefing · Mercer Career, Europe','Executive Briefing · Mercer Career, Europa'],
+h_p:['Where the impact lands, who is exposed, how fast Europe is adopting, and what HR, reward and talent leaders should do now. Evidence from 2024–2026 sources, cross-checked.','Wo die Wirkung eintritt, wer betroffen ist, wie schnell Europa adoptiert und was HR-, Vergütungs- und Talent-Verantwortliche jetzt tun sollten. Belege aus Quellen 2024–2026, gegengeprüft.'],
+h_upd:['Updated','Stand'],h_src:['Sources','Quellen'],h_inst:['institutions','Institutionen'],h_reg:['Region','Region'],
+v_h:['The one-minute read','In einer Minute'],
+s1_e:['01 · Scale','01 · Ausmaß'],s1_h:['Most European jobs are touched. Few are simply replaced.','Die meisten Jobs in Europa sind betroffen. Nur wenige werden einfach ersetzt.'],s1_p:['Three institutions measure "exposure" differently, but agree on the shape: broad reach, concentrated risk in clerical and routine work, and a large complementary share.','Drei Institutionen messen „Exposure" unterschiedlich, sind sich aber im Muster einig: große Reichweite, konzentriertes Risiko bei Büro- und Routinetätigkeiten, großer komplementärer Anteil.'],
+c_exp_h:['How exposed is work to AI?','Wie stark ist Arbeit KI-exponiert?'],c_exp_s:['Share of jobs, by institution and measure','Anteil der Jobs, nach Institution und Messgröße'],
+c_occ_h:['Task automation by occupation, Europe','Aufgaben-Automatisierung nach Berufsgruppe, Europa'],c_occ_s:['Share of tasks technically automatable by generative AI','Anteil technisch durch GenAI automatisierbarer Aufgaben'],
+s2_e:['02 · Jobs','02 · Jobs'],s2_h:['Net positive, heavily churned.','Netto positiv, stark durchgewirbelt.'],s2_p:['Europe gains more jobs than it loses, but the gain hides ~12M people who must change occupation. The productivity upside depends on whether that transition is managed.','Europa gewinnt mehr Jobs als es verliert – doch hinter dem Plus stehen ~12 Mio. Menschen, die den Beruf wechseln müssen. Der Produktivitätsgewinn hängt davon ab, ob dieser Übergang gesteuert wird.'],
+c_jobs_h:['Jobs created vs displaced by AI, Europe to 2030','Durch KI geschaffene vs. verdrängte Jobs, Europa bis 2030'],c_jobs_s:['Millions of jobs','Millionen Jobs'],lg_created:['Created','Geschaffen'],lg_displaced:['Displaced','Verdrängt'],
+c_prod_h:['The productivity fork','Die Produktivitäts-Gabelung'],c_prod_s:['Annual productivity growth for Europe to 2030 under two adoption paths','Jährliches Produktivitätswachstum Europas bis 2030 in zwei Adoptionspfaden'],
+s3_e:['03 · Skills','03 · Kompetenzen'],s3_h:['Willing workers, hesitant employers.','Bereite Beschäftigte, zögernde Arbeitgeber.'],s3_p:['Demand for AI skills is exploding while the base of digital skills is thin. The gap is a trust gap as much as a training gap.','Die Nachfrage nach KI-Kompetenzen explodiert, während die digitale Basis dünn ist. Die Lücke ist ebenso eine Vertrauens- wie eine Weiterbildungslücke.'],
+c_cede_h:['What EU workers say about AI at work','Was EU-Beschäftigte über KI am Arbeitsplatz sagen'],c_cede_s:['Share of EU employees, 2024 survey','Anteil der EU-Beschäftigten, Befragung 2024'],
+c_dig_h:['Digital foundations vs 2030 targets','Digitale Basis vs. Ziele 2030'],c_dig_s:['EU Digital Decade progress','Fortschritt EU Digital Decade'],
+s4_e:['04 · Europe','04 · Europa'],s4_h:['A two-speed continent that regulates first.','Ein Kontinent der zwei Geschwindigkeiten, der zuerst reguliert.'],s4_p:['Enterprise adoption is racing ahead in the Nordics and lagging in the East and South, while the EU AI Act sets the world\'s strictest rules for AI in HR.','Die Unternehmensadoption eilt im Norden voraus und hinkt im Osten und Süden hinterher, während der EU AI Act die weltweit strengsten Regeln für KI im HR setzt.'],
+c_ctry_h:['Enterprises using AI, 2025','Unternehmen mit KI-Einsatz, 2025'],c_ctry_s:['Share of enterprises with 10+ employees','Anteil der Unternehmen ab 10 Beschäftigten'],c_ctry_src:['Eurostat, Dec 2025. By size: large ~55%, medium ~30%, small ~17%.','Eurostat, Dez. 2025. Nach Größe: groß ~55 %, mittel ~30 %, klein ~17 %.'],
+c_act_h:['EU AI Act: what applies when','EU AI Act: Was gilt wann'],c_act_s:['Obligations relevant to HR and workforce use of AI','Pflichten für den KI-Einsatz in HR und Belegschaft'],applies:['Applies now','Gilt jetzt'],
+art26:['Employers must ensure human oversight, keep logs for at least 6 months and inform workers\' representatives before deploying high-risk AI (Art. 26).','Arbeitgeber müssen menschliche Aufsicht sicherstellen, Protokolle mindestens 6 Monate aufbewahren und Arbeitnehmervertretungen vor dem Einsatz von Hochrisiko-KI informieren (Art. 26).'],
+s5_e:['05 · Country deep-dive','05 · Länder-Deep-Dive'],s5_h:['Four labour markets, four speeds, four rulebooks.','Vier Arbeitsmärkte, vier Geschwindigkeiten, vier Regelwerke.'],s5_p:['Germany, France, the UK and the Nordics differ in adoption, in what workers actually use, and in who must be consulted before AI touches a job.','Deutschland, Frankreich, UK und die Nordics unterscheiden sich in der Adoption, in dem, was Beschäftigte tatsächlich nutzen, und darin, wer konsultiert werden muss, bevor KI einen Job berührt.'],
+s6_e:['06 · Exposure calculator','06 · Exposure-Rechner'],s6_h:['How exposed is a role in your organisation?','Wie exponiert ist eine Rolle in Ihrer Organisation?'],s6_p:['Pick a job function, an industry and a market. The estimate combines occupation-level task exposure with sector and country context, and points to the moves that matter most.','Wählen Sie Funktion, Branche und Markt. Die Schätzung kombiniert die Aufgaben-Exposure der Berufsgruppe mit Branchen- und Länderkontext und zeigt die wichtigsten Hebel.'],
+cf_func:['Job function','Funktion'],cf_ind:['Industry','Branche'],cf_mkt:['Market','Markt'],
+s7_e:['07 · People','07 · Menschen'],s7_h:['Anxiety up, thriving down. Ambition ahead of readiness.','Sorgen steigen, Wohlbefinden sinkt. Ambition vor Bereitschaft.'],s7_p:['Mercer\'s Global Talent Trends tracks the human side. The lines have moved the wrong way in two years, and the readiness gap is widest inside HR itself.','Mercers Global Talent Trends erfasst die menschliche Seite. In zwei Jahren haben sich die Linien in die falsche Richtung bewegt – und die Bereitschaftslücke ist im HR selbst am größten.'],
+c_slope_h:['Employee sentiment, 2024 → 2026','Stimmung der Beschäftigten, 2024 → 2026'],c_slope_s:['Share of employees, global survey (~12,000 respondents)','Anteil der Beschäftigten, globale Befragung (~12.000)'],lg_thr:['Thriving at work','Thriving at work'],lg_fear:['Concerned about AI job loss','Sorge um KI-bedingten Jobverlust'],
+c_ready_h:['Ambition vs readiness','Ambition vs. Bereitschaft'],c_ready_s:['Executives and HR leaders, Mercer GTT','Führungskräfte und HR-Leader, Mercer GTT'],
+pov_e:['Mercer\'s point of view','Mercers Standpunkt'],pov_h:['Redesign work, not just jobs.','Arbeit neu gestalten – nicht nur Jobs.'],pov_lead:['Leading "human-centric productivity" firms report efficiency gains from AI of 67% vs 54% for laggards, and innovation gains of 59% vs 31%.','Führende „Human-centric Productivity"-Unternehmen berichten KI-Effizienzgewinne von 67 % vs. 54 % bei Nachzüglern und Innovationsgewinne von 59 % vs. 31 %.'],
+s8_e:['08 · Mercer\'s own transformation','08 · Mercers eigene Transformation'],s8_h:['AI is now embedded in Mercer\'s Career services.','KI ist jetzt in Mercers Career-Services eingebettet.'],s8_p:['Verified launches and offerings, 2024–2026.','Verifizierte Launches und Angebote, 2024–2026.'],
+s9_e:['09 · Agenda','09 · Agenda'],s9_h:['Five moves for HR, reward and talent leaders.','Fünf Hebel für HR-, Vergütungs- und Talent-Verantwortliche.'],s9_p:['Tick what is already underway in your organisation. Progress is stored in this browser only.','Haken Sie ab, was in Ihrer Organisation bereits läuft. Der Fortschritt wird nur in diesem Browser gespeichert.'],
+src_e:['Sources','Quellen'],src_h:['Evidence base','Evidenzbasis'],
+src_note:['Several primary PDFs were corroborated through document extracts rather than direct fetches. Global figures (WEF 39%, Goldman occupation series) are applied to Europe where no European series exists; Cedefop, Eurostat and national statistics provide the Europe-specific numbers. Items marked "verify" rest on secondary reporting. Confirm exact wording against source documents before external publication.','Mehrere Primär-PDFs wurden über Dokumentauszüge statt Direktabruf bestätigt. Globale Werte (WEF 39 %, Goldman-Berufsreihe) werden auf Europa angewandt, wo keine europäische Reihe existiert; Cedefop, Eurostat und nationale Statistiken liefern die Europa-spezifischen Zahlen. Mit „prüfen" markierte Punkte beruhen auf Sekundärberichten. Vor externer Veröffentlichung Wortlaut an den Quellen prüfen.'],
+foot:['Mercer · AI Careers Europe Monitor · Compiled Sep 2026. Mercer is a business of Marsh; this page uses Mercer\'s established visual identity.','Mercer · AI Careers Europe Monitor · Stand Sep. 2026. Mercer ist ein Geschäftsbereich von Marsh; diese Seite nutzt Mercers etablierte visuelle Identität.'],
+};
+const t=(k)=>I[k]?I[k][L==='de'?1:0]:k;
+const tx=(a)=>Array.isArray(a)?a[L==='de'?1:0]:a;
+
+const H_TITLE=['AI is reshaping European careers. <em>The constraint is skills, not technology.</em>','KI verändert Karrieren in Europa. <em>Der Engpass sind Kompetenzen, nicht Technologie.</em>'];
+const VERDICT=[
+ ['~60% of jobs are exposed to AI, but half of those gain productivity rather than lose work.','~60 % der Jobs sind KI-exponiert – aber die Hälfte davon gewinnt Produktivität statt Arbeit zu verlieren.'],
+ ['Europe nets +2M jobs to 2030 (11M created, 9M displaced) with ~12M role transitions.','Europa gewinnt bis 2030 netto +2 Mio. Jobs (11 Mio. geschaffen, 9 Mio. verdrängt) bei ~12 Mio. Rollenwechseln.'],
+ ['Skills lag: only 56% of EU adults have basic digital skills; 44% of workers doubt they will be trained.','Kompetenzen hinken: nur 56 % der EU-Erwachsenen haben digitale Grundkompetenzen; 44 % der Beschäftigten zweifeln an Weiterbildung.'],
+ ['The EU AI Act treats hiring, promotion and monitoring AI as high-risk from Aug 2026.','Der EU AI Act stuft KI für Recruiting, Beförderung und Monitoring ab Aug. 2026 als Hochrisiko ein.'],
+];
+const KPIS=[
+ {tag:['Exposure','Exposure'],v:'~60%',l:['of jobs in advanced economies exposed to AI','der Jobs in Industrieländern KI-exponiert'],s:['Half complemented, half at risk · IMF 2024','Hälfte ergänzt, Hälfte gefährdet · IWF 2024']},
+ {tag:['Net jobs, Europe','Netto-Jobs, Europa'],v:'+2M',l:['11M created vs 9M displaced by 2030','11 Mio. geschaffen vs. 9 Mio. verdrängt bis 2030'],s:['Largest driver of any technology · WEF 2025','Größter Treiber aller Technologien · WEF 2025']},
+ {tag:['Skills churn','Skills-Wandel'],v:'39%',l:['of core skills change by 2030','der Kernkompetenzen ändern sich bis 2030'],s:['6 in 10 EU workers face task change · WEF, Cedefop','6 von 10 EU-Beschäftigten erleben Aufgabenwandel · WEF, Cedefop']},
+ {tag:['Adoption','Adoption'],v:'20%',l:['of EU enterprises use AI (2025)','der EU-Unternehmen nutzen KI (2025)'],s:['Up from 13.5% in 2024 · Eurostat','Von 13,5 % in 2024 · Eurostat']},
+];
+const FACTS=[
+ {v:'56%',t:['of EU adults have basic digital skills','der EU-Erwachsenen haben digitale Grundkompetenzen'],s:['Target 80% by 2030 · Eurostat','Ziel 80 % bis 2030 · Eurostat']},
+ {v:'9.7M',t:['shortfall of ICT specialists vs the 20M goal','Lücke bei IKT-Fachkräften ggü. dem 20-Mio.-Ziel'],s:['10.3M employed in 2024 · Eurostat','10,3 Mio. beschäftigt 2024 · Eurostat']},
+ {v:'80×',t:['growth in EU professionals adding AI-literacy skills, 2022→2023','Anstieg der EU-Fachkräfte mit neuen KI-Kompetenzen, 2022→2023'],s:['LinkedIn Economic Graph','LinkedIn Economic Graph']},
+ {v:'+56%',t:['wage premium for roles requiring AI skills','Lohnaufschlag für Rollen mit KI-Kompetenzen'],s:['Up from 25% a year earlier · PwC 2025','Von 25 % im Vorjahr · PwC 2025']},
+];
+const TL=[
+ {d:['Aug 2024','Aug. 2024'],t:['In force','In Kraft'],x:['Regulation enters into force; phased application begins.','Verordnung tritt in Kraft; gestufte Anwendung beginnt.'],past:true},
+ {d:['Feb 2025','Feb. 2025'],t:['Prohibitions apply','Verbote gelten'],x:['Emotion-recognition AI banned in the workplace. Fines up to 7% of global turnover.','Emotionserkennungs-KI am Arbeitsplatz verboten. Bußgelder bis 7 % des Weltumsatzes.'],past:true},
+ {d:['Aug 2026','Aug. 2026'],t:['High-risk rules apply','Hochrisiko-Regeln gelten'],x:['Recruitment, promotion, termination, task allocation and performance-monitoring AI are high-risk (Annex III).','KI für Recruiting, Beförderung, Kündigung, Aufgabenzuweisung und Leistungsmonitoring ist Hochrisiko (Anhang III).'],past:true},
+ {d:['Aug 2027','Aug. 2027'],t:['Remaining categories','Restliche Kategorien'],x:['Extended deadline for certain high-risk systems embedded in regulated products.','Verlängerte Frist für bestimmte Hochrisiko-Systeme in regulierten Produkten.']},
+];
+const POV=[
+ {h:['Decompose and redesign','Zerlegen und neu gestalten'],p:['Break jobs into tasks to decide what AI automates, what it augments and what stays human, then rebuild roles around the new mix.','Jobs in Aufgaben zerlegen: Was automatisiert KI, was ergänzt sie, was bleibt menschlich – und Rollen um den neuen Mix herum neu bauen.']},
+ {h:['Go skills-based','Skills-basiert werden'],p:['One skills taxonomy, skills mapped to jobs, pay for skills. 55% of firms now map skills to jobs, up from 47% in 2023.','Eine Skills-Taxonomie, Skills auf Jobs gemappt, Bezahlung nach Skills. 55 % der Firmen mappen heute Skills auf Jobs, 47 % in 2023.']},
+ {h:['Lead human-centric','Menschenzentriert führen'],p:['Pair adoption with trust, transparency and funded reskilling. 63% of employees would trade a 10% raise for AI upskilling.','Adoption mit Vertrauen, Transparenz und finanziertem Reskilling verbinden. 63 % der Beschäftigten würden 10 % Gehaltserhöhung gegen KI-Weiterbildung tauschen.']},
+];
+const SVC=[
+ {h:'Workforce Insights + Aida',w:['Launched Oct 2025','Launch Okt. 2025'],p:['AI-powered benchmarking across 100+ countries and 20,000 organisations. Aida answers natural-language questions on pay, talent and compliance inside the Talent All Access Portal.','KI-gestütztes Benchmarking über 100+ Länder und 20.000 Organisationen. Aida beantwortet Fragen zu Vergütung, Talent und Compliance in natürlicher Sprache im Talent All Access Portal.']},
+ {h:'Skills Edge & Skills Library',w:['2024 HR Tech Award','HR Tech Award 2024'],p:['Skills-based talent management; AI matches jobs to skills using partner databases that scan millions of job profiles.','Skills-basiertes Talentmanagement; KI matcht Jobs auf Skills über Partnerdatenbanken, die Millionen Jobprofile scannen.']},
+ {h:'AI Pathmaker',w:['Consulting service','Beratungsservice'],p:['Responsible AI adoption: work redesign, AI ROI cases and building a future-fit, reskilled workforce.','Verantwortungsvolle KI-Einführung: Work Redesign, KI-ROI-Cases und Aufbau einer zukunftsfähigen, umgeschulten Belegschaft.']},
+ {h:'Data Connector & IPE',w:['Compensation surveys','Vergütungsstudien'],p:['AI-assisted job matching and grading tied to Mercer\'s global compensation data and the International Position Evaluation framework.','KI-gestütztes Job-Matching und Grading, verknüpft mit Mercers globalen Vergütungsdaten und dem International-Position-Evaluation-Framework.']},
+];
+const MOVES=[
+ {b:['Map exposure and redesign work','Exposure kartieren und Arbeit neu gestalten'],s:['Assess which roles and tasks AI augments vs automates; redesign the highest-impact roles before scaling tools.','Prüfen, welche Rollen und Aufgaben KI ergänzt vs. automatisiert; die wirkungsstärksten Rollen neu gestalten, bevor Tools skaliert werden.']},
+ {b:['Build a skills-based foundation','Skills-basierte Grundlage schaffen'],s:['One skills taxonomy, skills mapped to jobs, and a path to paying for skills.','Eine Skills-Taxonomie, Skills auf Jobs gemappt und ein Pfad zur Bezahlung nach Skills.']},
+ {b:['Invest visibly in reskilling','Sichtbar in Reskilling investieren'],s:['Close the trust gap with concrete, funded commitments. 44% of EU workers doubt training will come.','Die Vertrauenslücke mit konkreten, finanzierten Zusagen schließen. 44 % der EU-Beschäftigten zweifeln, dass Weiterbildung kommt.']},
+ {b:['Get AI-in-HR governance right','KI-Governance im HR richtig aufsetzen'],s:['Treat hiring, promotion and monitoring AI as high-risk: human oversight, worker notification, logging, bias testing.','KI für Recruiting, Beförderung und Monitoring als Hochrisiko behandeln: menschliche Aufsicht, Information der Beschäftigten, Protokollierung, Bias-Tests.']},
+ {b:['Lead human-centric productivity','Menschenzentrierte Produktivität führen'],s:['Pair adoption with transparency, manager capability and pay equity to convert AI into productivity and engagement.','Adoption mit Transparenz, Führungskompetenz und Pay Equity verbinden, um KI in Produktivität und Engagement zu übersetzen.']},
+];
+
+// ===================== country data =====================
+const COUNTRIES=[
+{id:'de',name:['Germany','Deutschland'],
+ kpis:[{v:'26%',l:['enterprises using AI, 2025','Unternehmen mit KI, 2025'],s:['20% in 2024 · Destatis','20 % in 2024 · Destatis']},{v:'4.2%',l:['of job postings AI-touched','der Stellenanzeigen KI-bezogen'],s:['Highest in Europe · Indeed Q1 2026','Höchster Wert in Europa · Indeed Q1 2026']},{v:'8 in 10',l:['workers use AI tools','Beschäftigte nutzen KI-Tools'],s:['+14 pp · EY Barometer 2025','+14 Pp. · EY Barometer 2025']},{v:'38%',l:['of employees in high-substitutability jobs','der Beschäftigten in hoch substituierbaren Berufen'],s:['13.0M · IAB, 2022 data','13,0 Mio. · IAB, Daten 2022']}],
+ adopt:[['<b>GenAI in establishments:</b> ~25% in 2025, up from 5% in 2023; 48% of firms with 200+ staff. Only about 1 in 4 AI-using firms offers training (IAB 8/2026).','<b>GenAI in Betrieben:</b> ~25 % in 2025, 5 % in 2023; 48 % bei 200+ Beschäftigten. Nur etwa jeder vierte KI-nutzende Betrieb bietet Schulungen (IAB 8/2026).'],['<b>Business surveys run higher:</b> ifo 41% (2025) → 55% (May 2026); Bitkom 36%. Shadow AI widespread in 8% of firms.','<b>Unternehmensbefragungen liegen höher:</b> ifo 41 % (2025) → 55 % (Mai 2026); Bitkom 36 %. Schatten-KI in 8 % der Firmen verbreitet.'],['<b>AI skills penetration 1.9</b> — 3rd globally after India and the US (Stanford AI Index 2025). ~147k AI postings in 2024 (PwC).','<b>KI-Skills-Penetration 1,9</b> – weltweit Platz 3 nach Indien und USA (Stanford AI Index 2025). ~147k KI-Stellen 2024 (PwC).'],['<b>Capability gap:</b> 79% of firms lack the AI competencies they need; 86% say AI potential is underused (Stifterverband/McKinsey 2025).','<b>Kompetenzlücke:</b> 79 % der Firmen fehlen nötige KI-Kompetenzen; 86 % sehen KI-Potenzial ungenutzt (Stifterverband/McKinsey 2025).']],
+ law:[['<b>§87(1) No. 6 BetrVG:</b> works-council co-determination applies when AI is abstractly capable of monitoring behaviour or performance (BAG 2022 on MS 365; widely applied to Copilot).','<b>§87 Abs. 1 Nr. 6 BetrVG:</b> Mitbestimmung des Betriebsrats, sobald KI abstrakt zur Verhaltens- oder Leistungskontrolle geeignet ist (BAG 2022 zu MS 365; breit auf Copilot angewandt).'],['<b>§90 BetrVG:</b> information and consultation duty on AI introduction; §80(3): works council may engage an AI expert without proving necessity.','<b>§90 BetrVG:</b> Informations- und Beratungspflicht bei KI-Einführung; §80 Abs. 3: Betriebsrat kann KI-Sachverständigen ohne Erforderlichkeitsnachweis hinzuziehen.'],['<b>ArbG Hamburg (Jan 2024):</b> no co-determination where staff use ChatGPT via private accounts and the employer has no data access.','<b>ArbG Hamburg (Jan. 2024):</b> keine Mitbestimmung, wenn Beschäftigte ChatGPT über Privatkonten nutzen und der Arbeitgeber keinen Datenzugriff hat.'],['<b>KI-MIG</b> in force 29 Jul 2026; Bundesnetzagentur is national AI market-surveillance authority since Aug 2026.','<b>KI-MIG</b> in Kraft seit 29. Juli 2026; Bundesnetzagentur seit Aug. 2026 nationale KI-Marktüberwachungsbehörde.']],
+ policy:[['<b>Qualifizierungschancengesetz / Qualifizierungsgeld:</b> course costs funded up to 100% (small firms), wage subsidy up to 75%, +5 pp with a works agreement.','<b>Qualifizierungschancengesetz / Qualifizierungsgeld:</b> Kursförderung bis 100 % (Kleinbetriebe), Lohnzuschuss bis 75 %, +5 Pp. mit Betriebsvereinbarung.'],['<b>Weiterbildungsoffensive 2030</b> (Nov 2025): raise training participation by 11 pp to 65% by 2030.','<b>Weiterbildungsoffensive 2030</b> (Nov. 2025): Weiterbildungsbeteiligung um 11 Pp. auf 65 % bis 2030 steigern.'],['<b>Reality check:</b> only 45% of establishments supported training in H1 2025 (IAB-Betriebspanel).','<b>Realitätscheck:</b> nur 45 % der Betriebe förderten Weiterbildung im 1. Hj. 2025 (IAB-Betriebspanel).'],['<b>Worker sentiment:</b> 70% expect AI job cuts; 36% worried about their own job, below the European 42% (EY 2025).','<b>Stimmung:</b> 70 % erwarten KI-bedingten Stellenabbau; 36 % sorgen sich um den eigenen Job, unter dem Europa-Wert von 42 % (EY 2025).']],
+ verdict:['<b>Read-out:</b> high skills base and fast-rising adoption, but every AI rollout that can monitor staff runs through the works council. Plan co-determination into the timeline; use Qualifizierungsgeld to co-fund reskilling.','<b>Fazit:</b> starke Skills-Basis und schnell steigende Adoption, aber jeder KI-Rollout mit Monitoring-Potenzial läuft über den Betriebsrat. Mitbestimmung in den Zeitplan einplanen; Qualifizierungsgeld zur Kofinanzierung von Reskilling nutzen.'],
+ src:'Destatis IKT 2025 · IAB 5/2024, 6/2025, 8/2026 · ifo · Bitkom · Indeed Hiring Lab 2026 · Stanford AI Index 2025 · EY 2025 · Stifterverband/McKinsey 2025 · BAG 1 ABR 20/21 · ArbG Hamburg 24 BVGa 1/24 · BMAS'},
+{id:'fr',name:['France','Frankreich'],
+ kpis:[{v:'18%',l:['enterprises using AI, 2025','Unternehmen mit KI, 2025'],s:['10% in 2024 · INSEE','10 % in 2024 · INSEE']},{v:'166k',l:['AI job postings, 2024','KI-Stellenanzeigen, 2024'],s:['#1 in Europe, +273% since 2018 · PwC','Nr. 1 in Europa, +273 % seit 2018 · PwC']},{v:'~1 in 4',l:['employees use AI daily','Beschäftigte nutzen KI täglich'],s:['Among Europe\'s most cautious · EY 2025','Zu Europas Vorsichtigsten · EY 2025']},{v:'~16%',l:['of tasks exposed to automation','der Aufgaben automatisierungsexponiert'],s:['Up to 5M jobs concerned · Coface/OEM 2025','Bis zu 5 Mio. Jobs betroffen · Coface/OEM 2025']}],
+ adopt:[['<b>Size gap:</b> 58% of firms with 250+ staff use AI vs 15% under 50; 59% in information &amp; communication (INSEE 2025).','<b>Größenlücke:</b> 58 % der Firmen ab 250 Beschäftigten nutzen KI vs. 15 % unter 50; 59 % in Information &amp; Kommunikation (INSEE 2025).'],['<b>Training:</b> on average 21% of employees received AI training (30% in large firms).','<b>Weiterbildung:</b> im Schnitt 21 % der Beschäftigten erhielten KI-Schulung (30 % in Großunternehmen).'],['<b>Tools gap:</b> only 9% of employees have employer-provided GenAI tools; 49% say their employer has no plan; 73% feel insufficiently prepared (Ifop/Talan 2025).','<b>Tool-Lücke:</b> nur 9 % der Beschäftigten haben arbeitgeberseitige GenAI-Tools; 49 % sagen, der Arbeitgeber hat keinen Plan; 73 % fühlen sich unzureichend vorbereitet (Ifop/Talan 2025).'],['<b>AI-touched postings 3.3%</b>; 54% outside tech occupations (Indeed Q1 2026). 66% hold a positive view of AI vs 70% Europe (EY).','<b>KI-bezogene Stellen 3,3 %</b>; 54 % außerhalb von Tech-Berufen (Indeed Q1 2026). 66 % sehen KI positiv vs. 70 % Europa (EY).']],
+ law:[['<b>Art. L.2312-8 Code du travail:</b> the CSE must be informed and consulted before any new technology is introduced.','<b>Art. L.2312-8 Code du travail:</b> Der CSE muss vor Einführung jeder neuen Technologie informiert und konsultiert werden.'],['<b>TJ Créteil (Jul 2025):</b> Infopro Digital ordered to suspend GenAI tools pending CSE consultation. <b>TJ Paris (Sep 2025):</b> France Télévisions\' AI platform and HR chatbot ruled "new technology" requiring central CSE consultation.','<b>TJ Créteil (Juli 2025):</b> Infopro Digital musste GenAI-Tools bis zur CSE-Konsultation aussetzen. <b>TJ Paris (Sep. 2025):</b> KI-Plattform und HR-Chatbot von France Télévisions als „neue Technologie" mit zentraler CSE-Konsultationspflicht eingestuft.'],['<b>CNIL:</b> recruitment guide and AI/HR guidance under GDPR; designated authority for prohibited AI practices. Recruitment named a 2026 inspection priority <span class="flag">verify</span>.','<b>CNIL:</b> Recruiting-Leitfaden und KI/HR-Leitlinien unter DSGVO; Behörde für verbotene KI-Praktiken. Recruiting als Prüfschwerpunkt 2026 <span class="flag">prüfen</span>.'],['<b>Banking:</b> inter-branch study expects ~12% of banking jobs to evolve with GenAI (FBF 2025).','<b>Banken:</b> Branchenstudie erwartet Wandel bei ~12 % der Bankjobs durch GenAI (FBF 2025).']],
+ policy:[['<b>"Osez l\'IA"</b> (Jul 2025, €200m): targets 80% of SMEs and 100% of large firms using AI by 2030; 15M professionals trained via the Académie de l\'IA.','<b>„Osez l\'IA"</b> (Juli 2025, 200 Mio. €): Ziel 80 % der KMU und 100 % der Großunternehmen mit KI bis 2030; 15 Mio. Berufstätige über die Académie de l\'IA geschult.'],['<b>CPF:</b> 1.4M people trained in 2024, €2.2bn financed; no AI-specific breakdown published.','<b>CPF:</b> 1,4 Mio. Personen 2024 geschult, 2,2 Mrd. € finanziert; keine KI-spezifische Aufschlüsselung.'],['<b>Bpifrance AI diagnostic</b> for SMEs, 50% subsidised; 300 AI ambassadors.','<b>Bpifrance-KI-Diagnose</b> für KMU, 50 % bezuschusst; 300 KI-Botschafter.'],['<b>Mercer GTT:</b> 51% of French companies investing in AI and planning deployment this year <span class="flag">verify</span>.','<b>Mercer GTT:</b> 51 % der französischen Unternehmen investieren in KI und planen den Einsatz dieses Jahr <span class="flag">prüfen</span>.']],
+ verdict:['<b>Read-out:</b> Europe\'s largest AI hiring market sits on a cautious, under-equipped workforce. Two 2025 court rulings make CSE consultation a hard gate: sequence it first, then close the tools-and-training gap.','<b>Fazit:</b> Europas größter KI-Arbeitsmarkt trifft auf eine vorsichtige, schlecht ausgestattete Belegschaft. Zwei Urteile 2025 machen die CSE-Konsultation zur harten Hürde: zuerst einplanen, dann die Tool- und Trainingslücke schließen.'],
+ src:'INSEE Première 2061/2120 · PwC AI Jobs Barometer 2025 · Indeed Hiring Lab 2026 · EY 2025 · Ifop/Talan 2025 · Coface/OEM 2025 · TJ Créteil RG 25/00851 · TJ Paris RG 25/53278 · CNIL · economie.gouv.fr · DARES'},
+{id:'uk',name:['United Kingdom','Vereinigtes Königreich'],
+ kpis:[{v:'29%',l:['businesses using AI, Jun 2026','Unternehmen mit KI, Juni 2026'],s:['+8 pp; 49% of large firms · ONS','+8 Pp.; 49 % der Großunternehmen · ONS']},{v:'180k',l:['specialist AI postings, 2025','KI-Fachstellen, 2025'],s:['+61%; 34% wage premium · PwC UK 2026','+61 %; 34 % Lohnaufschlag · PwC UK 2026']},{v:'49%',l:['of workers have used AI for their job','der Beschäftigten haben KI für den Job genutzt'],s:['14% untrained · Mercer HR Tech 2025','14 % ungeschult · Mercer HR Tech 2025']},{v:'4.4M',l:['jobs lost, central scenario','Jobs verloren, zentrales Szenario'],s:['Worst 7.9M, best 0 · IPPR 2024','Schlimmstenfalls 7,9 Mio., bestenfalls 0 · IPPR 2024']}],
+ adopt:[['<b>Shallow adoption:</b> ~1.6 AI technologies per adopter; LLM text generation the most common use (17%) (ONS 2026).','<b>Flache Adoption:</b> ~1,6 KI-Technologien pro Nutzer; LLM-Textgenerierung häufigste Anwendung (17 %) (ONS 2026).'],['<b>CIPD:</b> employees use AI tools in 76% of organisations; 61% allow GenAI; 1 in 6 employers expect AI to shrink headcount (2025).','<b>CIPD:</b> in 76 % der Organisationen nutzen Beschäftigte KI-Tools; 61 % erlauben GenAI; jeder 6. Arbeitgeber erwartet KI-bedingten Personalabbau (2025).'],['<b>Mercer:</b> 18% of UK workers think AI has nothing to offer their role; fewer than 25% feel fairly paid, limiting motivation to learn (HR Tech 2025).','<b>Mercer:</b> 18 % der britischen Beschäftigten meinen, KI habe ihrer Rolle nichts zu bieten; unter 25 % fühlen sich fair bezahlt, was Lernmotivation bremst (HR Tech 2025).'],['<b>Exposure:</b> AI already covers 11% of tasks, rising to ~59% in a second wave (IPPR); DfE: 10–30% of jobs highly automatable over two decades.','<b>Exposure:</b> KI deckt bereits 11 % der Aufgaben ab, in einer zweiten Welle ~59 % (IPPR); DfE: 10–30 % der Jobs über zwei Jahrzehnte hoch automatisierbar.']],
+ law:[['<b>No AI Act.</b> Sector regulators and existing law apply; the ICO leads on AI in recruitment ("Recruitment Rewired", 2026 ADM guidance).','<b>Kein AI Act.</b> Sektorregulierer und bestehendes Recht gelten; die ICO führt bei KI im Recruiting („Recruitment Rewired", ADM-Leitlinien 2026).'],['<b>Data (Use and Access) Act 2025</b> (s.80 in force Feb 2026) loosens automated-decision rules: restrictions now apply mainly to significant decisions using special-category data.','<b>Data (Use and Access) Act 2025</b> (§80 seit Feb. 2026) lockert Regeln für automatisierte Entscheidungen: Beschränkungen gelten v. a. für bedeutende Entscheidungen mit besonderen Datenkategorien.'],['<b>Employment Rights Act 2025</b> has no AI-specific provisions; a surveillance-tech consultation is promised. TUC draft AI bill (2024) proposes high-risk decision rights; 60% of workers believe they are monitored.','<b>Employment Rights Act 2025</b> ohne KI-spezifische Regeln; Konsultation zu Überwachungstechnik angekündigt. TUC-Gesetzentwurf (2024) fordert Rechte bei Hochrisiko-Entscheidungen; 60 % der Beschäftigten glauben, überwacht zu werden.'],['<b>Implication:</b> lighter statutory gate than the EU, but higher reputational and union exposure; EU AI Act still binds UK firms operating in the EU.','<b>Implikation:</b> geringere gesetzliche Hürde als in der EU, aber höheres Reputations- und Gewerkschaftsrisiko; der EU AI Act bindet weiterhin britische Firmen mit EU-Geschäft.']],
+ policy:[['<b>TechFirst</b> (£187m, 2025) and an industry pledge to give 10M workers AI skills by 2030; Skills England "AI Foundation Skills for Work" benchmark (2026).','<b>TechFirst</b> (187 Mio. £, 2025) und Industriezusage, 10 Mio. Beschäftigte bis 2030 KI-fit zu machen; Skills-England-Benchmark „AI Foundation Skills for Work" (2026).'],['<b>Skills gaps:</b> 97% of AI firms report at least one skills gap (DSIT 2025).','<b>Skills-Lücken:</b> 97 % der KI-Firmen melden mindestens eine Kompetenzlücke (DSIT 2025).'],['<b>Wage signal:</b> UK AI wage premium jumped from 11% (2024) to 34% (2025), peaking at 64% in consumer markets (PwC UK).','<b>Lohnsignal:</b> KI-Lohnaufschlag stieg von 11 % (2024) auf 34 % (2025), bis 64 % in Consumer-Märkten (PwC UK).'],['<b>Upside case:</b> IPPR best case is zero net job loss with +13% GDP; TBI sees 1–3M jobs displaced by 2050, offset by new roles.','<b>Chancenfall:</b> IPPR-Bestfall ist null Netto-Jobverlust bei +13 % BIP; TBI sieht 1–3 Mio. verdrängte Jobs bis 2050, kompensiert durch neue Rollen.']],
+ verdict:['<b>Read-out:</b> fastest-loosening rulebook in Europe and a booming AI wage market, but half the workforce has not used AI at work and pay-fairness dents learning. Lead with transparency and reskilling rather than compliance.','<b>Fazit:</b> das am schnellsten gelockerte Regelwerk Europas und ein boomender KI-Lohnmarkt – doch die Hälfte der Beschäftigten hat KI nie im Job genutzt, und Lohnfairness bremst das Lernen. Mit Transparenz und Reskilling führen, nicht mit Compliance.'],
+ src:'ONS AI in UK businesses 2023–2026 · DSIT 2025 · PwC UK AI Jobs Barometer 2026 · Mercer HR Technology\'s Impact on the Workforce 2025 · CIPD LMO Autumn 2025 · IPPR 2024 · DfE 2023 · TBI 2024 · ICO 2026 · TUC · Skills England'},
+{id:'nd',name:['Nordics','Nordics'],
+ kpis:[{v:'42%',l:['Danish enterprises using AI, 2025','dänische Unternehmen mit KI, 2025'],s:['FI 38%, SE 35%, NO 29% · Eurostat','FI 38 %, SE 35 %, NO 29 % · Eurostat']},{v:'59%',l:['Danish firms using AI, 2026','dänische Firmen mit KI, 2026'],s:['15% in 2023 · Statistics Denmark','15 % in 2023 · Statistics Denmark']},{v:'65%',l:['Danish office workers use GenAI weekly','dänische Büroangestellte nutzen GenAI wöchentlich'],s:['FI 62% · Solita/Kantar 2025','FI 62 % · Solita/Kantar 2025']},{v:'~1 in 5',l:['of Danish workforce at displacement risk','der dänischen Erwerbstätigen mit Verdrängungsrisiko'],s:['Most benefit · IMF 2025','Mehrheit profitiert · IWF 2025']}],
+ adopt:[['<b>Europe\'s leaders:</b> Denmark +14.5 pp and Finland +13.5 pp in one year (Eurostat 2025). Finland 80% in ICT.','<b>Europas Spitze:</b> Dänemark +14,5 Pp. und Finnland +13,5 Pp. in einem Jahr (Eurostat 2025). Finnland 80 % in IKT.'],['<b>Use is deep:</b> used AI in past 6 months: FI 85%, DK 83%, NO 82%, SE 78% (EY 2026). 39% of Swedish employees use AI extensively (Tieto 2026).','<b>Nutzung ist tief:</b> KI in den letzten 6 Monaten genutzt: FI 85 %, DK 83 %, NO 82 %, SE 78 % (EY 2026). 39 % der schwedischen Beschäftigten nutzen KI intensiv (Tieto 2026).'],['<b>Denmark 2.9%</b> of all postings are AI roles, highest in the Nordics; ~1 in 10 ICT postings in SE/DK require AI skills (PwC 2025).','<b>Dänemark 2,9 %</b> aller Stellen sind KI-Rollen, Nordics-Spitze; ~jede 10. IKT-Stelle in SE/DK verlangt KI-Skills (PwC 2025).'],['<b>Governance lag:</b> 6 in 10 Swedish private-sector white-collar workers lack clear AI rules (Akavia/Unionen); 61% of Nordic firms provide AI training (EY).','<b>Governance-Lücke:</b> 6 von 10 schwedischen Angestellten in der Privatwirtschaft fehlen klare KI-Regeln (Akavia/Unionen); 61 % der nordischen Firmen bieten KI-Schulung (EY).']],
+ law:[['<b>EU AI Act applies</b> in DK, SE, FI (Norway via EEA, pending).','<b>EU AI Act gilt</b> in DK, SE, FI (Norwegen über EWR, ausstehend).'],['<b>Social partners prefer agreements over law:</b> Danish Industrial Agreement 2025–28 (230,000 workers); 3F–Hilfr agreement regulates algorithmic decisions with explanation duties.','<b>Sozialpartner bevorzugen Vereinbarungen statt Gesetze:</b> Dänisches Industrieabkommen 2025–28 (230.000 Beschäftigte); 3F–Hilfr-Vereinbarung regelt algorithmische Entscheidungen mit Erklärungspflichten.'],['<b>Sweden:</b> Unionen finds AI introduced in 67% of member workplaces (90% in IT/telecom), Oct 2025.','<b>Schweden:</b> Unionen: KI in 67 % der Mitgliedsbetriebe eingeführt (90 % in IT/Telekom), Okt. 2025.'],['<b>Employment evidence:</b> Danish AI adopters show lower subsequent employment growth, concentrated among young and highly educated staff, with no aggregate effect yet (Nationalbank 2026); Swedish postings show augmentation effects.','<b>Beschäftigungsevidenz:</b> dänische KI-Anwender zeigen geringeres Beschäftigungswachstum, konzentriert bei jungen und hochqualifizierten Beschäftigten, ohne Gesamteffekt (Nationalbank 2026); schwedische Stellen zeigen Augmentationseffekte.']],
+ policy:[['<b>Finland "Elements of AI":</b> over 1M learners in 110+ countries; met its goal of training 1% of Finns.','<b>Finnland „Elements of AI":</b> über 1 Mio. Lernende in 110+ Ländern; Ziel, 1 % der Finnen zu schulen, erreicht.'],['<b>Sweden AI Commission</b> roadmap (Nov 2024) with 75 measures; <b>Denmark</b> DKK 62.5m AI strategy 2024–27 and digitalisation strategy 2026–29.','<b>Schwedische KI-Kommission</b> Roadmap (Nov. 2024) mit 75 Maßnahmen; <b>Dänemark</b> 62,5 Mio. DKK KI-Strategie 2024–27 und Digitalisierungsstrategie 2026–29.'],['<b>Low fear:</b> only 45% of Nordic employers expect major job automation within a decade vs 65% globally; Finland: 45% see AI at their workplace, 16% use it daily.','<b>Geringe Angst:</b> nur 45 % der nordischen Arbeitgeber erwarten große Automatisierung binnen zehn Jahren vs. 65 % global; Finnland: 45 % sehen KI am Arbeitsplatz, 16 % nutzen sie täglich.'],['<b>Access widening:</b> firms giving ≥40% of staff approved AI tools rose from 37% to 56% in a year (Nordic exec survey, 2026).','<b>Zugang wächst:</b> Firmen, die ≥40 % der Belegschaft freigegebene KI-Tools geben, stiegen in einem Jahr von 37 % auf 56 % (nordische Führungskräftebefragung 2026).']],
+ verdict:['<b>Read-out:</b> the region has solved adoption; the open questions are governance and distribution. Partner with unions on AI agreements early and watch the early employment signal in Denmark.','<b>Fazit:</b> die Region hat die Adoption gelöst; offen sind Governance und Verteilung. Früh mit Gewerkschaften KI-Vereinbarungen schließen und das frühe Beschäftigungssignal aus Dänemark beobachten.'],
+ src:'Eurostat Dec 2025 · Statistics Denmark · Statistics Finland · SCB · PwC 2025 country analyses · Solita/Kantar 2025 · Tieto 2026 · EY AI Sentiment Index 2026 · IMF SIP 25/119 · Danmarks Nationalbank 2026 · FAOS · Unionen/Akavia · Elements of AI'},
+];
+
+// ===================== calculator data =====================
+// Occupation task exposure: Goldman Sachs 2023 (share of tasks automatable by GenAI, US; Europe ≈ same). aug = indicative augmentation share of exposed tasks.
+const FUNCS=[
+ {n:['Office & administrative support','Büro & Verwaltung'],e:46,aug:.40,k:'admin'},
+ {n:['Legal','Recht'],e:44,aug:.55,k:'pro'},
+ {n:['Architecture & engineering','Architektur & Ingenieurwesen'],e:37,aug:.65,k:'stem'},
+ {n:['Science (life, physical, social)','Wissenschaft (Natur-, Sozial-)'],e:36,aug:.65,k:'stem'},
+ {n:['Business & financial operations','Business & Finance Operations'],e:35,aug:.50,k:'pro'},
+ {n:['Community & social service','Soziale Dienste'],e:33,aug:.65,k:'care'},
+ {n:['Management','Management'],e:32,aug:.65,k:'mgmt'},
+ {n:['Sales & customer service','Vertrieb & Kundenservice'],e:31,aug:.45,k:'sales'},
+ {n:['Computer & mathematical','IT & Mathematik'],e:29,aug:.60,k:'stem'},
+ {n:['Healthcare practitioners','Gesundheitsberufe'],e:28,aug:.70,k:'care'},
+ {n:['Education & training','Bildung & Training'],e:27,aug:.70,k:'care'},
+ {n:['Arts, design & media','Kunst, Design & Medien'],e:26,aug:.55,k:'pro'},
+ {n:['Personal care & service','Persönliche Dienstleistungen'],e:19,aug:.60,k:'manual'},
+ {n:['Food preparation & serving','Gastronomie'],e:12,aug:.60,k:'manual'},
+ {n:['Transportation & logistics','Transport & Logistik'],e:11,aug:.55,k:'manual'},
+ {n:['Production','Produktion'],e:9,aug:.55,k:'manual'},
+ {n:['Construction & extraction','Bau & Rohstoffe'],e:6,aug:.60,k:'manual'},
+ {n:['Installation, maintenance & repair','Installation, Wartung & Reparatur'],e:4,aug:.60,k:'manual'},
+];
+// Industry tiers: PwC 2025 exposure tiers; ctx = cited sector fact.
+const INDS=[
+ {n:['Financial services & insurance','Finanzdienstleistungen & Versicherung'],tier:'H',ctx:['WEF: automated task share 21% → 38% by 2030; McKinsey: GenAI worth 2.8–4.7% of banking revenue.','WEF: automatisierter Aufgabenanteil 21 % → 38 % bis 2030; McKinsey: GenAI-Wert 2,8–4,7 % des Bankumsatzes.']},
+ {n:['Technology & software','Technologie & Software'],tier:'H',ctx:['McKinsey: GenAI worth up to 9% of high-tech revenue; PwC: among most AI-exposed industries.','McKinsey: GenAI-Wert bis 9 % des High-Tech-Umsatzes; PwC: unter den KI-exponiertesten Branchen.']},
+ {n:['Professional services','Professional Services'],tier:'H',ctx:['Pew: 52% of professional/scientific/technical workers highly exposed; PwC top exposure tier.','Pew: 52 % der Beschäftigten in Professional Services hoch exponiert; PwC oberste Exposure-Stufe.']},
+ {n:['Telecoms & media','Telekommunikation & Medien'],tier:'H',ctx:['WEF: insurance and telecoms lead the automation trend; McKinsey GenAI value 1.5–3.7% of revenue.','WEF: Versicherung und Telekom führen den Automatisierungstrend; McKinsey GenAI-Wert 1,5–3,7 % des Umsatzes.']},
+ {n:['Public sector & education','Öffentlicher Sektor & Bildung'],tier:'M',ctx:['McKinsey: education GenAI value up to 4% of spend; Europe education automation 6% → 21% with GenAI.','McKinsey: GenAI-Wert Bildung bis 4 % der Ausgaben; Automatisierung Bildung Europa 6 % → 21 % mit GenAI.']},
+ {n:['Healthcare & pharma','Gesundheit & Pharma'],tier:'M',ctx:['McKinsey Europe: 18% of healthcare hours automatable by 2030, the lowest sector; pharma GenAI value up to 5%.','McKinsey Europa: 18 % der Gesundheitsstunden bis 2030 automatisierbar, niedrigster Sektor; Pharma-GenAI-Wert bis 5 %.']},
+ {n:['Retail & consumer','Handel & Konsumgüter'],tier:'M',ctx:['McKinsey: GenAI worth 1.2–2.0% of retail revenue; demand falls for customer-service roles.','McKinsey: GenAI-Wert 1,2–2,0 % des Handelsumsatzes; Nachfrage nach Kundenservice-Rollen sinkt.']},
+ {n:['Manufacturing','Fertigung'],tier:'M',ctx:['McKinsey Europe: 30% of manufacturing hours automatable by 2030, the highest sector (all automation tech).','McKinsey Europa: 30 % der Fertigungsstunden bis 2030 automatisierbar, höchster Sektor (alle Automatisierungstechnik).']},
+ {n:['Energy & utilities','Energie & Versorgung'],tier:'M',ctx:['McKinsey: GenAI value ~1–1.6% of energy revenue; exposure concentrated in back-office functions.','McKinsey: GenAI-Wert ~1–1,6 % des Energieumsatzes; Exposure konzentriert in Back-Office-Funktionen.']},
+ {n:['Transport & logistics','Transport & Logistik'],tier:'L',ctx:['PwC: among least AI-exposed industries; McKinsey GenAI value 1.2–2.0% of revenue.','PwC: unter den am wenigsten KI-exponierten Branchen; McKinsey GenAI-Wert 1,2–2,0 % des Umsatzes.']},
+ {n:['Construction','Bau'],tier:'L',ctx:['PwC and Goldman Sachs: construction among the least exposed; Goldman: 6% of construction tasks.','PwC und Goldman Sachs: Bau unter den am wenigsten exponierten; Goldman: 6 % der Bauaufgaben.']},
+ {n:['Hospitality','Gastgewerbe'],tier:'L',ctx:['PwC: hospitality among the least AI-exposed industries.','PwC: Gastgewerbe unter den am wenigsten KI-exponierten Branchen.']},
+];
+const MKTS=[
+ {n:['EU average','EU-Durchschnitt'],a:20.0,note:['20% of EU enterprises use AI (Eurostat 2025)','20 % der EU-Unternehmen nutzen KI (Eurostat 2025)']},
+ {n:['Germany','Deutschland'],a:26,note:['26% adoption; works-council co-determination on monitoring-capable AI','26 % Adoption; Betriebsrats-Mitbestimmung bei monitoringfähiger KI']},
+ {n:['France','Frankreich'],a:18,note:['18% adoption; CSE consultation before new technology (2025 rulings)','18 % Adoption; CSE-Konsultation vor neuer Technologie (Urteile 2025)']},
+ {n:['United Kingdom','Vereinigtes Königreich'],a:29,note:['29% adoption; no AI Act, ICO guidance on recruitment AI','29 % Adoption; kein AI Act, ICO-Leitlinien zu Recruiting-KI']},
+ {n:['Denmark','Dänemark'],a:42,note:['42% adoption (59% in 2026); collective agreements on AI','42 % Adoption (59 % in 2026); Tarifvereinbarungen zu KI']},
+ {n:['Finland','Finnland'],a:37.8,note:['38% adoption; EU AI Act applies','38 % Adoption; EU AI Act gilt']},
+ {n:['Sweden','Schweden'],a:35,note:['35% adoption; 6 in 10 white-collar workers lack AI rules','35 % Adoption; 6 von 10 Angestellten fehlen KI-Regeln']},
+ {n:['Poland','Polen'],a:8.4,note:['8% adoption; 19% fear AI job loss (Cedefop)','8 % Adoption; 19 % fürchten KI-Jobverlust (Cedefop)']},
+];
+const TIERF={H:1.1,M:1.0,L:0.9};
+const TIERN={H:['High','Hoch'],M:['Medium','Mittel'],L:['Low','Niedrig']};
+const CALC_T={
+ est:['Estimated share of tasks exposed','Geschätzter Anteil exponierter Aufgaben'],
+ band:[['Low exposure','Geringe Exposure'],['Moderate exposure','Moderate Exposure'],['High exposure','Hohe Exposure']],
+ aug:['augmentation','Augmentation'],auto:['automation','Automatisierung'],
+ augl:['of exposed tasks likely augmented: AI assists, people stay in the loop','der exponierten Aufgaben werden eher ergänzt: KI assistiert, Menschen bleiben im Loop'],
+ autol:['of exposed tasks at risk of automation: candidates for redesign and redeployment','der exponierten Aufgaben mit Automatisierungsrisiko: Kandidaten für Redesign und Redeployment'],
+ sector:['Sector context','Branchenkontext'],market:['Market context','Marktkontext'],
+ moves:['Recommended moves','Empfohlene Hebel'],
+ method:['<b>Method.</b> Base = share of tasks automatable by generative AI for the occupation group (Goldman Sachs 2023; Europe ≈ US). Industry tier (PwC 2025) nudges the base ±10%. Augmentation share is indicative, drawing on the IMF\'s half/half split, ILO clerical findings and Goldman/McKinsey augmentation evidence. Market adoption is Eurostat/ONS. This is a directional estimate for prioritisation, not a job-level assessment.','<b>Methode.</b> Basis = Anteil der durch GenAI automatisierbaren Aufgaben der Berufsgruppe (Goldman Sachs 2023; Europa ≈ USA). Branchenstufe (PwC 2025) verschiebt die Basis um ±10 %. Der Augmentationsanteil ist indikativ, gestützt auf die IWF-Hälfte/Hälfte-Aufteilung, ILO-Befunde zu Büroberufen und Goldman/McKinsey-Augmentationsevidenz. Marktadoption: Eurostat/ONS. Richtungsweisende Schätzung zur Priorisierung, keine Bewertung einzelner Jobs.'],
+ svc:['Relevant Mercer capability','Relevante Mercer-Leistung'],
+};
+function movesFor(f,ind,mkt){
+  const out=[];
+  const x=f.e*TIERF[ind.tier];
+  if(x>=30) out.push({i:0,why:['High task exposure: decompose the role and redesign it before scaling tools.','Hohe Aufgaben-Exposure: Rolle zerlegen und neu gestalten, bevor Tools skaliert werden.']});
+  if(f.aug<.5) out.push({i:2,why:['Automation-heavy profile: fund visible reskilling and redeployment paths now.','Automatisierungslastiges Profil: sichtbares Reskilling und Redeployment-Pfade jetzt finanzieren.']});
+  else out.push({i:1,why:['Augmentation-heavy profile: build the skills taxonomy that lets people move up the value chain.','Augmentationslastiges Profil: die Skills-Taxonomie aufbauen, mit der Menschen in der Wertschöpfung aufsteigen.']});
+  if(mkt.n[0]!=='United Kingdom') out.push({i:3,why:['EU AI Act applies: hiring, promotion and monitoring AI in this role are high-risk.','EU AI Act gilt: KI für Recruiting, Beförderung und Monitoring in dieser Rolle ist Hochrisiko.']});
+  else out.push({i:4,why:['Lighter UK rulebook: transparency and pay fairness drive adoption more than compliance.','Leichteres UK-Regelwerk: Transparenz und Lohnfairness treiben Adoption stärker als Compliance.']});
+  if(out.length<3) out.push({i:4,why:['Pair adoption with trust and manager capability to convert it into productivity.','Adoption mit Vertrauen und Führungskompetenz verbinden, um sie in Produktivität zu übersetzen.']});
+  const svc = f.k==='admin'||f.k==='sales' ? 'AI Pathmaker (work redesign)' : f.k==='stem'||f.k==='pro' ? 'Skills Edge & Skills Library' : f.k==='mgmt' ? 'Workforce Insights + Aida' : 'Data Connector & IPE (job architecture)';
+  return {moves:out.slice(0,3),svc};
+}
+
+// ===================== helpers =====================
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+const el=(n,a={},txt)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e};
+const tt=$('#tt');
+function hover(node,html){
+  node.addEventListener('mousemove',e=>{tt.innerHTML=html;tt.style.opacity=1;const w=tt.offsetWidth,h=tt.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tt.style.left=x+'px';tt.style.top=y+'px';});
+  node.addEventListener('mouseleave',()=>tt.style.opacity=0);
+}
+const tables={};
+function tableToggle(id,rows,cols){tables[id]={rows,cols};}
+document.querySelectorAll('[data-table]').forEach(b=>{
+  b.addEventListener('click',()=>{const id=b.dataset.table,host=document.getElementById(id);const tb=tables[id];if(!tb)return;
+    let nx=host.nextElementSibling;
+    if(nx&&nx.classList.contains('dt')){nx.remove();host.hidden=false;b.textContent=t('tbl');return;}
+    const tbl=document.createElement('table');tbl.className='dt';
+    tbl.innerHTML='<thead><tr>'+tb.cols.map((c,i)=>'<th'+(i?' class="n"':'')+'>'+tx(c)+'</th>').join('')+'</tr></thead><tbody>'+tb.rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(i?' class="n num"':'')+'>'+tx(c)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+    host.hidden=true;host.after(tbl);b.textContent=L==='de'?'Diagramm':'Chart';});
+});
+function hbar(id,data,{max=100,color='var(--s1)',fmt=v=>v+'%',note=''}={}){
+  const host=document.getElementById(id);host.innerHTML='';host.hidden=false;const nx=host.nextElementSibling;if(nx&&nx.classList.contains('dt'))nx.remove();
+  const W=560,rowH=30,padL=222,padR=64,H=data.length*rowH+8;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':note});
+  const x=v=>padL+(v/max)*(W-padL-padR);
+  [0,25,50,75,100].filter(v=>v<=max).forEach(v=>svg.append(el('line',{x1:x(v),x2:x(v),y1:0,y2:H-8,stroke:'var(--grid)','stroke-width':1})));
+  data.forEach((d,i)=>{const y=i*rowH+4;const g=el('g');const lab=tx(d.label);
+    g.append(el('text',{x:padL-10,y:y+15,'text-anchor':'end',fill:'var(--ink)','font-size':12.5,'font-weight':d.bold?700:500},lab));
+    const w=Math.max(0,x(d.v)-padL);
+    g.append(el('rect',{x:padL,y:y+4,width:w,height:rowH-12,fill:d.color||color}));
+    g.append(el('rect',{x:padL+w-4,y:y+4,width:4,height:rowH-12,fill:d.color||color,rx:3}));
+    g.append(el('text',{x:padL+w+8,y:y+15,fill:'var(--ink-2)','font-size':12.5,'font-weight':600},fmt(d.v)));
+    hover(g,`<b>${lab}</b><br>${fmt(d.v)}${d.note?'<br>'+tx(d.note):''}`);svg.append(g);});
+  host.append(svg);
+}
+
+// ===================== renderers =====================
+function renderStatic(){
+  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i)});
+  $('#h_title').innerHTML=tx(H_TITLE);
+  $('#v_list').innerHTML=VERDICT.map(v=>'<li>'+tx(v)+'</li>').join('');
+  $('#kpis').innerHTML=KPIS.map(k=>`<div class="kpi"><span class="tag">${tx(k.tag)}</span><span class="v num">${k.v}</span><span class="l">${tx(k.l)}</span><span class="s">${tx(k.s)}</span></div>`).join('');
+  $('#facts').innerHTML=FACTS.map(f=>`<div class="fact"><span class="v num">${f.v}</span><span class="t">${tx(f.t)}<small>${tx(f.s)}</small></span></div>`).join('');
+  $('#tl').innerHTML=TL.map(x=>`<div class="${x.past?'past':''}"><div class="d">${tx(x.d)}</div><div class="t">${tx(x.t)}</div><div class="x">${tx(x.x)}</div></div>`).join('');
+  $('#povcols').innerHTML=POV.map(p=>`<div><h3>${tx(p.h)}</h3><p>${tx(p.p)}</p></div>`).join('');
+  $('#svc').innerHTML=SVC.map(s=>`<div class="card"><h3>${s.h}</h3><div class="when">${tx(s.w)}</div><p>${tx(s.p)}</p></div>`).join('');
+  document.documentElement.lang=L;
+}
+function renderCharts(){
+  hbar('c-exp',[
+    {label:['Exposed to AI · IMF','KI-exponiert · IWF'],v:60,note:['Advanced economies, 2024 · ~half complemented, half at risk','Industrieländer, 2024 · ~Hälfte ergänzt, Hälfte gefährdet']},
+    {label:['Exposed to automation · Goldman','Automatisierungsexponiert · Goldman'],v:66,note:['US + Europe, 2023 · "two-thirds"','USA + Europa, 2023 · „zwei Drittel"']},
+    {label:['Highest automation risk · OECD','Höchstes Automatisierungsrisiko · OECD'],v:28,note:['Occupations at highest risk','Berufe mit höchstem Risiko'],color:'var(--s2)'},
+    {label:['Work hours automatable · McKinsey','Automatisierbare Arbeitsstunden · McKinsey'],v:27,note:['Europe, by 2030','Europa, bis 2030'],color:'var(--s2)'},
+  ],{note:'exposure'});
+  tableToggle('c-exp',[[['Exposed to AI (IMF)','KI-exponiert (IWF)'],'60%'],[['Exposed to automation (Goldman)','Automatisierungsexponiert (Goldman)'],'~66%'],[['Highest automation risk (OECD)','Höchstes Risiko (OECD)'],'28%'],[['Work hours automatable, Europe 2030 (McKinsey)','Automatisierbare Stunden, Europa 2030 (McKinsey)'],'27%']],[['Measure','Messgröße'],['Share','Anteil']]);
+  hbar('c-occ',[
+    {label:['Clerical / office support','Büro / Verwaltung'],v:46,note:['Most exposed','Am stärksten exponiert']},
+    {label:['Legal','Recht'],v:44},
+    {label:['STEM professionals (2030, gen-AI)','MINT-Fachkräfte (2030, GenAI)'],v:27,note:['Up from 13% · McKinsey','Von 13 % · McKinsey']},
+    {label:['Average, all occupations','Durchschnitt aller Berufe'],v:24,note:['Europe · Goldman Sachs','Europa · Goldman Sachs']},
+    {label:['Construction','Bau'],v:6},
+    {label:['Maintenance & repair','Wartung & Reparatur'],v:4,note:['Least exposed','Am wenigsten exponiert']},
+  ],{max:50,note:'occupation'});
+  tableToggle('c-occ',[[['Clerical / office support','Büro / Verwaltung'],'46%'],[['Legal','Recht'],'44%'],[['STEM professionals, 2030','MINT-Fachkräfte, 2030'],'27%'],[['Average, all occupations (Europe)','Durchschnitt (Europa)'],'24%'],[['Construction','Bau'],'6%'],[['Maintenance & repair','Wartung & Reparatur'],'4%']],[['Occupation','Berufsgruppe'],['Automatable tasks','Automatisierbare Aufgaben']]);
+  (function(){const host=document.getElementById('c-jobs');host.innerHTML='';const W=560,H=210;const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'jobs'});
+    const padL=40,padB=34,padT=14,max=12;const y=v=>padT+(1-v/max)*(H-padT-padB);
+    [0,3,6,9,12].forEach(v=>{svg.append(el('line',{x1:padL,x2:W-10,y1:y(v),y2:y(v),stroke:'var(--grid)'}));svg.append(el('text',{x:padL-8,y:y(v)+4,'text-anchor':'end',fill:'var(--ink-3)','font-size':11},v+'M'));});
+    const groups=[{l:t('lg_created'),v:11,c:'var(--s2)',n:['WEF 2025 · 11 million jobs created in Europe','WEF 2025 · 11 Mio. Jobs in Europa geschaffen']},{l:t('lg_displaced'),v:9,c:'var(--s1)',n:['WEF 2025 · 9 million jobs displaced in Europe','WEF 2025 · 9 Mio. Jobs in Europa verdrängt']},{l:L==='de'?'Netto':'Net',v:2,c:'var(--s2)',net:true,n:['Net effect: +2 million · plus ~12M occupational transitions (McKinsey)','Nettoeffekt: +2 Mio. · plus ~12 Mio. Berufswechsel (McKinsey)']}];
+    const defs=el('defs');const p=el('pattern',{id:'hatch',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'});p.append(el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'var(--surface)','stroke-width':2,'stroke-opacity':.55}));defs.append(p);svg.append(defs);
+    const bw=90,gap=60,x0=padL+40;
+    groups.forEach((g,i)=>{const x=x0+i*(bw+gap);const h=y(0)-y(g.v);const gg=el('g');
+      gg.append(el('rect',{x,y:y(g.v)+4,width:bw,height:Math.max(0,h-4),fill:g.c}));gg.append(el('rect',{x,y:y(g.v),width:bw,height:6,rx:3,fill:g.c}));
+      if(g.net)gg.append(el('rect',{x,y:y(g.v)+4,width:bw,height:Math.max(0,h-4),fill:'url(#hatch)'}));
+      gg.append(el('text',{x:x+bw/2,y:y(g.v)-8,'text-anchor':'middle',fill:'var(--ink)','font-size':14,'font-weight':700},(g.net?'+':'')+g.v+'M'));
+      gg.append(el('text',{x:x+bw/2,y:H-12,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5},g.l));
+      hover(gg,`<b>${g.l}</b><br>${tx(g.n)}`);svg.append(gg);});
+    host.append(svg);})();
+  tableToggle('c-jobs',[[['Created','Geschaffen'],'11M'],[['Displaced','Verdrängt'],'9M'],[['Net','Netto'],'+2M']],[['Effect','Effekt'],['Jobs','Jobs']]);
+  hbar('c-prod',[{label:['Fast adoption + redeployment','Schnelle Adoption + Redeployment'],v:3.0,bold:true,color:'var(--s2)',note:['McKinsey high scenario','McKinsey-Hochszenario']},{label:['Slow adoption','Langsame Adoption'],v:0.3,note:['McKinsey low scenario','McKinsey-Niedrigszenario']}],{max:3.5,fmt:v=>v.toFixed(1)+'% p.a.',note:'productivity'});
+  tableToggle('c-prod',[[['Fast adoption + redeployment','Schnelle Adoption + Redeployment'],'3.0% p.a.'],[['Slow adoption','Langsame Adoption'],'0.3% p.a.']],[['Scenario','Szenario'],['Productivity growth','Produktivitätswachstum']]);
+  hbar('c-cede',[{label:['Expect to need new skills','Erwarten, neue Skills zu brauchen'],v:61},{label:['Face AI-related task change','Erleben KI-bedingten Aufgabenwandel'],v:60,note:['"6 in 10"','„6 von 10"']},{label:['Doubt employer will train them','Zweifeln an Weiterbildung durch Arbeitgeber'],v:44,color:'var(--s2)'},{label:['Already interact with AI at work','Interagieren bereits mit KI'],v:28},{label:['Fear AI job loss within 5 years','Fürchten KI-Jobverlust binnen 5 Jahren'],v:15,color:'var(--s2)',note:['Greece 24%, Poland 19%, Slovakia 19%','Griechenland 24 %, Polen 19 %, Slowakei 19 %']}],{note:'cedefop'});
+  tableToggle('c-cede',[[['Expect to need new skills','Erwarten neue Skills'],'61%'],[['Face AI-related task change','KI-bedingter Aufgabenwandel'],'60%'],[['Doubt employer will train them','Zweifel an Weiterbildung'],'44%'],[['Already interact with AI at work','Interagieren mit KI'],'28%'],[['Fear AI job loss within 5 years','Fürchten Jobverlust'],'15%']],[['Statement','Aussage'],['Share of EU workers','Anteil EU-Beschäftigte']]);
+  hbar('c-ctry',[{label:['Denmark','Dänemark'],v:42.0,note:['+14.5 pp vs 2024','+14,5 Pp. ggü. 2024']},{label:['Finland','Finnland'],v:37.8,note:['+13.5 pp vs 2024','+13,5 Pp. ggü. 2024']},{label:['Sweden','Schweden'],v:35.0},{label:['United Kingdom (ONS, 2026)','Vereinigtes Königreich (ONS, 2026)'],v:29.0,note:['Different survey; June 2026','Andere Erhebung; Juni 2026']},{label:['Germany','Deutschland'],v:26.0,note:['Destatis 2025','Destatis 2025']},{label:['EU-27 average','EU-27-Durchschnitt'],v:20.0,bold:true,color:'var(--s2)',note:['Up from 13.5% in 2024','Von 13,5 % in 2024']},{label:['France','Frankreich'],v:18.0,note:['INSEE 2025','INSEE 2025']},{label:['Poland','Polen'],v:8.4},{label:['Romania','Rumänien'],v:5.2,note:['Lowest in the EU','Niedrigster EU-Wert']}],{max:50,fmt:v=>v.toFixed(1)+'%',note:'countries'});
+  tableToggle('c-ctry',[[['Denmark','Dänemark'],'42.0%'],[['Finland','Finnland'],'37.8%'],[['Sweden','Schweden'],'35.0%'],[['United Kingdom (ONS 2026)','UK (ONS 2026)'],'29.0%'],[['Germany','Deutschland'],'26.0%'],[['EU-27 average','EU-27'],'20.0%'],[['France','Frankreich'],'18.0%'],[['Poland','Polen'],'8.4%'],[['Romania','Rumänien'],'5.2%']],[['Country','Land'],['Enterprises using AI','Unternehmen mit KI']]);
+  (function(){const host=document.getElementById('c-slope');host.innerHTML='';const W=560,H=230;const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'sentiment'});
+    const xL=150,xR=410,padT=18,padB=30,max=80;const y=v=>padT+(1-v/max)*(H-padT-padB);
+    [0,20,40,60,80].forEach(v=>{svg.append(el('line',{x1:xL,x2:xR,y1:y(v),y2:y(v),stroke:'var(--grid)'}));svg.append(el('text',{x:xL-56,y:y(v)+4,'text-anchor':'end',fill:'var(--ink-3)','font-size':11},v+'%'));});
+    svg.append(el('text',{x:xL,y:H-8,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5,'font-weight':600},'2024'));svg.append(el('text',{x:xR,y:H-8,'text-anchor':'middle',fill:'var(--ink-2)','font-size':12.5,'font-weight':600},'2026'));
+    [{l:t('lg_thr'),a:66,b:44,c:'var(--s1)'},{l:t('lg_fear'),a:28,b:40,c:'var(--s2)'}].forEach(s=>{const g=el('g');
+      g.append(el('line',{x1:xL,y1:y(s.a),x2:xR,y2:y(s.b),stroke:s.c,'stroke-width':2.5}));
+      [[xL,s.a],[xR,s.b]].forEach(([x,v])=>g.append(el('circle',{cx:x,cy:y(v),r:5,fill:s.c,stroke:'var(--surface)','stroke-width':2})));
+      g.append(el('text',{x:xL-12,y:y(s.a)+4,'text-anchor':'end',fill:'var(--ink)','font-size':12.5,'font-weight':600},s.a+'%'));
+      g.append(el('text',{x:xR+12,y:y(s.b)+4,fill:'var(--ink)','font-size':12.5,'font-weight':600},s.b+'%'));
+      hover(g,`<b>${s.l}</b><br>2024: ${s.a}% → 2026: ${s.b}% (${s.b-s.a>0?'+':''}${s.b-s.a} pp)`);svg.append(g);});
+    host.append(svg);})();
+  tableToggle('c-slope',[[['Thriving at work','Thriving at work'],'66%','44%'],[['Concerned about AI job loss','Sorge um KI-Jobverlust'],'28%','40%']],[['Measure','Messgröße'],'2024','2026']);
+  hbar('c-ready',[{label:['Plan org-design changes (2 yrs)','Planen Org-Design-Änderungen (2 J.)'],v:98,note:['Executives · GTT 2026','Führungskräfte · GTT 2026']},{label:['Expect 11–30% reskilled/redeployed','Erwarten 11–30 % Reskilling/Redeployment'],v:65,note:['Executives · GTT 2026','Führungskräfte · GTT 2026']},{label:['Adopted tech without work redesign','Tech ohne Work Redesign eingeführt'],v:67,color:'var(--s2)',note:['HR leaders · GTT 2024','HR-Leader · GTT 2024']},{label:['Tech outpaces retraining','Tech schneller als Umschulung'],v:58,color:'var(--s2)',note:['Executives · GTT 2024','Führungskräfte · GTT 2024']},{label:['Use GenAI regularly','Nutzen GenAI regelmäßig'],v:31,note:['Companies · GTT 2026','Unternehmen · GTT 2026']},{label:['HR says AI drove a fundamental shift','HR: KI bewirkte fundamentalen Wandel'],v:6,color:'var(--s2)',note:['HR leaders · GTT 2026','HR-Leader · GTT 2026']}],{note:'readiness'});
+  tableToggle('c-ready',[[['Plan org-design changes within 2 years','Org-Design-Änderungen binnen 2 J.'],'98%'],[['Expect 11–30% reskilled/redeployed','11–30 % Reskilling/Redeployment'],'65%'],[['Adopted technology without work redesign','Tech ohne Work Redesign'],'67%'],[['Technology outpaces retraining','Tech schneller als Umschulung'],'58%'],[['Use GenAI regularly','GenAI regelmäßig'],'31%'],[['HR says AI drove a fundamental shift','KI bewirkte fundamentalen Wandel'],'6%']],[['Statement','Aussage'],['Share','Anteil']]);
+}
+
+// countries
+let cSel='de';
+function renderCountries(){
+  $('#ctabs').innerHTML=COUNTRIES.map(c=>`<button class="tab" role="tab" id="tab-${c.id}" aria-selected="${c.id===cSel}" data-c="${c.id}">${tx(c.name)}</button>`).join('');
+  $('#ctabs').querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{cSel=b.dataset.c;try{localStorage.setItem('mcm-country',cSel)}catch(e){};renderCountries();}));
+  const c=COUNTRIES.find(x=>x.id===cSel);
+  const H={adopt:['Adoption & skills','Adoption & Skills'],law:['Regulation & co-determination','Regulierung & Mitbestimmung'],policy:['Reskilling policy & sentiment','Weiterbildungspolitik & Stimmung']};
+  $('#cpanel').innerHTML=`<div class="ckpis">${c.kpis.map(k=>`<div class="ckpi"><div class="v num">${k.v}</div><div class="l">${tx(k.l)}</div><div class="s">${tx(k.s)}</div></div>`).join('')}</div>
+  <div class="ccols">${['adopt','law','policy'].map(k=>`<div class="card"><h4>${tx(H[k])}</h4><ul>${c[k].map(b=>'<li>'+tx(b)+'</li>').join('')}</ul></div>`).join('')}</div>
+  <div class="cverdict">${tx(c.verdict)}</div><div class="src">${c.src}</div>`;
+}
+
+// calculator
+function renderCalcOptions(){
+  const fill=(id,arr)=>{const s=document.getElementById(id);const cur=s.value;s.innerHTML=arr.map((o,i)=>`<option value="${i}">${tx(o.n)}</option>`).join('');if(cur)s.value=cur;};
+  fill('f-func',FUNCS);fill('f-ind',INDS);fill('f-mkt',MKTS);
+  $('#method').innerHTML=tx(CALC_T.method);
+}
+function renderCalc(){
+  const f=FUNCS[+$('#f-func').value||0],ind=INDS[+$('#f-ind').value||0],mkt=MKTS[+$('#f-mkt').value||0];
+  const x=Math.round(f.e*TIERF[ind.tier]);const band=x<15?0:x<30?1:2;
+  const augP=Math.round(x*f.aug),autP=x-augP;
+  const r=movesFor(f,ind,mkt);
+  const pillCls=band===2?'risk':band===1?'soon':'now';
+  $('#calc-out').innerHTML=`
+   <div class="card-h"><div><h3>${tx(f.n)} · ${tx(ind.n)}</h3><div class="sub">${tx(mkt.n)}</div></div><span class="pill ${pillCls}">${tx(CALC_T.band[band])}</span></div>
+   <div class="gauge"><div class="big num">${x}%<small>${tx(CALC_T.est)}</small></div><div><div class="bar"><i style="width:${x}%"></i><i class="aug" style="width:${augP}%"></i></div><div class="legend" style="margin-top:8px"><span><i class="sw" style="background:var(--s2)"></i>${tx(CALC_T.aug)} ${augP}%</span><span><i class="sw" style="background:var(--s1)"></i>${tx(CALC_T.auto)} ${autP}%</span></div></div></div>
+   <div class="split"><div><div class="v num" style="color:var(--s2)">${Math.round(f.aug*100)}%</div><div class="l">${tx(CALC_T.augl)}</div></div><div><div class="v num" style="color:var(--s1)">${100-Math.round(f.aug*100)}%</div><div class="l">${tx(CALC_T.autol)}</div></div></div>
+   <p style="margin-top:12px;font-size:13px;color:var(--ink-2)"><b style="color:var(--ink)">${tx(CALC_T.sector)} · ${tx(TIERN[ind.tier])}:</b> ${tx(ind.ctx)}</p>
+   <p style="margin-top:6px;font-size:13px;color:var(--ink-2)"><b style="color:var(--ink)">${tx(CALC_T.market)}:</b> ${tx(mkt.note)}</p>
+   <h4 style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:16px;font-family:'Source Sans 3',sans-serif">${tx(CALC_T.moves)}</h4>
+   <div class="moves">${r.moves.map(m=>`<div class="move"><span class="n">${m.i+1}</span><div><b>${tx(MOVES[m.i].b)}</b><span>${tx(m.why)}</span></div></div>`).join('')}</div>
+   <p style="margin-top:12px;font-size:12.5px;color:var(--ink-2)"><b style="color:var(--ink)">${tx(CALC_T.svc)}:</b> ${r.svc}</p>`;
+}
+['f-func','f-ind','f-mkt'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{try{localStorage.setItem('mcm-calc',JSON.stringify(['f-func','f-ind','f-mkt'].map(i=>document.getElementById(i).value)))}catch(e){};renderCalc();}));
+
+// checklist
+function renderCheck(){
+  let saved=[];try{saved=JSON.parse(localStorage.getItem('mcm-check')||'[]')}catch(e){}
+  $('#check').innerHTML=MOVES.map((m,i)=>`<label><input type="checkbox" id="a${i+1}" ${saved[i]?'checked':''}><div><b>${tx(m.b)}</b><span>${tx(m.s)}</span></div></label>`).join('');
+  const boxes=document.querySelectorAll('#check input');
+  const upd=()=>{const n=[...boxes].filter(b=>b.checked).length;$('#prog').textContent=L==='de'?`${n} von 5 Hebeln in Umsetzung`:`${n} of 5 moves underway`;try{localStorage.setItem('mcm-check',JSON.stringify([...boxes].map(b=>b.checked)))}catch(e){}};
+  boxes.forEach(b=>b.addEventListener('change',upd));upd();
+}
+
+// filter
+const chips=document.querySelectorAll('.chip');
+function applyFilter(f){chips.forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.f===f)));document.querySelectorAll('main section').forEach(s=>{const g=s.dataset.g;s.hidden=!(f==='all'||g==='all'||g===f);});try{localStorage.setItem('mcm-filter',f)}catch(e){}}
+chips.forEach(c=>c.addEventListener('click',()=>applyFilter(c.dataset.f)));
+
+// language
+function setLang(l){L=l;$('#lang-en').setAttribute('aria-pressed',String(l==='en'));$('#lang-de').setAttribute('aria-pressed',String(l==='de'));try{localStorage.setItem('mcm-lang',l)}catch(e){};renderAll();}
+$('#lang-en').addEventListener('click',()=>setLang('en'));$('#lang-de').addEventListener('click',()=>setLang('de'));
+
+// present mode
+const stage=$('#stage');
+function slides(){return [...stage.querySelectorAll(':scope > .hero, :scope > main > .kpis, :scope > main > section:not([hidden])')];}
+let pi=0;
+function goto(i){const s=slides();pi=Math.max(0,Math.min(s.length-1,i));s[pi].scrollIntoView({behavior:'smooth',block:'start'});$('#p-cnt').textContent=`${pi+1} / ${s.length}`;}
+function enterPresent(){document.body.classList.add('present');goto(0);}
+function exitPresent(){document.body.classList.remove('present');window.scrollTo(0,0);}
+$('#present-btn').addEventListener('click',enterPresent);$('#p-exit').addEventListener('click',exitPresent);
+$('#p-next').addEventListener('click',()=>goto(pi+1));$('#p-prev').addEventListener('click',()=>goto(pi-1));
+document.addEventListener('keydown',e=>{if(!document.body.classList.contains('present'))return;if(e.key==='Escape')exitPresent();if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();goto(pi+1)}if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();goto(pi-1)}});
+
+function renderAll(){renderStatic();renderCharts();renderCountries();renderCalcOptions();renderCalc();renderCheck();document.querySelectorAll('[data-table]').forEach(b=>b.textContent=t('tbl'));}
+
+// boot
+try{L=localStorage.getItem('mcm-lang')||'en'}catch(e){}
+try{cSel=localStorage.getItem('mcm-country')||'de'}catch(e){}
+$('#lang-en').setAttribute('aria-pressed',String(L==='en'));$('#lang-de').setAttribute('aria-pressed',String(L==='de'));
+renderCalcOptions();
+try{const s=JSON.parse(localStorage.getItem('mcm-calc')||'[]');['f-func','f-ind','f-mkt'].forEach((i,k)=>{if(s[k]!=null)document.getElementById(i).value=s[k]})}catch(e){}
+renderAll();
+let saved='all';try{saved=localStorage.getItem('mcm-filter')||'all'}catch(e){}
+applyFilter(saved);
+})();
+</script>
