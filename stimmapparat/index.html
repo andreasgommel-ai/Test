@@ -89,7 +89,7 @@ button,input,select{font:inherit;color:inherit}
 .btn svg{width:14px;height:14px;flex:none}
 .field{display:grid;gap:2px;min-width:180px;flex:1 1 200px}
 .field label{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
-.field output{font-family:var(--f-mono);font-size:12px;color:var(--ink);text-transform:none;letter-spacing:0}
+.field output{white-space:nowrap;font-family:var(--f-mono);font-size:12px;color:var(--ink);text-transform:none;letter-spacing:0}
 input[type=range]{width:100%;accent-color:var(--ca);margin:4px 0}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{appearance:none;border:0;background:transparent;padding:7px 11px;cursor:pointer;font-size:13.5px}
@@ -189,12 +189,17 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
         <button class="btn primary" type="button" id="btnPlay" aria-label="Animation anhalten"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2" width="3" height="10" fill="currentColor"/><rect x="8.5" y="2" width="3" height="10" fill="currentColor"/></svg><span>Anhalten</span></button>
         <button class="btn" type="button" id="btnSound" aria-pressed="false"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 5h2.5l3.5-3v10l-3.5-3H1.5z" fill="currentColor"/><path d="M9.5 4.5c1 .7 1.5 1.6 1.5 2.5s-.5 1.8-1.5 2.5" stroke="currentColor" fill="none" stroke-width="1.4" stroke-linecap="round"/></svg><span>Ton an</span></button>
         <div class="field">
-          <label for="f0">Tonhöhe <output id="f0Out" class="num">115 Hz</output></label>
-          <input type="range" id="f0" min="0" max="1000" step="1" value="287">
+          <label for="f0">Tonhöhe <output id="f0Out" class="num">210 Hz · Gis3</output></label>
+          <input type="range" id="f0" min="0" max="1000" step="1" value="630">
         </div>
         <div class="field">
           <label for="press">Lautstärke <output id="pressOut" class="num">7 cmH₂O</output></label>
           <input type="range" id="press" min="3" max="25" step="0.5" value="7">
+        </div>
+        <div class="seg" role="group" aria-label="Stimme">
+          <button type="button" data-voice="f" aria-pressed="true">Frau</button>
+          <button type="button" data-voice="m" aria-pressed="false">Mann</button>
+          <button type="button" data-voice="c" aria-pressed="false">Kind</button>
         </div>
         <div class="seg" role="group" aria-label="Atemmodus">
           <button type="button" id="modeSpeech" aria-pressed="true">Sprechatmung</button>
@@ -252,12 +257,7 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
           <label for="slow">Stroboskop-Verlangsamung <output id="slowOut" class="num">80×</output></label>
           <input type="range" id="slow" min="25" max="300" step="5" value="80">
         </div>
-        <div class="row" role="group" aria-label="Stimmlage">
-          <span class="cap">Stimmlage:</span>
-          <button class="btn" type="button" data-f0="115">Männlich · 115 Hz</button>
-          <button class="btn" type="button" data-f0="210">Weiblich · 210 Hz</button>
-          <button class="btn" type="button" data-f0="300">Kind · 300 Hz</button>
-        </div>
+        <p class="cap" style="margin:0">Stimme unten umschalten: Frau (Standard, um 210 Hz), Mann (um 115 Hz) oder Kind (um 300 Hz). Der Schieberegler für die Tonhöhe verändert nur die Grundfrequenz.</p>
         <div>
           <p class="sub">Ein Schwingungszyklus</p>
           <ol class="cycle">
@@ -280,7 +280,7 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
           <div class="eyebrow">Stufe 3 · Filter</div>
           <h2>Resonanz</h2>
         </div>
-        <p class="lead">Der Ton direkt an den Stimmlippen klingt wie ein obertonreiches Summen. Erst der Raum darüber formt den Klang: Rachen, Mund- und Nasenraum bilden zusammen das Ansatzrohr, etwa 17 cm lang. Seine Eigenresonanzen heißen <em>Formanten</em>. Sie verstärken einzelne Obertöne und dämpfen andere. Die Lage der ersten beiden Formanten F1 und F2 bestimmt, welchen Vokal wir hören.</p>
+        <p class="lead">Der Ton direkt an den Stimmlippen klingt wie ein obertonreiches Summen. Erst der Raum darüber formt den Klang: Rachen, Mund- und Nasenraum bilden zusammen das Ansatzrohr, bei Frauen etwa 15 cm lang, bei Männern etwa 17 cm. Seine Eigenresonanzen heißen <em>Formanten</em>. Sie verstärken einzelne Obertöne und dämpfen andere. Die Lage der ersten beiden Formanten F1 und F2 bestimmt, welchen Vokal wir hören.</p>
         <div class="vrow" data-vowels aria-label="Vokal wählen"></div>
         <figure class="fig" style="margin:0">
           <canvas id="cvSpec" height="220" aria-label="Spektrum aus Quelle, Filter und Ergebnis"></canvas>
@@ -293,7 +293,7 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
         </div>
         <figure class="fig" style="margin:0">
           <canvas id="cvVowel" height="220" aria-label="Vokalviereck nach Formanten, anklickbar"></canvas>
-          <figcaption>Vokalviereck nach Formanten (deutsche Männerstimme): F2 von links nach rechts fallend, F1 nach unten steigend. So entspricht die Lage ungefähr der Zungenposition im Mund. Anklicken wählt den Vokal.</figcaption>
+          <figcaption>Vokalviereck nach Formanten der gewählten Stimme: F2 von links nach rechts fallend, F1 nach unten steigend. So entspricht die Lage ungefähr der Zungenposition im Mund. Anklicken wählt den Vokal.</figcaption>
         </figure>
         <div class="row">
           <span class="cap">Stehende Welle im Rohr zeigen:</span>
@@ -304,7 +304,7 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
             <button type="button" data-mode="3" aria-pressed="false">F3</button>
           </div>
         </div>
-        <p class="cap" style="margin:0">Näherung als gleichförmiges Rohr, 17,5 cm, unten geschlossen (Glottis) und oben offen (Lippen): Resonanzen bei (2n−1)·c/4L = 500, 1500 und 2500 Hz. Das entspricht dem neutralen Vokal [ə]. Warme Farbe: Überdruck, kühle Farbe: Unterdruck.</p>
+        <p class="cap" style="margin:0">Näherung als gleichförmiges Rohr, unten geschlossen (Glottis) und oben offen (Lippen): Resonanzen bei (2n−1)·c/4L. <span id="tubeTxt">Frau: L ≈ 15 cm, also etwa 580, 1750 und 2920 Hz.</span> Das entspricht dem neutralen Vokal [ə]. Warme Farbe: Überdruck, kühle Farbe: Unterdruck.</p>
         <p class="tip">Ändere die Tonhöhe: Die Obertöne rücken zusammen oder auseinander, die Formanten bleiben an ihrem Platz. Darum erkennen wir ein [a] in jeder Stimmlage.</p>
       </section>
 
@@ -342,7 +342,7 @@ table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
     </aside>
   </main>
 
-  <p class="foot">Vereinfachtes Lernmodell. Proportionen, Formantwerte (erwachsene Männerstimme, Deutsch) und Zeitabläufe sind gerundet. Die Stimmlippenschwingung wird stroboskopisch verlangsamt gezeigt, der Klang entsteht per Quelle-Filter-Synthese im Browser. Tastatur: 1–4 wechselt die Stufe, Leertaste hält an.</p>
+  <p class="foot">Vereinfachtes Lernmodell. Proportionen, Formantwerte deutscher Vokale (Männerwerte als Basis, für Frauen- und Kinderstimme hochskaliert) und Zeitabläufe sind gerundet. Die Stimmlippenschwingung wird stroboskopisch verlangsamt gezeigt, der Klang entsteht per Quelle-Filter-Synthese im Browser. Tastatur: 1–4 wechselt die Stufe, Leertaste hält an.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -424,7 +424,7 @@ const VOWDUR = .45, LEAD = .08;
    ===================================================================== */
 const S = {
   stage: 1, playing: !reduceMotion, sound: false, labels: true,
-  f0: 115, press: 7, mode: 'speech', vowel: 'a', cons: null, syl: null,
+  voice: 'f', f0: 210, press: 7, mode: 'speech', vowel: 'a', cons: null, syl: null,
   slow: 80, wave: 1
 };
 const A = { c: .3, k: .55, ph: .8, oc: 1.45, jaw: 1, round: 0, lip: 0, cPl: .8, cDeg: 0, velum: 0, abd: 1 };
@@ -437,7 +437,13 @@ const NOTE = ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'B', 'H'
 const noteName = f => { const m = Math.round(69 + 12 * Math.log2(f / 440)); return NOTE[(m % 12 + 12) % 12] + (Math.floor(m / 12) - 1); };
 const splFromP = p => 60 + 26 * Math.log10(p / 3);
 const tiltNow = () => 1.35 - 0.5 * (S.press - 3) / 22;
-const oqNow = () => clamp(0.72 - (S.press - 3) / 22 * 0.3, .4, .72);
+const VOICES = {
+  f: { name: 'Frau', f0: 210, k: 1.17, L: 15, oq: .08, breathy: .035 },
+  m: { name: 'Mann', f0: 115, k: 1.0, L: 17.5, oq: 0, breathy: .012 },
+  c: { name: 'Kind', f0: 300, k: 1.3, L: 13.5, oq: .06, breathy: .03 }
+};
+const VK = () => VOICES[S.voice].k;
+const oqNow = () => clamp(0.72 + VOICES[S.voice].oq - (S.press - 3) / 22 * 0.3, .4, .8);
 
 /* Rosenberg-Puls: Glottisöffnung 0..1 über eine Periode */
 function glot(ph) {
@@ -1085,6 +1091,7 @@ function voicingFor(seg, b) {
 }
 function formTarget(seg) {
   let F = VOWELS[S.vowel].F.concat([3500]), B = BW.slice(), nasal = 0;
+  const k = VK();
   const c = seg.ph === 'C' || seg.ph === 'hold' ? seg.c : null;
   if (c) {
     if (c.m === 'nasal') { F = NASF[c.pl].concat([3500]); B = [100, 200, 260, 300]; nasal = 1; }
@@ -1093,12 +1100,13 @@ function formTarget(seg) {
     else if (c.pl === 'uvular') F = [450, 1250, 2400, 3500];
     else if (LOCUS[c.pl]) { F[1] = lerp(F[1], LOCUS[c.pl], .65); F[0] = Math.min(F[0], 320); if (c.pl === 'bilabial' || c.pl === 'labiodental') F[2] *= .92; }
   }
+  F = F.map(f => f * k);
   return { F, B, nasal };
 }
 function audioTarget(seg) {
   const c = seg.c, b = breath, exhale = b.phase === 'out' || seg.ph === 'C' || seg.ph === 'V';
   const loud = .35 + .65 * (S.press - 3) / 22;
-  let voice = voicedAmt * loud, asp = voicedAmt * .012 + (b.phase === 'in' && seg.ph === 'free' ? .05 * Math.abs(b.flow) * (S.mode === 'speech' ? 1 : .4) : 0);
+  let voice = voicedAmt * loud, asp = voicedAmt * VOICES[S.voice].breathy + (b.phase === 'in' && seg.ph === 'free' ? .05 * Math.abs(b.flow) * (S.mode === 'speech' ? 1 : .4) : 0);
   let fric = { type: 'bandpass', f: 3000, Q: 1, g: 0 }, trill = 0, fg = 1;
   const active = seg.ph === 'C' || seg.ph === 'hold' ? c : null;
   if (active) {
@@ -1239,7 +1247,7 @@ function drawGlottis() {
 /* Spektrum */
 function drawSpec() {
   const cv = $('#cvSpec'); if (!cv.offsetParent) return;
-  const { g, w, h } = fit(cv), L = 34, R = w - 10, T = 12, Bm = h - 24, FMAX = 5000;
+  const { g, w, h } = fit(cv), L = 34, R = w - 10, T = 22, Bm = h - 24, FMAX = 5000;
   const F = FC.F, B = FC.B, tilt = tiltNow(), fx = f => L + f / FMAX * (R - L);
   const env = f => 20 * Math.log10(tractMag(f, F, B) * (FC.nasal ? .55 : 1));
   const src = k => -6 * tilt * Math.log2(k);
@@ -1250,7 +1258,7 @@ function drawSpec() {
   for (let d = top; d >= bottom; d -= 20) { g.beginPath(); g.moveTo(L, fy(d)); g.lineTo(R, fy(d)); g.stroke(); g.fillText(String(d), L - 5, fy(d)); }
   g.textAlign = 'center'; g.textBaseline = 'top';
   for (let f = 0; f <= FMAX; f += 1000) { g.beginPath(); g.moveTo(fx(f), Bm); g.lineTo(fx(f), Bm + 4); g.stroke(); g.fillText(f ? (f / 1000) + ' kHz' : '0', fx(f), Bm + 7); }
-  g.textAlign = 'left'; g.fillText('dB', 4, T - 6);
+  g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText('dB', 6, 4);
   for (let k = 1; k * S.f0 < FMAX; k++) {
     const f = k * S.f0, X = fx(f), ys = fy(Math.max(src(k), bottom)), yo = fy(Math.max(src(k) + env(f), bottom));
     g.strokeStyle = alpha(tok.muted, .55); g.lineWidth = 1.5; g.beginPath(); g.moveTo(X, Bm); g.lineTo(X, ys); g.stroke();
@@ -1265,6 +1273,7 @@ function drawSpec() {
 /* Vokalviereck */
 const VCH = { f2: [2500, 600], f1: [200, 850] };
 function vcMap(w, h) {
+  const k = VK(), VCH = { f2: [2500 * k, 600 * k], f1: [200 * k, 850 * k] };
   const L = 14, R = w - 44, T = 24, Bm = h - 12;
   return { L, R, T, Bm, x: f2 => L + (VCH.f2[0] - f2) / (VCH.f2[0] - VCH.f2[1]) * (R - L), y: f1 => T + (f1 - VCH.f1[0]) / (VCH.f1[1] - VCH.f1[0]) * (Bm - T) };
 }
@@ -1273,23 +1282,24 @@ function drawVowel() {
   const { g, w, h } = fit(cv), m = vcMap(w, h);
   g.font = `10.5px ${tok.mono}`; g.strokeStyle = tok.line; g.lineWidth = 1; g.fillStyle = tok.muted;
   g.textAlign = 'center'; g.textBaseline = 'bottom';
-  [2500, 2000, 1500, 1000].forEach(f => { const X = m.x(f); g.beginPath(); g.moveTo(X, m.T); g.lineTo(X, m.Bm); g.stroke(); g.fillText(String(f), X, m.T - 4); });
+  const k = VK();
+  [3000, 2500, 2000, 1500, 1000].filter(f => f <= 2500 * k && f >= 700 * k).forEach(f => { const X = m.x(f); g.beginPath(); g.moveTo(X, m.T); g.lineTo(X, m.Bm); g.stroke(); g.fillText(String(f), X, m.T - 4); });
   g.textAlign = 'left'; g.textBaseline = 'middle';
-  [300, 500, 700].forEach(f => { const Y = m.y(f); g.beginPath(); g.moveTo(m.L, Y); g.lineTo(m.R, Y); g.stroke(); g.fillText(String(f), m.R + 5, Y); });
+  [300, 500, 700, 900].filter(f => f >= 230 * k && f <= 820 * k).forEach(f => { const Y = m.y(f); g.beginPath(); g.moveTo(m.L, Y); g.lineTo(m.R, Y); g.stroke(); g.fillText(String(f), m.R + 5, Y); });
   g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText('F2 Hz', m.R, 11); g.textAlign = 'left'; g.fillText('F1', m.R + 5, m.Bm + 2);
-  const poly = ['i', 'e', 'ɛ', 'a', 'o', 'u']; g.beginPath(); poly.forEach((v, i) => { const F = VOWELS[v].F, X = m.x(F[1]), Y = m.y(F[0]); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath();
+  const poly = ['i', 'e', 'ɛ', 'a', 'o', 'u']; g.beginPath(); poly.forEach((v, i) => { const F = VOWELS[v].F.map(x => x * k), X = m.x(F[1]), Y = m.y(F[0]); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath();
   g.fillStyle = alpha(tok.c3, .07); g.fill(); g.strokeStyle = alpha(tok.c3, .35); g.stroke();
   VORDER.forEach(v => {
-    const F = VOWELS[v].F, X = m.x(F[1]), Y = m.y(F[0]), sel = v === S.vowel;
+    const F = VOWELS[v].F.map(x => x * k), X = m.x(F[1]), Y = m.y(F[0]), sel = v === S.vowel;
     g.fillStyle = sel ? tok.c3 : tok.s2; g.strokeStyle = sel ? tok.c3 : tok.muted; g.lineWidth = 1.2;
     g.beginPath(); g.arc(X, Y, 11, 0, 7); g.fill(); g.stroke();
     g.fillStyle = sel ? tok.surface : tok.ink; g.font = `500 14px ${tok.ipa}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(v, X, Y + .5);
   });
-  if (!FC.nasal) { const X = m.x(clamp(FC.F[1], 600, 2500)), Y = m.y(clamp(FC.F[0], 200, 850)); g.strokeStyle = tok.ink; g.lineWidth = 1.5; g.beginPath(); g.arc(X, Y, 16, 0, 7); g.stroke(); }
+  if (!FC.nasal) { const X = m.x(clamp(FC.F[1], 600 * k, 2500 * k)), Y = m.y(clamp(FC.F[0], 200 * k, 850 * k)); g.strokeStyle = tok.ink; g.lineWidth = 1.5; g.beginPath(); g.arc(X, Y, 16, 0, 7); g.stroke(); }
 }
 $('#cvVowel').addEventListener('click', e => {
   const cv = e.currentTarget, r = cv.getBoundingClientRect(), m = vcMap(r.width, r.height), x = e.clientX - r.left, y = e.clientY - r.top;
-  let best = null, bd = 30; VORDER.forEach(v => { const F = VOWELS[v].F, d = Math.hypot(m.x(F[1]) - x, m.y(F[0]) - y); if (d < bd) { bd = d; best = v; } });
+  let best = null, bd = 30; VORDER.forEach(v => { const F = VOWELS[v].F.map(x => x * VK()), d = Math.hypot(m.x(F[1]) - x, m.y(F[0]) - y); if (d < bd) { bd = d; best = v; } });
   if (best) setVowel(best);
 });
 
@@ -1328,7 +1338,14 @@ $('#btnSound').addEventListener('click', () => {
 });
 function setF0(f) { S.f0 = f; $('#f0').value = sliderFromF0(f); $('#f0Out').textContent = `${Math.round(f)} Hz · ${noteName(f)}`; }
 $('#f0').addEventListener('input', e => setF0(f0FromSlider(+e.target.value)));
-$$('[data-f0]').forEach(b => b.addEventListener('click', () => setF0(+b.dataset.f0)));
+function setVoice(v) {
+  S.voice = v; const V = VOICES[v]; setF0(V.f0);
+  $$('[data-voice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.voice === v)));
+  const r = n => Math.round((2 * n - 1) * 35000 / (4 * V.L) / 10) * 10;
+  $('#tubeTxt').textContent = `${V.name}: L ≈ ${fmt(V.L, V.L % 1 ? 1 : 0)} cm, also etwa ${r(1)}, ${r(2)} und ${r(3)} Hz.`;
+  store.set('stimme.voice', v); updateSel();
+}
+$$('[data-voice]').forEach(b => b.addEventListener('click', () => setVoice(b.dataset.voice)));
 function setPress(p) { S.press = p; $('#pressOut').textContent = `${fmt(p, p % 1 ? 1 : 0)} cmH₂O · ca. ${Math.round(splFromP(p))} dB`; }
 $('#press').addEventListener('input', e => setPress(+e.target.value));
 function setMode(m) { S.mode = m; $('#modeSpeech').setAttribute('aria-pressed', String(m === 'speech')); $('#modeRest').setAttribute('aria-pressed', String(m === 'rest')); simT = 0; }
@@ -1392,7 +1409,7 @@ function updateSel() {
     $('#btnSylTxt').textContent = `Silbe [${c.ipa}${S.vowel}] abspielen`;
   } else {
     $('#selIpa').textContent = S.vowel; $('#selDesc').textContent = `Vokal [${S.vowel}]: ${VNAME[S.vowel]}`;
-    $('#selEx').textContent = `Beispiel: ${VOWELS[S.vowel].w} · F1 ${VOWELS[S.vowel].F[0]} Hz, F2 ${VOWELS[S.vowel].F[1]} Hz`;
+    $('#selEx').textContent = `Beispiel: ${VOWELS[S.vowel].w} · F1 ${Math.round(VOWELS[S.vowel].F[0] * VK())} Hz, F2 ${Math.round(VOWELS[S.vowel].F[1] * VK())} Hz`;
     $('#btnSylTxt').textContent = `Silbe [p${S.vowel}] abspielen`;
   }
 }
@@ -1503,7 +1520,8 @@ function tick(now) {
 
 /* Start */
 readTokens();
-setF0(115); setPress(7); setPlaying(S.playing); setVowel('a'); S.mode = 'speech';
+setPress(7); setPlaying(S.playing); setVowel('a');
+setVoice(VOICES[store.get('stimme.voice')] ? store.get('stimme.voice') : 'f'); S.mode = 'speech';
 const hashStage = Object.entries(STAGE_HASH).find(([, v]) => location.hash === '#' + v);
 const saved = +store.get('stimme.stage');
 setStage(hashStage ? +hashStage[0] : (saved >= 1 && saved <= 4 ? saved : 1), true);
