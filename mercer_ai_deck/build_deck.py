@@ -62,7 +62,7 @@ textbox(s, Inches(0.9), Inches(4.55), Inches(11.0), Inches(0.9),
                   "redesign work, reward and careers.", "size": 15,
           "color": C.SKY, "font": FONT_BODY}])
 textbox(s, Inches(0.9), Inches(5.85), Inches(11.0), Inches(0.5),
-        [{"text": "Executive briefing  ·  June 2026  ·  Mercer Career — Europe",
+        [{"text": "Executive briefing  ·  September 2026  ·  Mercer Career — Europe",
           "size": 12, "color": C.WHITE, "font": FONT_BODY, "bold": True}])
 
 # ===========================================================================
@@ -342,6 +342,10 @@ textbox(s, Inches(0.9), Inches(3.95), Inches(11.0), Inches(0.8),
         [{"text": "Let's discuss how Mercer can help your organisation in "
                   "Europe redesign work, reward and careers for the AI era.",
           "size": 14, "color": C.SKY, "font": FONT_BODY}])
+textbox(s, Inches(0.9), Inches(4.75), Inches(11.0), Inches(0.5),
+        [{"text": "Interactive dashboard (country deep-dives, exposure calculator): "
+                  "https://claude.ai/artifact/MciK1Nwww1SaWMzM1eJrWK",
+          "size": 11, "color": C.TEAL, "font": FONT_BODY}])
 textbox(s, Inches(0.9), Inches(5.85), Inches(11.6), Inches(1.4),
         [{"text": "KEY SOURCES", "size": 9, "color": C.TEAL, "bold": True,
           "font": FONT_BODY, "space_after": 3},
