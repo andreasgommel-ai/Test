@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Erzeugt die Tonspur des Erklärvideos.
 
-- Sprechertext mit Piper (offline, neuronale deutsche Stimme)
+- Sprechertext mit Coqui-TTS (VITS, Stimme Thorsten) oder Piper, jeweils offline
 - Klangbeispiele (Rohklang, Vokale, Silben) per Quelle-Filter-Synthese
 - Abmischung zu einer WAV-Datei (48 kHz, mono)
 - timeline.json (Szenen, Untertitel, Regieanweisungen für das Rendering)
@@ -9,7 +9,7 @@
 
 Aufruf: python build_audio.py --voice-dir VOICES --out OUT
 """
-import argparse, hashlib, json, math, os, wave
+import argparse, hashlib, json, math, os, re, wave
 import numpy as np
 from scipy.signal import lfilter, butter, sosfilt, resample_poly
 
@@ -17,11 +17,17 @@ SR = 48000
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # --------------------------------------------------------------------------- Sprecher
-def tts_lines(script, voice_dir, cache_dir):
+def speech_text(ln, script):
+    """Text für die Sprachsynthese: 'say' falls vorhanden, sonst der Untertitel, plus Sprechschreibweisen."""
+    t = ln.get("say", ln["text"])
+    for a, b in script.get("respell", {}).items():
+        t = re.sub(rf"(?<![\wÄÖÜäöüß]){re.escape(a)}(?![\wÄÖÜäöüß])", b, t)
+    return t
+
+def piper_engine(script, voice_dir):
     from piper import PiperVoice, SynthesisConfig
     name = script["voice"]
-    model = os.path.join(voice_dir, name.replace("de-", "", 1), f"{name}.onnx")
-    voice = PiperVoice.load(model)
+    voice = PiperVoice.load(os.path.join(voice_dir, name.replace("de-", "", 1), f"{name}.onnx"))
     # espeak liefert [ç] zerlegt als c + Cedille; das Stimmmodell kennt nur das ganze Zeichen
     orig = voice.phonemize
     def phonemize(text):
@@ -37,15 +43,45 @@ def tts_lines(script, voice_dir, cache_dir):
         return out
     voice.phonemize = phonemize
     cfg = SynthesisConfig(length_scale=script.get("lengthScale", 1.0), noise_scale=0.6, noise_w_scale=0.7)
+    def synth(text, path):
+        with wave.open(path, "wb") as wf:
+            voice.synthesize_wav(text, wf, syn_config=cfg)
+    return synth, f"piper|{name}|{cfg.length_scale}"
+
+def coqui_engine(script, voice_dir):
+    """Coqui-TTS (VITS), z. B. die männliche Stimme Thorsten."""
+    from TTS.utils.synthesizer import Synthesizer
+    d = os.path.join(voice_dir, script.get("model", "tts_models--de--thorsten--vits"))
+    syn = Synthesizer(tts_checkpoint=os.path.join(d, "model_file.pth"), tts_config_path=os.path.join(d, "config.json"))
+    p = script.get("prosody", {})
+    m = syn.tts_model
+    m.length_scale = script.get("lengthScale", 1.0)
+    m.inference_noise_scale = p.get("noise", 0.667)
+    m.inference_noise_scale_dp = p.get("noiseDuration", 0.8)
+    sr = syn.output_sample_rate
+    def synth(text, path):
+        torch_seed(text)
+        w = np.array(syn.tts(text), dtype=np.float64)
+        with wave.open(path, "wb") as wf:
+            wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(sr)
+            wf.writeframes((np.clip(w / (np.max(np.abs(w)) + 1e-9) * 0.9, -1, 1) * 32767).astype(np.int16).tobytes())
+    return synth, f"coqui|{d}|{m.length_scale}|{m.inference_noise_scale}|{m.inference_noise_scale_dp}"
+
+def torch_seed(text):
+    import torch  # gleiche Eingabe -> gleiche Aufnahme
+    torch.manual_seed(int(hashlib.sha1(text.encode()).hexdigest()[:8], 16))
+
+def tts_lines(script, voice_dir, cache_dir):
+    synth, tag = (coqui_engine if script.get("engine") == "coqui" else piper_engine)(script, voice_dir)
     os.makedirs(cache_dir, exist_ok=True)
     out = {}
     for sc in script["scenes"]:
         for ln in sc["lines"]:
-            key = hashlib.sha1(f'v2|{name}|{cfg.length_scale}|{ln["text"]}'.encode()).hexdigest()[:16]
+            text = speech_text(ln, script)
+            key = hashlib.sha1(f"v3|{tag}|{text}".encode()).hexdigest()[:16]
             path = os.path.join(cache_dir, key + ".wav")
             if not os.path.exists(path):
-                with wave.open(path, "wb") as wf:
-                    voice.synthesize_wav(ln["text"], wf, syn_config=cfg)
+                synth(text, path)
             with wave.open(path, "rb") as wf:
                 sr = wf.getframerate()
                 x = np.frombuffer(wf.readframes(wf.getnframes()), dtype=np.int16).astype(np.float64) / 32768

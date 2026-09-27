@@ -975,7 +975,7 @@ function buildLabels() {
   L('Rachen', [3], v => v.set(tract.cen[40].x - 1.2, tract.cen[40].y, 0), c3);
   L('Mundhöhle', [3], v => v.set(tract.cen[95].x, tract.cen[95].y, 1.9), c3);
   L('Nasenhöhle', [3, 4], v => v.set(4.5, 4.9, 1), c3);
-  L('Gaumensegel', [3, 4], v => { const i = 70; v.set(tract.C[i].x + tract.N[i].x * 1.1, tract.C[i].y + tract.N[i].y * 1.1 - A.velum * .6, 0); }, c4);
+  L('Gaumensegel', [3, 4], v => { const i = 66; v.set(tract.C[i].x + tract.N[i].x * 1.1, tract.C[i].y + tract.N[i].y * 1.1 - A.velum * .6, -1.4); }, c4);
   L('Zunge', [4], v => { const i = 88; v.set(tract.C[i].x + tract.N[i].x * (Rout(.73) - tract.d[i]) - .2, tract.C[i].y + tract.N[i].y * (Rout(.73) - tract.d[i]) - .3, 1.4); }, c4);
   L('Lippen', [4], v => v.copy(M.lipU.position).add(V3(.4, .3, 0)), c4);
   L('Harter Gaumen', [4], v => { const i = 100; v.set(tract.C[i].x + tract.N[i].x * 1.25, tract.C[i].y + tract.N[i].y * 1.25, 1.2); }, c4);
