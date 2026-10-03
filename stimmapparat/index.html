@@ -1,0 +1,1557 @@
+<title>Stimmapparat 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans:wght@500&display=swap">
+<style>
+:root{
+  --bg:#E8EDEC; --surface:#F7F9F8; --surface-2:#EEF2F1; --ink:#13201F; --muted:#56645F; --line:#CCD5D3;
+  --c1:#2D6CB0; --c2:#B2345F; --c3:#A26A0C; --c4:#1C7A61;
+  --ca:var(--c1);
+  --v-bg:#0A1012; --v-ink:#D8E4E2; --v-muted:#8B9C99; --v-line:rgba(216,228,226,.14);
+  --v1:#78B4F5; --v2:#F07CA2; --v3:#EBB052; --v4:#57CDA7;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --f-ipa:"Noto Sans", "Doulos SIL", "Charis SIL", "Segoe UI", sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1315; --surface:#151C1F; --surface-2:#1B2427; --ink:#E3EBE9; --muted:#93A29E; --line:#2A3538;
+    --c1:#6AA6E8; --c2:#EE7199; --c3:#E3A646; --c4:#4CC39E;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1315; --surface:#151C1F; --surface-2:#1B2427; --ink:#E3EBE9; --muted:#93A29E; --line:#2A3538;
+  --c1:#6AA6E8; --c2:#EE7199; --c3:#E3A646; --c4:#4CC39E;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:1480px;margin:0 auto;padding-inline:16px;padding-block:14px 28px;display:grid;gap:14px}
+.app[data-stage="1"]{--ca:var(--c1)} .app[data-stage="2"]{--ca:var(--c2)} .app[data-stage="3"]{--ca:var(--c3)} .app[data-stage="4"]{--ca:var(--c4)}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;text-wrap:balance;margin:0;letter-spacing:-.01em}
+.ipa{font-family:var(--f-ipa);font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ca);outline-offset:2px}
+
+/* ---------- header ---------- */
+.top{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px 24px;align-items:end}
+.brand h1{font-size:clamp(1.6rem,2.6vw,2.2rem);line-height:1.05}
+.brand p{margin:.25rem 0 0;color:var(--muted);max-width:52ch}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-width:min(640px,100%)}
+.step{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:8px 10px 9px;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;transition:background .2s,border-color .2s}
+.step .n{grid-row:span 2;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:500;border:1.5px solid var(--sc);color:var(--sc)}
+.step .nm{font-family:var(--f-display);font-weight:700;font-size:15px;line-height:1.1}
+.step .rl{font-size:11.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.step:hover{border-color:var(--sc)}
+.step[aria-selected="true"]{background:color-mix(in srgb,var(--sc) 12%,var(--surface));border-color:var(--sc)}
+.step[aria-selected="true"] .n{background:var(--sc);color:var(--surface)}
+.chain{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--muted);align-items:center}
+.chain b{color:var(--ink);font-weight:700}
+.chain .arr{opacity:.6}
+
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,440px);gap:14px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:1fr}.top{grid-template-columns:1fr}.steps{min-width:0}}
+@media (max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- viewer (fixed dark imaging monitor) ---------- */
+.viewer{display:grid;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.stage3d{position:relative;height:clamp(420px,70vh,780px);background:radial-gradient(120% 90% at 60% 35%,#16232A 0%,#0C1416 55%,#070B0C 100%);color:var(--v-ink);overflow:hidden;touch-action:none;user-select:none}
+.stage3d canvas.gl{display:block;width:100%;height:100%;cursor:grab}
+.stage3d canvas.gl.drag{cursor:grabbing}
+.stage3d canvas.gl.hot{cursor:pointer}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lbl{position:absolute;left:0;top:0;display:flex;align-items:center;gap:6px;font-size:12px;line-height:1;white-space:nowrap;color:var(--v-ink);text-shadow:0 1px 2px #000,0 0 6px #000;will-change:transform}
+.lbl i{width:7px;height:7px;border-radius:50%;background:var(--lc);box-shadow:0 0 0 2px rgba(0,0,0,.5);flex:none}
+.lbl span{padding:2px 0}
+.hud{position:absolute;left:12px;top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:calc(100% - 24px)}
+.chip{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.02em;padding:4px 8px;border-radius:999px;background:rgba(10,16,18,.72);border:1px solid var(--v-line);color:var(--v-ink);backdrop-filter:blur(4px)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--v-muted)}
+.hint{position:absolute;right:12px;bottom:10px;font-size:11.5px;color:var(--v-muted);text-align:right;pointer-events:none}
+.info{position:absolute;left:12px;bottom:12px;width:min(340px,calc(100% - 24px));background:rgba(10,16,18,.88);border:1px solid var(--v-line);border-radius:var(--r);padding:12px 14px 12px;color:var(--v-ink);backdrop-filter:blur(6px)}
+.info h3{font-size:16px;margin-right:28px}
+.info p{margin:.35rem 0 0;font-size:13.5px;color:#C4D2CF}
+.info button{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:50%;border:1px solid var(--v-line);background:transparent;color:var(--v-ink);cursor:pointer;line-height:1}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--v-ink)}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-size:14px;line-height:1.1;white-space:nowrap}
+.btn:hover{border-color:var(--ca)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn[aria-pressed="true"]{background:var(--ca);border-color:var(--ca);color:var(--surface)}
+.btn svg{width:14px;height:14px;flex:none}
+.field{display:grid;gap:2px;min-width:180px;flex:1 1 200px}
+.field label{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+.field output{white-space:nowrap;font-family:var(--f-mono);font-size:12px;color:var(--ink);text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--ca);margin:4px 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{appearance:none;border:0;background:transparent;padding:7px 11px;cursor:pointer;font-size:13.5px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ca);color:var(--surface)}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:13.5px;cursor:pointer}
+.check input{accent-color:var(--ca);width:16px;height:16px}
+
+/* ---------- panel ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 20px;display:grid;gap:14px;min-width:0}
+.panel section{display:grid;gap:14px;min-width:0}
+.panel section>*{min-width:0}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ca)}
+.panel h2{font-size:1.65rem;line-height:1.1;margin-top:2px}
+.lead{margin:0;max-width:65ch}
+.facts{display:grid;gap:0;margin:0;border-top:1px solid var(--line)}
+.facts div{display:grid;grid-template-columns:minmax(96px,34%) 1fr;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+.fig{display:grid;gap:6px;min-width:0}
+.fig canvas{display:block;width:100%;border-radius:8px;background:var(--surface-2);border:1px solid var(--line)}
+#cvBreath{height:210px} #cvGlottis{height:250px} #cvSpec{height:220px} #cvVowel{height:230px;cursor:pointer}
+.fig figcaption,.cap{font-size:12.5px;color:var(--muted)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.readout div{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+.readout small{display:block;font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.readout b{font-family:var(--f-mono);font-weight:500;font-size:14px;font-variant-numeric:tabular-nums}
+.cycle{margin:0;padding-left:1.3em;display:grid;gap:4px;font-size:13.5px}
+.cycle li::marker{font-family:var(--f-mono);color:var(--ca)}
+.tip{font-size:13.5px;margin:0;padding:9px 12px;border-radius:8px;background:color-mix(in srgb,var(--ca) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--ca) 30%,var(--line))}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sub{font-family:var(--f-display);font-size:14px;font-weight:700;margin:0}
+
+.vrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px}
+.vbtn{appearance:none;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:5px 2px 6px;cursor:pointer;display:grid;justify-items:center;gap:0;line-height:1.15}
+.vbtn .ipa{font-size:19px}
+.vbtn small{font-size:10.5px;color:var(--muted)}
+.vbtn:hover{border-color:var(--ca)}
+.vbtn[aria-pressed="true"]{background:var(--ca);border-color:var(--ca);color:var(--surface)}
+.vbtn[aria-pressed="true"] small{color:inherit;opacity:.85}
+
+.chart-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+table.ipa-chart{border-collapse:collapse;font-size:12px;min-width:100%}
+.ipa-chart th{font-weight:400;color:var(--muted);padding:5px 4px;text-align:center;white-space:nowrap;font-size:11px}
+.ipa-chart th[scope=row]{text-align:left;padding-left:8px}
+.ipa-chart td{border-left:1px solid var(--line);border-top:1px solid var(--line);padding:3px;text-align:center;white-space:nowrap}
+.ipa-chart thead th{border-left:1px solid var(--line)}
+.ipa-chart thead th:first-child{border-left:0}
+.cbtn{appearance:none;border:1px solid transparent;background:transparent;border-radius:6px;width:24px;height:28px;padding:0;cursor:pointer;font-family:var(--f-ipa);font-size:16px;font-weight:500}
+.cbtn:hover{border-color:var(--ca)}
+.cbtn[aria-pressed="true"]{background:var(--ca);color:var(--surface)}
+.cbtn.ph{visibility:hidden}
+.sel{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.sel .big{grid-row:span 2;font-size:40px;line-height:1;min-width:1.2em;text-align:center;color:var(--ca)}
+.sel .d{font-weight:700}
+.sel .e{font-size:13px;color:var(--muted)}
+
+.foot{font-size:12.5px;color:var(--muted);max-width:110ch}
+</style>
+
+<div class="app" id="app" data-stage="1">
+  <header class="top">
+    <div class="brand">
+      <h1>Stimmapparat</h1>
+      <p>Wie aus Atemluft Stimme und Sprache werden: Atmung, Stimmlippen, Resonanz und Artikulation als bewegtes 3D-Modell.</p>
+    </div>
+    <nav class="steps" role="tablist" aria-label="Stufen der Stimmbildung">
+      <button class="step" role="tab" id="tab1" data-stage="1" aria-selected="true" aria-controls="p1" style="--sc:var(--c1)"><span class="n">1</span><span class="nm">Atmung</span><span class="rl">Energie</span></button>
+      <button class="step" role="tab" id="tab2" data-stage="2" aria-selected="false" aria-controls="p2" style="--sc:var(--c2)"><span class="n">2</span><span class="nm">Stimmlippen</span><span class="rl">Schallquelle</span></button>
+      <button class="step" role="tab" id="tab3" data-stage="3" aria-selected="false" aria-controls="p3" style="--sc:var(--c3)"><span class="n">3</span><span class="nm">Resonanz</span><span class="rl">Filter</span></button>
+      <button class="step" role="tab" id="tab4" data-stage="4" aria-selected="false" aria-controls="p4" style="--sc:var(--c4)"><span class="n">4</span><span class="nm">Artikulation</span><span class="rl">Lautbildung</span></button>
+    </nav>
+    <div class="chain" aria-hidden="true">
+      <span><b>Lunge</b> liefert Luftdruck</span><span class="arr">→</span>
+      <span><b>Stimmlippen</b> zerhacken den Luftstrom in Schallpulse</span><span class="arr">→</span>
+      <span><b>Ansatzrohr</b> verstärkt Formanten</span><span class="arr">→</span>
+      <span><b>Zunge, Lippen, Gaumensegel</b> formen Laute</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="viewer" aria-label="3D-Modell">
+      <div class="stage3d" id="view">
+        <div class="labels" id="labels"></div>
+        <div class="hud">
+          <span class="chip" id="chipStage"><span class="dot" id="chipDot"></span><span id="chipStageTxt">Atmung</span></span>
+          <span class="chip num" id="chipState">Einatmung</span>
+        </div>
+        <div class="hint" id="hint">Ziehen: drehen · Mausrad/Pinch: zoomen · Organ anklicken: Info</div>
+        <div class="info" id="info" hidden>
+          <button type="button" id="infoClose" aria-label="Info schließen">×</button>
+          <h3 id="infoTitle"></h3>
+          <p id="infoText"></p>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn primary" type="button" id="btnPlay" aria-label="Animation anhalten"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2" width="3" height="10" fill="currentColor"/><rect x="8.5" y="2" width="3" height="10" fill="currentColor"/></svg><span>Anhalten</span></button>
+        <button class="btn" type="button" id="btnSound" aria-pressed="false"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 5h2.5l3.5-3v10l-3.5-3H1.5z" fill="currentColor"/><path d="M9.5 4.5c1 .7 1.5 1.6 1.5 2.5s-.5 1.8-1.5 2.5" stroke="currentColor" fill="none" stroke-width="1.4" stroke-linecap="round"/></svg><span>Ton an</span></button>
+        <div class="field">
+          <label for="f0">Tonhöhe <output id="f0Out" class="num">210 Hz · Gis3</output></label>
+          <input type="range" id="f0" min="0" max="1000" step="1" value="630">
+        </div>
+        <div class="field">
+          <label for="press">Lautstärke <output id="pressOut" class="num">7 cmH₂O</output></label>
+          <input type="range" id="press" min="3" max="25" step="0.5" value="7">
+        </div>
+        <div class="seg" role="group" aria-label="Stimme">
+          <button type="button" data-voice="f" aria-pressed="true">Frau</button>
+          <button type="button" data-voice="m" aria-pressed="false">Mann</button>
+          <button type="button" data-voice="c" aria-pressed="false">Kind</button>
+        </div>
+        <div class="seg" role="group" aria-label="Atemmodus">
+          <button type="button" id="modeSpeech" aria-pressed="true">Sprechatmung</button>
+          <button type="button" id="modeRest" aria-pressed="false">Ruheatmung</button>
+        </div>
+        <label class="check"><input type="checkbox" id="chkLabels" checked> Beschriftung</label>
+        <button class="btn" type="button" id="btnView">Ansicht zurücksetzen</button>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel">
+      <!-- 1 Atmung -->
+      <section id="p1" role="tabpanel" aria-labelledby="tab1">
+        <div>
+          <div class="eyebrow">Stufe 1 · Energiequelle</div>
+          <h2>Atmung</h2>
+        </div>
+        <p class="lead">Beim Einatmen zieht sich das Zwerchfell zusammen und flacht ab, die Zwischenrippenmuskeln heben den Brustkorb. Der Unterdruck in der Lunge lässt Luft einströmen. Zum Sprechen atmen wir kurz ein und lange, gebremst wieder aus. Unter den geschlossenen Stimmlippen entsteht dabei ein gleichmäßiger Überdruck, der <em>subglottische Druck</em>. Er treibt die Stimme an.</p>
+        <figure class="fig" style="margin:0">
+          <canvas id="cvBreath" height="210" aria-label="Verlauf des Lungenvolumens und Druckanzeige"></canvas>
+          <figcaption>Lungenvolumen über der Atemruhelage (Liter), die letzten 10 Sekunden. Rosa Flächen: Phasen mit Stimme. Rechts: Druck unter den Stimmlippen.</figcaption>
+        </figure>
+        <div class="readout">
+          <div><small>Phase</small><b id="r1Phase">–</b></div>
+          <div><small>Volumen</small><b id="r1Vol">–</b></div>
+          <div><small>Druck</small><b id="r1P">–</b></div>
+        </div>
+        <dl class="facts">
+          <div><dt>Ruheatmung</dt><dd>12–16 Atemzüge pro Minute, etwa 0,5 l je Atemzug, Einatmen zu Ausatmen ≈ 1 : 1,5, meist durch die Nase.</dd></div>
+          <div><dt>Sprechatmung</dt><dd>Schnelles Einatmen durch den Mund (0,3–0,8 s), langes Ausatmen. Verhältnis bis 1 : 10.</dd></div>
+          <div><dt>Subglottischer Druck</dt><dd>Gespräch etwa 5–10 cmH₂O, Rufen 20 cmH₂O und mehr. Doppelter Druck ergibt etwa 8–9 dB mehr Schallpegel.</dd></div>
+          <div><dt>Atemstütze</dt><dd>Zwerchfell und Bauchmuskeln arbeiten beim Sprechen gegeneinander, damit der Druck trotz sinkender Luftmenge konstant bleibt.</dd></div>
+        </dl>
+        <p class="tip">Stell unten auf <b>Ruheatmung</b>: Die Stimmlippen bleiben geöffnet, die Luft strömt durch die Nase, es entsteht kein Ton.</p>
+      </section>
+
+      <!-- 2 Stimmlippen -->
+      <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
+        <div>
+          <div class="eyebrow">Stufe 2 · Schallquelle</div>
+          <h2>Stimmlippen</h2>
+        </div>
+        <p class="lead">Die beiden Stimmlippen liegen im Kehlkopf quer über dem Luftweg. Zum Atmen stehen sie V-förmig offen. Zum Sprechen schließen die Stellknorpel die Stimmritze (Glottis). Der Luftdruck darunter drückt sie auf, Elastizität und Sog ziehen sie wieder zusammen. Diese Schwingung zerhackt den Luftstrom in 100 bis 300 Pulse pro Sekunde: den Grundton.</p>
+        <figure class="fig" style="margin:0">
+          <canvas id="cvGlottis" height="250" aria-label="Kehlkopfspiegel-Ansicht und Glottis-Luftstrom"></canvas>
+          <figcaption>Links: Blick von oben wie im Kehlkopfspiegel (Stroboskopie). Rechts: Luftstrom durch die Glottis über drei Schwingungen.</figcaption>
+        </figure>
+        <div class="readout">
+          <div><small>Grundfrequenz</small><b id="r2F0">–</b></div>
+          <div><small>Periode</small><b id="r2T">–</b></div>
+          <div><small>Offen-Anteil</small><b id="r2OQ">–</b></div>
+          <div><small>Zeitlupe</small><b id="r2Slow">–</b></div>
+        </div>
+        <div class="field" style="min-width:0">
+          <label for="slow">Stroboskop-Verlangsamung <output id="slowOut" class="num">80×</output></label>
+          <input type="range" id="slow" min="25" max="300" step="5" value="80">
+        </div>
+        <p class="cap" style="margin:0">Stimme unten umschalten: Frau (Standard, um 210 Hz), Mann (um 115 Hz) oder Kind (um 300 Hz). Der Schieberegler für die Tonhöhe verändert nur die Grundfrequenz.</p>
+        <div>
+          <p class="sub">Ein Schwingungszyklus</p>
+          <ol class="cycle">
+            <li>Die Stellknorpel schließen die Stimmritze, der Druck darunter steigt.</li>
+            <li>Die Stimmlippen öffnen sich von unten nach oben: Die Schleimhaut läuft als Welle über den Rand (Randkantenverschiebung).</li>
+            <li>Luft strömt schnell durch den Spalt. Der Druck im Spalt sinkt (Bernoulli-Effekt), die Elastizität zieht die Lippen zurück.</li>
+            <li>Die Glottis schließt sich schlagartig. Dieser Schluss erzeugt den Schallpuls, und der nächste Zyklus beginnt.</li>
+          </ol>
+        </div>
+        <dl class="facts">
+          <div><dt>Länge</dt><dd>Männer ca. 17–24 mm, Frauen ca. 13–17 mm. Kürzere, leichtere Stimmlippen schwingen schneller.</dd></div>
+          <div><dt>Tonhöhe</dt><dd>Der Ringknorpel-Schildknorpel-Muskel kippt den Schildknorpel und dehnt die Stimmlippen: länger, dünner, straffer, höher.</dd></div>
+          <div><dt>Lautstärke</dt><dd>Mehr Druck: größere Auslenkung, längere Schlussphase, schärferer Schluss und dadurch mehr Obertöne.</dd></div>
+        </dl>
+      </section>
+
+      <!-- 3 Resonanz -->
+      <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
+        <div>
+          <div class="eyebrow">Stufe 3 · Filter</div>
+          <h2>Resonanz</h2>
+        </div>
+        <p class="lead">Der Ton direkt an den Stimmlippen klingt wie ein obertonreiches Summen. Erst der Raum darüber formt den Klang: Rachen, Mund- und Nasenraum bilden zusammen das Ansatzrohr, bei Frauen etwa 15 cm lang, bei Männern etwa 17 cm. Seine Eigenresonanzen heißen <em>Formanten</em>. Sie verstärken einzelne Obertöne und dämpfen andere. Die Lage der ersten beiden Formanten F1 und F2 bestimmt, welchen Vokal wir hören.</p>
+        <div class="vrow" data-vowels aria-label="Vokal wählen"></div>
+        <figure class="fig" style="margin:0">
+          <canvas id="cvSpec" height="220" aria-label="Spektrum aus Quelle, Filter und Ergebnis"></canvas>
+          <figcaption><span style="color:var(--muted)">▮</span> Quelle (Obertöne der Stimmlippen, −6 dB/Oktave inkl. Abstrahlung) · <span style="color:var(--c3)">━</span> Filterkurve des Ansatzrohrs · <span style="color:var(--c3)">●</span> Ergebnis am Mund</figcaption>
+        </figure>
+        <div class="readout">
+          <div><small>F1</small><b id="r3F1">–</b></div>
+          <div><small>F2</small><b id="r3F2">–</b></div>
+          <div><small>F3</small><b id="r3F3">–</b></div>
+        </div>
+        <figure class="fig" style="margin:0">
+          <canvas id="cvVowel" height="220" aria-label="Vokalviereck nach Formanten, anklickbar"></canvas>
+          <figcaption>Vokalviereck nach Formanten der gewählten Stimme: F2 von links nach rechts fallend, F1 nach unten steigend. So entspricht die Lage ungefähr der Zungenposition im Mund. Anklicken wählt den Vokal.</figcaption>
+        </figure>
+        <div class="row">
+          <span class="cap">Stehende Welle im Rohr zeigen:</span>
+          <div class="seg" role="group" aria-label="Resonanz anzeigen">
+            <button type="button" data-mode="0" aria-pressed="false">Aus</button>
+            <button type="button" data-mode="1" aria-pressed="true">F1</button>
+            <button type="button" data-mode="2" aria-pressed="false">F2</button>
+            <button type="button" data-mode="3" aria-pressed="false">F3</button>
+          </div>
+        </div>
+        <p class="cap" style="margin:0">Näherung als gleichförmiges Rohr, unten geschlossen (Glottis) und oben offen (Lippen): Resonanzen bei (2n−1)·c/4L. <span id="tubeTxt">Frau: L ≈ 15 cm, also etwa 580, 1750 und 2920 Hz.</span> Das entspricht dem neutralen Vokal [ə]. Warme Farbe: Überdruck, kühle Farbe: Unterdruck.</p>
+        <p class="tip">Ändere die Tonhöhe: Die Obertöne rücken zusammen oder auseinander, die Formanten bleiben an ihrem Platz. Darum erkennen wir ein [a] in jeder Stimmlage.</p>
+      </section>
+
+      <!-- 4 Artikulation -->
+      <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
+        <div>
+          <div class="eyebrow">Stufe 4 · Lautbildung</div>
+          <h2>Artikulation</h2>
+        </div>
+        <p class="lead">Zunge, Lippen, Unterkiefer und Gaumensegel verändern die Form des Ansatzrohrs laufend. Bei Vokalen bleibt es offen. Bei Konsonanten entsteht eine Enge oder ein Verschluss, beschrieben durch die Artikulationsstelle (wo) und die Artikulationsart (wie). Ob ein Laut stimmhaft ist, entscheidet die Glottis.</p>
+        <div>
+          <p class="sub" style="margin-bottom:6px">Vokale</p>
+          <div class="vrow" data-vowels aria-label="Vokal wählen"></div>
+        </div>
+        <div>
+          <p class="sub" style="margin-bottom:6px">Konsonanten des Deutschen</p>
+          <div class="chart-wrap"><table class="ipa-chart" id="consTable"></table></div>
+          <p class="cap" style="margin:6px 0 0">Im Feld links stimmlos, rechts stimmhaft (IPA-Konvention). Spalten von den Lippen bis zur Glottis.</p>
+        </div>
+        <div class="sel" id="selBox">
+          <span class="big ipa" id="selIpa">a</span>
+          <span class="d" id="selDesc">Vokal [a]</span>
+          <span class="e" id="selEx">Beispiel: Bahn</span>
+        </div>
+        <div class="row">
+          <button class="btn primary" type="button" id="btnSyl"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2l9 5-9 5z" fill="currentColor"/></svg><span id="btnSylTxt">Silbe [pa] abspielen</span></button>
+          <button class="btn" type="button" id="btnClear">Zurück zum Vokal</button>
+        </div>
+        <dl class="facts">
+          <div><dt>Plosive</dt><dd>Vollständiger Verschluss, Druck staut sich, dann Sprengung. Deutsch p, t, k werden behaucht.</dd></div>
+          <div><dt>Frikative</dt><dd>Enge Stelle, turbulente Luft rauscht. [s] am hellsten (um 6 kHz), [ʃ] tiefer und mit Lippenrundung.</dd></div>
+          <div><dt>Nasale</dt><dd>Mund verschlossen, Gaumensegel gesenkt: Der Schall entweicht durch die Nase.</dd></div>
+        </dl>
+      </section>
+    </aside>
+  </main>
+
+  <p class="foot">Vereinfachtes Lernmodell. Proportionen, Formantwerte deutscher Vokale (Männerwerte als Basis, für Frauen- und Kinderstimme hochskaliert) und Zeitabläufe sind gerundet. Die Stimmlippenschwingung wird stroboskopisch verlangsamt gezeigt, der Klang entsteht per Quelle-Filter-Synthese im Browser. Tastatur: 1–4 wechselt die Stufe, Leertaste hält an.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const gauss = (s, c, w) => Math.exp(-((s - c) * (s - c)) / (2 * w * w));
+const bump = (s, a, b) => smooth(a, a + 0.06, s) * (1 - smooth(b - 0.06, b, s));
+const fmt = (v, d = 0) => v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+/* =====================================================================
+   Daten
+   ===================================================================== */
+const VOWELS = {
+  'i': { w: 'Biene', F: [280, 2250, 2950], c: .82, k: .85, ph: 1.35, oc: 1.0, jaw: .12, round: 0 },
+  'y': { w: 'Tüte',  F: [280, 1750, 2200], c: .82, k: .85, ph: 1.35, oc: 1.0, jaw: .12, round: .9 },
+  'e': { w: 'Beet',  F: [370, 2100, 2750], c: .80, k: .70, ph: 1.25, oc: 1.0, jaw: .25, round: 0 },
+  'ø': { w: 'schön', F: [370, 1500, 2300], c: .80, k: .70, ph: 1.25, oc: 1.0, jaw: .25, round: .75 },
+  'ɛ': { w: 'Bett',  F: [530, 1850, 2600], c: .78, k: .50, ph: 1.10, oc: 1.1, jaw: .45, round: 0 },
+  'a': { w: 'Bahn',  F: [750, 1300, 2550], c: .30, k: .55, ph: 0.80, oc: 1.45, jaw: 1.0, round: 0 },
+  'ə': { w: 'bitte', F: [500, 1500, 2500], c: .60, k: 0,   ph: 1.00, oc: 1.0, jaw: .35, round: .1 },
+  'o': { w: 'Boot',  F: [390, 780, 2500],  c: .52, k: .60, ph: 0.90, oc: 1.1, jaw: .35, round: .75 },
+  'u': { w: 'Hut',   F: [300, 700, 2300],  c: .64, k: .75, ph: 1.10, oc: 1.05, jaw: .15, round: 1 }
+};
+const VORDER = ['i', 'y', 'e', 'ø', 'ɛ', 'a', 'ə', 'o', 'u'];
+const VNAME = { 'i': 'gespannter vorderer hoher Vokal', 'y': 'gerundeter vorderer hoher Vokal', 'e': 'gespannter vorderer halbhoher Vokal', 'ø': 'gerundeter vorderer halbhoher Vokal', 'ɛ': 'ungespannter vorderer halbtiefer Vokal', 'a': 'tiefer zentraler Vokal', 'ə': 'Schwa, neutraler Mittelzungenvokal', 'o': 'gerundeter hinterer halbhoher Vokal', 'u': 'gerundeter hinterer hoher Vokal' };
+const BW = [80, 100, 140, 200];
+
+const PLACES = [
+  ['bilabial', 'bilab.', 'bilabialer', 'beide Lippen'],
+  ['labiodental', 'labiod.', 'labiodentaler', 'Unterlippe an obere Schneidezähne'],
+  ['alveolar', 'alv.', 'alveolarer', 'Zungenspitze am Zahndamm'],
+  ['postalveolar', 'postalv.', 'postalveolarer', 'Zungenblatt hinter dem Zahndamm'],
+  ['palatal', 'palat.', 'palataler', 'Zungenrücken am harten Gaumen'],
+  ['velar', 'vel.', 'velarer', 'Zungenrücken am Gaumensegel'],
+  ['uvular', 'uvul.', 'uvularer', 'Zungenrücken am Zäpfchen'],
+  ['glottal', 'glott.', 'glottaler', 'in der Stimmritze']
+];
+const MANNERS = [['plosiv', 'Plosiv'], ['nasal', 'Nasal'], ['frikativ', 'Frikativ'], ['approximant', 'Approximant'], ['lateral', 'Lateral'], ['vibrant', 'Vibrant']];
+const CONS = [
+  { ipa: 'p', pl: 'bilabial', m: 'plosiv', v: 0, w: 'Pass' }, { ipa: 'b', pl: 'bilabial', m: 'plosiv', v: 1, w: 'Ball' },
+  { ipa: 't', pl: 'alveolar', m: 'plosiv', v: 0, w: 'Tal' }, { ipa: 'd', pl: 'alveolar', m: 'plosiv', v: 1, w: 'Dach' },
+  { ipa: 'k', pl: 'velar', m: 'plosiv', v: 0, w: 'Kamm' }, { ipa: 'g', pl: 'velar', m: 'plosiv', v: 1, w: 'Gast' },
+  { ipa: 'ʔ', pl: 'glottal', m: 'plosiv', v: 0, w: 'be|achten (Knacklaut)' },
+  { ipa: 'm', pl: 'bilabial', m: 'nasal', v: 1, w: 'Mann' }, { ipa: 'n', pl: 'alveolar', m: 'nasal', v: 1, w: 'Name' }, { ipa: 'ŋ', pl: 'velar', m: 'nasal', v: 1, w: 'Ring' },
+  { ipa: 'f', pl: 'labiodental', m: 'frikativ', v: 0, w: 'Fass' }, { ipa: 'v', pl: 'labiodental', m: 'frikativ', v: 1, w: 'Wal' },
+  { ipa: 's', pl: 'alveolar', m: 'frikativ', v: 0, w: 'Haus' }, { ipa: 'z', pl: 'alveolar', m: 'frikativ', v: 1, w: 'Sonne' },
+  { ipa: 'ʃ', pl: 'postalveolar', m: 'frikativ', v: 0, w: 'Schal' }, { ipa: 'ʒ', pl: 'postalveolar', m: 'frikativ', v: 1, w: 'Garage' },
+  { ipa: 'ç', pl: 'palatal', m: 'frikativ', v: 0, w: 'ich' }, { ipa: 'x', pl: 'velar', m: 'frikativ', v: 0, w: 'Bach' },
+  { ipa: 'ʁ', pl: 'uvular', m: 'frikativ', v: 1, w: 'Rad' }, { ipa: 'h', pl: 'glottal', m: 'frikativ', v: 0, w: 'Hut' },
+  { ipa: 'j', pl: 'palatal', m: 'approximant', v: 1, w: 'ja' },
+  { ipa: 'l', pl: 'alveolar', m: 'lateral', v: 1, w: 'Land' },
+  { ipa: 'ʀ', pl: 'uvular', m: 'vibrant', v: 1, w: 'Rad (gerollt)' }
+];
+const CPLACE = { bilabial: { s: 1 }, labiodental: { s: .975 }, alveolar: { s: .885 }, postalveolar: { s: .855, round: .55 }, palatal: { s: .80 }, velar: { s: .665 }, uvular: { s: .57 }, glottal: { s: 0 } };
+const MDEG = { plosiv: 1, nasal: 1, frikativ: .86, approximant: .6, lateral: .8, vibrant: .8 };
+const MDUR = { plosiv: .11, nasal: .17, frikativ: .2, approximant: .1, lateral: .12, vibrant: .17 };
+const NASF = { bilabial: [250, 1100, 2300], alveolar: [250, 1600, 2600], velar: [250, 2000, 2800] };
+const LOCUS = { bilabial: 800, labiodental: 1000, alveolar: 1800, postalveolar: 1900, palatal: 2200, velar: 1900, uvular: 1200, glottal: null };
+const FRIC = {
+  'f': { type: 'highpass', f: 1600, Q: .5, g: .22 }, 'v': { type: 'highpass', f: 1600, Q: .5, g: .16 },
+  's': { type: 'bandpass', f: 6200, Q: 1.8, g: 1.0 }, 'z': { type: 'bandpass', f: 6200, Q: 1.8, g: .6 },
+  'ʃ': { type: 'bandpass', f: 3000, Q: 1.3, g: .9 }, 'ʒ': { type: 'bandpass', f: 3000, Q: 1.3, g: .55 },
+  'ç': { type: 'bandpass', f: 4200, Q: 2.4, g: .55 }, 'x': { type: 'bandpass', f: 1500, Q: 2, g: .5 },
+  'ʁ': { type: 'bandpass', f: 1300, Q: 2, g: .2 }
+};
+const BURST = { bilabial: { f: 900, Q: .8, g: .45 }, alveolar: { f: 4000, Q: 1, g: .7 }, velar: { f: 2000, Q: 2, g: .7 } };
+const VOWDUR = .45, LEAD = .08;
+
+/* =====================================================================
+   Zustand
+   ===================================================================== */
+const S = {
+  stage: 1, playing: !reduceMotion, sound: false, labels: true,
+  voice: 'f', f0: 210, press: 7, mode: 'speech', vowel: 'a', cons: null, syl: null,
+  slow: 80, wave: 1
+};
+const A = { c: .3, k: .55, ph: .8, oc: 1.45, jaw: 1, round: 0, lip: 0, cPl: .8, cDeg: 0, velum: 0, abd: 1 };
+const FC = { F: [750, 1300, 2550, 3500], B: [80, 100, 140, 200], nasal: 0 };
+/* Steuerung von außen (z. B. für das Erklärvideo): null = normales Verhalten */
+const film = { hi: null, abd: null, voice: null, hold: false, orbit: 0, particles: true };
+let manualNow = null; /* gesetzt = Bilder werden von außen Schritt für Schritt berechnet */
+const clockNow = () => (manualNow !== null ? manualNow : performance.now());
+let simT = 0, phaseV = 0, breath = null, voicedAmt = 0, flowNow = 0, segNow = { ph: 'free' };
+
+const f0FromSlider = v => 70 * Math.pow(400 / 70, v / 1000);
+const sliderFromF0 = f => Math.round(1000 * Math.log(f / 70) / Math.log(400 / 70));
+const NOTE = ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'B', 'H'];
+const noteName = f => { const m = Math.round(69 + 12 * Math.log2(f / 440)); return NOTE[(m % 12 + 12) % 12] + (Math.floor(m / 12) - 1); };
+const splFromP = p => 60 + 26 * Math.log10(p / 3);
+const tiltNow = () => 1.35 - 0.5 * (S.press - 3) / 22;
+const VOICES = {
+  f: { name: 'Frau', f0: 210, k: 1.17, L: 15, oq: .08, breathy: .035 },
+  m: { name: 'Mann', f0: 115, k: 1.0, L: 17.5, oq: 0, breathy: .012 },
+  c: { name: 'Kind', f0: 300, k: 1.3, L: 13.5, oq: .06, breathy: .03 }
+};
+const VK = () => VOICES[S.voice].k;
+const oqNow = () => clamp(0.72 + VOICES[S.voice].oq - (S.press - 3) / 22 * 0.3, .4, .8);
+
+/* Rosenberg-Puls: Glottisöffnung 0..1 über eine Periode */
+function glot(ph) {
+  const p = ph - Math.floor(ph), oq = oqNow(), tp = oq * 0.6;
+  if (p < tp) return 0.5 * (1 - Math.cos(Math.PI * p / tp));
+  if (p < oq) return Math.cos(Math.PI / 2 * (p - tp) / (oq - tp));
+  return 0;
+}
+/* halbe Glottisweite (cm) an Position u (0 vorn … 1 hinten) */
+function halfGap(u, layer) {
+  const lead = layer === 'lo' ? 0.1 : 0;
+  const amp = 0.2 * (0.55 + 0.45 * (S.press - 3) / 22) * voicedAmt;
+  return A.abd * 0.45 * u + amp * Math.pow(Math.sin(Math.PI * clamp(u, 0, 1)), 0.8) * glot(phaseV + lead);
+}
+
+/* Atmung */
+function breathState(t) {
+  if (S.mode === 'speech') {
+    const Ti = .75, Te = 5.2, Vt = 1.1, P = Ti + Te, x = t % P;
+    if (x < Ti) { const u = x / Ti; return { phase: 'in', u, vol: Vt * (1 - Math.cos(Math.PI * u)) / 2, flow: -Math.sin(Math.PI * u), phon: 0 }; }
+    const u = (x - Ti) / Te;
+    return { phase: 'out', u, vol: Vt * (1 - Math.pow(u, 1.1)), flow: 1, phon: smooth(.02, .07, u) * (1 - smooth(.9, .96, u)) };
+  }
+  const Ti = 1.7, Te = 2.6, Vt = .5, P = Ti + Te, x = t % P;
+  if (x < Ti) { const u = x / Ti; return { phase: 'in', u, vol: Vt * (1 - Math.cos(Math.PI * u)) / 2, flow: -Math.sin(Math.PI * u), phon: 0 }; }
+  const u = (x - Ti) / Te;
+  return { phase: 'out', u, vol: Vt * (1 + Math.cos(Math.PI * u)) / 2, flow: Math.sin(Math.PI * u), phon: 0 };
+}
+
+/* Formant-Filter (Kaskade, DC = 1) */
+function resMag(f, F, B) { const b2 = (B / 2) * (B / 2); return (F * F + b2) / Math.sqrt(((f - F) ** 2 + b2) * ((f + F) ** 2 + b2)); }
+function tractMag(f, Fs, Bs) { let m = 1; for (let i = 0; i < Fs.length; i++) m *= resMag(f, Fs[i], Bs[i]); return m; }
+
+/* =====================================================================
+   Audio: Quelle-Filter-Synthese
+   ===================================================================== */
+const AE = {
+  ctx: null, tilt: -1,
+  init() {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    const C = this.ctx = new AC();
+    const g = v => { const n = C.createGain(); n.gain.value = v; return n; };
+    this.master = g(0);
+    const comp = C.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 6; comp.attack.value = .004; comp.release.value = .15;
+    this.master.connect(comp); comp.connect(C.destination);
+    this.osc = C.createOscillator(); this.osc.frequency.value = S.f0; this.setTilt(tiltNow());
+    this.vib = C.createOscillator(); this.vib.frequency.value = 5.3; this.vibG = g(S.f0 * .005); this.vib.connect(this.vibG); this.vibG.connect(this.osc.frequency);
+    this.trill = g(1); this.trillL = C.createOscillator(); this.trillL.frequency.value = 27; this.trillD = g(0); this.trillL.connect(this.trillD); this.trillD.connect(this.trill.gain);
+    this.voice = g(0); this.osc.connect(this.trill); this.trill.connect(this.voice);
+    const len = C.sampleRate * 2, buf = C.createBuffer(1, len, C.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    this.noise = C.createBufferSource(); this.noise.buffer = buf; this.noise.loop = true;
+    const hp = C.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 450;
+    this.asp = g(0); this.noise.connect(hp); hp.connect(this.asp);
+    this.src = g(1); this.voice.connect(this.src); this.asp.connect(this.src);
+    this.out = g(.32); this.out.connect(this.master);
+    this.bp = []; this.bg = [];
+    for (let i = 0; i < 4; i++) {
+      const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = FC.F[i]; f.Q.value = FC.F[i] / FC.B[i];
+      const gg = g(0); this.src.connect(f); f.connect(gg); gg.connect(this.out); this.bp.push(f); this.bg.push(gg);
+    }
+    this.lp = C.createBiquadFilter(); this.lp.type = 'lowpass'; this.lp.frequency.value = 500; this.lpG = g(.1);
+    this.src.connect(this.lp); this.lp.connect(this.lpG); this.lpG.connect(this.out);
+    this.fricF = C.createBiquadFilter(); this.fricF.type = 'bandpass'; this.fric = g(0);
+    this.noise.connect(this.fricF); this.fricF.connect(this.fric); this.fric.connect(this.master);
+    this.burstF = C.createBiquadFilter(); this.burstF.type = 'bandpass'; this.burstG = g(0);
+    this.noise.connect(this.burstF); this.burstF.connect(this.burstG); this.burstG.connect(this.master);
+    this.osc.start(); this.vib.start(); this.trillL.start(); this.noise.start();
+    return true;
+  },
+  setTilt(t) {
+    if (Math.abs(t - this.tilt) < .04) return; this.tilt = t;
+    const n = 72, re = new Float32Array(n), im = new Float32Array(n);
+    for (let k = 1; k < n; k++) im[k] = Math.pow(k, -t);
+    this.osc.setPeriodicWave(this.ctx.createPeriodicWave(re, im));
+  },
+  apply(T) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime, tau = .014, st = (p, v, k = tau) => p.setTargetAtTime(v, t, k);
+    st(this.osc.frequency, T.f0, .03); st(this.vibG.gain, T.f0 * .005, .05);
+    this.setTilt(T.tilt);
+    st(this.voice.gain, T.voice); st(this.asp.gain, T.asp);
+    const peak = tractMag(T.F[0], T.F, T.B);
+    for (let i = 0; i < 4; i++) {
+      st(this.bp[i].frequency, T.F[i], .02); st(this.bp[i].Q, T.F[i] / T.B[i], .02);
+      st(this.bg[i].gain, T.fg * tractMag(T.F[i], T.F, T.B) / peak * (T.nasal && i > 0 ? .3 : 1), .02);
+    }
+    st(this.lp.frequency, T.F[0] * .9, .02); st(this.lpG.gain, T.fg * 1.2 / peak, .02);
+    if (this.fricF.type !== T.fric.type) this.fricF.type = T.fric.type;
+    st(this.fricF.frequency, T.fric.f, .01); st(this.fricF.Q, T.fric.Q, .01); st(this.fric.gain, T.fric.g, .012);
+    st(this.trillD.gain, T.trill * .85, .01);
+    st(this.master.gain, T.master, .04);
+  },
+  burst(at, b) {
+    if (!this.ctx || !b) return;
+    this.burstF.frequency.setValueAtTime(b.f, at); this.burstF.Q.setValueAtTime(b.Q, at);
+    this.burstG.gain.cancelScheduledValues(at);
+    this.burstG.gain.setValueAtTime(0, at); this.burstG.gain.linearRampToValueAtTime(b.g, at + .003);
+    this.burstG.gain.setTargetAtTime(0, at + .005, .012);
+  }
+};
+
+/* =====================================================================
+   3D-Szene
+   ===================================================================== */
+const view = $('#view');
+const hasGL = typeof THREE !== 'undefined' && (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch (e) { return false; } })();
+let renderer, scene, camera;
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const pickables = [], mats = [], labelDefs = [];
+
+if (!hasGL) {
+  const d = document.createElement('div'); d.className = 'nogl';
+  d.textContent = 'Das 3D-Modell braucht WebGL und die Three.js-Bibliothek. Beides ist in diesem Browser gerade nicht verfügbar. Die Diagramme rechts funktionieren trotzdem.';
+  view.appendChild(d);
+}
+
+/* --- Geometrie-Referenzen, die auch ohne WebGL-Rendering gebraucht werden --- */
+const NS = 120, MR = 20;
+let tract = null;
+
+if (hasGL) {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.domElement.className = 'gl';
+  view.insertBefore(renderer.domElement, view.firstChild);
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(35, 1, .1, 600);
+  scene.add(new THREE.HemisphereLight(0xd6ecff, 0x2a1418, .75));
+  const dl = new THREE.DirectionalLight(0xffffff, .85); dl.position.set(20, 30, 28); scene.add(dl);
+  const dl2 = new THREE.DirectionalLight(0x8fb4ff, .45); dl2.position.set(-25, 8, -20); scene.add(dl2);
+}
+
+function mat(color, group, opts = {}) {
+  const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: .55, metalness: 0, transparent: true, opacity: 1, side: THREE.DoubleSide }, opts));
+  m.userData.base = m.opacity; m.userData.group = group; m.userData.emis = (opts.emissive !== undefined) ? new THREE.Color(opts.emissive) : new THREE.Color(0);
+  mats.push(m); return m;
+}
+const PARTS = {};
+function add(mesh, info, parent) {
+  (parent || scene).add(mesh);
+  if (info) { mesh.userData.info = info; pickables.push(mesh); (PARTS[info[0]] = PARTS[info[0]] || []).push(mesh); }
+  return mesh;
+}
+function tubeAlong(points, r, m, closed = false, segs = 64, radial = 10) {
+  const c = new THREE.CatmullRomCurve3(points, closed, 'centripetal');
+  return new THREE.Mesh(new THREE.TubeGeometry(c, segs, r, radial, closed), m);
+}
+function cylBetween(a, b, r, m) {
+  const len = a.distanceTo(b), g = new THREE.CylinderGeometry(r, r, len, 16, 1, true);
+  const mesh = new THREE.Mesh(g, m); mesh.position.copy(a).add(b).multiplyScalar(.5);
+  mesh.quaternion.setFromUnitVectors(V3(0, 1, 0), b.clone().sub(a).normalize()); return mesh;
+}
+
+const INFO = {
+  lunge: ['Lunge', 'Der Luftspeicher der Stimme. Die Lungen haben keine eigenen Muskeln: Zwerchfell und Brustkorb dehnen sie. Vitalkapazität eines Erwachsenen etwa 3,5–5 Liter, beim Sprechen genutzt werden meist nur 0,5–1,5 Liter.'],
+  zwerchfell: ['Zwerchfell', 'Kuppelförmiger Hauptatemmuskel. Beim Einatmen zieht er sich zusammen und flacht ab, der Brustraum wird größer. Beim Sprechen bremst er das Ausatmen, damit der Druck unter den Stimmlippen gleichmäßig bleibt (Atemstütze).'],
+  rippen: ['Brustkorb und Rippen', 'Die äußeren Zwischenrippenmuskeln heben die Rippen beim Einatmen. Beim lauten oder langen Sprechen helfen innere Zwischenrippenmuskeln und Bauchmuskeln beim aktiven Ausatmen.'],
+  trachea: ['Luftröhre (Trachea)', 'Etwa 10–12 cm lang, durch 16–20 hufeisenförmige Knorpelspangen offen gehalten. Leitet die Ausatemluft zum Kehlkopf.'],
+  bronchien: ['Hauptbronchien', 'Die Luftröhre teilt sich in einen rechten und linken Hauptbronchus, die sich in der Lunge weiter verzweigen.'],
+  folds: ['Stimmlippen', 'Zwei Falten aus Muskel (M. vocalis), Stimmband und Schleimhaut. Ihre Schwingung zerhackt den Luftstrom in Schallpulse. Länge bei Männern ca. 17–24 mm, bei Frauen ca. 13–17 mm.'],
+  thyroid: ['Schildknorpel', 'Größter Kehlkopfknorpel, vorn als Adamsapfel tastbar. Die Stimmlippen setzen innen am Winkel an. Kippt er nach vorn, werden sie gedehnt und der Ton steigt.'],
+  cricoid: ['Ringknorpel', 'Siegelringförmige Basis des Kehlkopfs über der Luftröhre. Auf seiner Platte sitzen die Stellknorpel.'],
+  aryt: ['Stellknorpel (Aryknorpel)', 'Zwei kleine Pyramiden, die auf dem Ringknorpel drehen und gleiten. Sie öffnen die Stimmritze zum Atmen und schließen sie zum Sprechen.'],
+  epi: ['Kehldeckel (Epiglottis)', 'Verschließt beim Schlucken den Kehlkopfeingang. Beim Atmen und Sprechen steht er offen.'],
+  hyoid: ['Zungenbein', 'Hufeisenförmiger Knochen, an dem der Kehlkopf aufgehängt ist und an dem Zungenmuskeln ansetzen.'],
+  tract: ['Ansatzrohr', 'Rachen, Mundhöhle und bei Nasalen der Nasenraum. Etwa 17 cm lang bei Männern, 14–15 cm bei Frauen. Das Rohr wirkt als akustischer Filter mit Resonanzen, den Formanten.'],
+  nase: ['Nasenhöhle', 'Wird bei m, n und ŋ zugeschaltet: Das Gaumensegel senkt sich, der Schall entweicht durch die Nase. In Ruhe atmen wir durch die Nase.'],
+  zunge: ['Zunge', 'Der beweglichste Artikulator. Zungenrücken und Zungenwurzel bestimmen die Vokale, die Zungenspitze bildet t, d, n, l und s.'],
+  lippen: ['Lippen', 'Verschluss für p, b und m, Enge für f und v, Rundung für o, u, ü und ö. Rundung verlängert das Ansatzrohr und senkt alle Formanten.'],
+  kiefer: ['Unterkiefer', 'Öffnet den Mund und nimmt die Zunge mit. Weite Kieferöffnung hebt den ersten Formanten, etwa beim [a].'],
+  gaumen: ['Harter Gaumen', 'Knöchernes Dach der Mundhöhle. Vorn liegt der Zahndamm (Alveolen), Artikulationsstelle für t, d, n, s und l.'],
+  velum: ['Gaumensegel (Velum)', 'Weicher Gaumen mit Zäpfchen. Gehoben trennt er den Nasenraum ab, gesenkt öffnet er ihn für Nasale. Artikulationsstelle für k, g, ŋ und x.'],
+  zaehne: ['Schneidezähne', 'Die oberen Schneidezähne sind Artikulationsstelle für f und v: Die Unterlippe legt sich an ihre Kante.'],
+  wirbel: ['Wirbelsäule', 'Stützt Kopf und Rumpf. Eine aufrechte Haltung hält den Atemraum weit und den Kehlkopf beweglich.']
+};
+
+/* ---------- Modell aufbauen ---------- */
+const M = {};
+
+function buildModel() {
+  /* Haut: Fresnel-Glas */
+  const skinMat = new THREE.ShaderMaterial({
+    uniforms: { col: { value: new THREE.Color(0x7fb6c9) }, op: { value: .55 } },
+    vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.0); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix*mv; }',
+    fragmentShader: 'uniform vec3 col; uniform float op; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0-abs(dot(vN,vV)),2.4); gl_FragColor = vec4(col, f*op); }',
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+  });
+  M.skinMat = skinMat;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), skinMat); head.scale.set(7.4, 9.6, 7); head.position.set(1.3, 3.2, 0); scene.add(head);
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(1.1, 2.8, 20), skinMat); nose.rotation.z = -1.95; nose.position.set(8.7, 4.4, 0); scene.add(nose);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(4.0, 4.5, 13, 36, 1, true), skinMat); neck.position.set(-.4, -10.5, 0); scene.add(neck);
+  const torso = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), skinMat); torso.scale.set(7.8, 14, 11.5); torso.position.set(-1, -27, 0); scene.add(torso);
+
+  /* Skelett */
+  const boneM = mat(0xd9d2c3, 'skel', { opacity: .42, roughness: .8 });
+  for (let y = 1.5; y > -39; y -= (y > -12 ? 1.35 : 1.75)) {
+    const x = lerp(-3.2, -6.2, smooth(-9, -18, y)), big = y < -12;
+    const v = new THREE.Mesh(new THREE.BoxGeometry(big ? 1.8 : 1.3, big ? 1.25 : .95, big ? 2 : 1.6), boneM);
+    v.position.set(x, y, 0); add(v, INFO.wirbel);
+  }
+
+  /* Rippen */
+  const ribM = mat(0xe4dccb, 'breath', { opacity: .5, roughness: .7 });
+  M.ribs = new THREE.Group(); M.ribs.position.set(-1.5, -24, 0); scene.add(M.ribs);
+  for (let i = 0; i < 7; i++) {
+    const y0 = 7.5 - i * 2.3, rx = 5.0 + 1.9 * Math.sin(Math.min(i, 4) / 4 * Math.PI / 2), rz = 6.3 + 3.0 * Math.sin(Math.min(i, 4) / 4 * Math.PI / 2);
+    const pts = []; for (let k = 0; k < 40; k++) { const a = k / 40 * Math.PI * 2; pts.push(V3(rx * Math.cos(a), y0 - 1.7 * (1 + Math.cos(a)) / 2, rz * Math.sin(a))); }
+    add(tubeAlong(pts, .15, ribM, true, 90, 6), INFO.rippen, M.ribs);
+  }
+  const stern = new THREE.Mesh(new THREE.BoxGeometry(.5, 9, 1.4), ribM); stern.position.set(5.2, 2.5, 0); M.ribs.add(stern);
+
+  /* Lungen */
+  const lungM = mat(0xe07d95, 'breath', { opacity: .55, roughness: .65, emissive: 0x2a0710 });
+  const prof = [[.01, 8], [1.8, 7.2], [3.2, 5], [4.1, 1.5], [4.4, -2.5], [4.1, -6.2], [3.0, -7.7], [.01, -8]].map(p => new THREE.Vector2(p[0], p[1]));
+  M.lungs = [-1, 1].map(side => {
+    const l = new THREE.Mesh(new THREE.LatheGeometry(prof, 36), lungM); l.position.set(-.8, -24.2, side * 5); l.scale.set(1, 1, .85);
+    return add(l, INFO.lunge);
+  });
+  /* Zwerchfell */
+  const diaM = mat(0xc4566a, 'breath', { opacity: .6, roughness: .6, emissive: 0x1a0308 });
+  M.dia = add(new THREE.Mesh(new THREE.SphereGeometry(8.5, 48, 16, 0, Math.PI * 2, 0, 1.12), diaM), INFO.zwerchfell);
+  M.dia.position.set(-1, -36.2, 0); M.dia.scale.set(1, .55, 1.12);
+
+  /* Luftröhre + Bronchien */
+  const trM = mat(0xbcd3d8, 'breath', { opacity: .32, roughness: .5 });
+  add(new THREE.Mesh(new THREE.CylinderGeometry(.82, .82, 8, 24, 1, true), trM), INFO.trachea).position.set(-.1, -13.8, 0);
+  const ringM = mat(0xe8efe9, 'breath', { opacity: .75, roughness: .6 });
+  for (let y = -10.2; y > -17.6; y -= .72) {
+    const g = new THREE.TorusGeometry(.86, .085, 6, 28, 5.2); g.rotateZ(Math.PI - 5.74); g.rotateX(Math.PI / 2);
+    const r = new THREE.Mesh(g, ringM); r.position.set(-.1, y, 0); add(r, INFO.trachea);
+  }
+  [-1, 1].forEach(s => add(cylBetween(V3(-.1, -17.6, 0), V3(-.8, -21, s * 3.2), .55, trM), INFO.bronchien));
+
+  /* Kehlkopf */
+  const cartM = mat(0xcfe0e3, 'larynx', { opacity: .5, roughness: .45 });
+  [1, -1].forEach(s => {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.3, .12), cartM);
+    p.position.set(.326, -7.6, s * .717); p.rotation.y = s * .61; add(p, INFO.thyroid);
+  });
+  const cricM = mat(0xcfe0e3, 'larynx', { opacity: .5, roughness: .45 });
+  const cric = new THREE.Mesh(new THREE.TorusGeometry(1.05, .2, 10, 36), cricM); cric.rotation.x = Math.PI / 2; cric.position.set(.05, -9.2, 0); add(cric, INFO.cricoid);
+  const lam = new THREE.Mesh(new THREE.BoxGeometry(.24, 1.2, 1.4), cricM); lam.position.set(-.98, -8.8, 0); add(lam, INFO.cricoid);
+  const arM = mat(0xd98d98, 'larynx', { opacity: .9, roughness: .5 });
+  M.aryt = [-1, 1].map(s => { const a = new THREE.Mesh(new THREE.ConeGeometry(.26, .75, 14), arM); a.position.set(-.98, -7.55, s * .4); return add(a, INFO.aryt); });
+  const epiM = mat(0xe6d9b8, 'larynx', { opacity: .55, roughness: .5 });
+  const epi = new THREE.Mesh(new THREE.CylinderGeometry(.85, .6, 2.3, 18, 1, true, Math.PI / 2 - 1, 2), epiM);
+  epi.position.set(.1, -5.4, 0); epi.rotation.z = .25; add(epi, INFO.epi);
+  add(tubeAlong([V3(-.3, -5.3, 1.6), V3(1.2, -5.3, 1.25), V3(1.9, -5.3, 0), V3(1.2, -5.3, -1.25), V3(-.3, -5.3, -1.6)], .15, mat(0xddd4c2, 'larynx', { opacity: .6 }), false, 30, 8), INFO.hyoid);
+
+  /* Stimmlippen: verformbare Keile */
+  const foldM = mat(0xf2e8da, 'larynx', { opacity: 1, roughness: .35, emissive: 0x2a1a14 });
+  M.folds = [-1, 1].map(side => {
+    const U = 20, g = new THREE.BufferGeometry(), pos = new Float32Array((U + 1) * 4 * 3), idx = [];
+    for (let u = 0; u < U; u++) for (let k = 0; k < 4; k++) {
+      const a = u * 4 + k, b = u * 4 + (k + 1) % 4, c = (u + 1) * 4 + k, d = (u + 1) * 4 + (k + 1) % 4;
+      idx.push(a, c, b, b, c, d);
+    }
+    idx.push(0, 1, 2, 0, 2, 3); const e = U * 4; idx.push(e, e + 2, e + 1, e, e + 3, e + 2);
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setIndex(idx);
+    const mesh = new THREE.Mesh(g, foldM); mesh.userData.side = side; mesh.userData.U = U; add(mesh, INFO.folds);
+    return mesh;
+  });
+
+  /* Ansatzrohr: Mittellinie von der Glottis zu den Lippen */
+  const cpts = [[0, -8], [-.1, -6.5], [-.4, -4], [-.5, -1.5], [-.3, .6], [.5, 1.6], [2, 2.1], [4, 2.2], [6, 2.0], [7.6, 1.6]].map(p => V3(p[0], p[1], 0));
+  const curve = new THREE.CatmullRomCurve3(cpts, false, 'centripetal');
+  tract = { C: [], T: [], N: [], d: new Float32Array(NS + 1), a: new Float32Array(NS + 1), b: new Float32Array(NS + 1), cen: [] };
+  for (let i = 0; i <= NS; i++) {
+    const s = i / NS, C = curve.getPointAt(s), T = curve.getTangentAt(s).normalize();
+    tract.C.push(C); tract.T.push(T); tract.N.push(V3(-T.y, T.x, 0).normalize()); tract.cen.push(C.clone());
+  }
+  const tg = new THREE.BufferGeometry(), tpos = new Float32Array((NS + 1) * MR * 3), tcol = new Float32Array((NS + 1) * MR * 3), tidx = [];
+  for (let i = 0; i < NS; i++) for (let j = 0; j < MR; j++) {
+    const a = i * MR + j, b = i * MR + (j + 1) % MR, c = (i + 1) * MR + j, d = (i + 1) * MR + (j + 1) % MR; tidx.push(a, c, b, b, c, d);
+  }
+  tg.setAttribute('position', new THREE.BufferAttribute(tpos, 3)); tg.setAttribute('color', new THREE.BufferAttribute(tcol, 3)); tg.setIndex(tidx);
+  const tractM = mat(0xffffff, 'tract', { opacity: .4, vertexColors: true, depthWrite: false, roughness: .35, emissive: 0x1c1204 });
+  M.tract = add(new THREE.Mesh(tg, tractM), INFO.tract); M.tract.renderOrder = 2;
+
+  /* Zunge: folgt der unteren Rohrwand */
+  const TK = 16, TI0 = 14, TI1 = 110, TR = TI1 - TI0 + 1;
+  const zg = new THREE.BufferGeometry(), zpos = new Float32Array((TR * TK + 2) * 3), zidx = [];
+  for (let i = 0; i < TR - 1; i++) for (let j = 0; j < TK; j++) {
+    const a = i * TK + j, b = i * TK + (j + 1) % TK, c = (i + 1) * TK + j, d = (i + 1) * TK + (j + 1) % TK; zidx.push(a, c, b, b, c, d);
+  }
+  const cs = TR * TK, ce = TR * TK + 1;
+  for (let j = 0; j < TK; j++) { zidx.push(cs, j, (j + 1) % TK); zidx.push(ce, (TR - 1) * TK + (j + 1) % TK, (TR - 1) * TK + j); }
+  zg.setAttribute('position', new THREE.BufferAttribute(zpos, 3)); zg.setIndex(zidx);
+  M.tongue = add(new THREE.Mesh(zg, mat(0xd65a6c, 'artic', { opacity: .92, roughness: .5, emissive: 0x2a0508 })), INFO.zunge);
+  M.tongue.userData.dims = { TK, TI0, TI1, TR };
+
+  /* Lippen */
+  const lipM = mat(0xc9606e, 'artic', { opacity: .95, roughness: .45, emissive: 0x220408 });
+  M.lipU = add(new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), lipM), INFO.lippen);
+  M.lipL = add(new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), lipM), INFO.lippen);
+
+  /* Gaumen (fest) */
+  const palM = mat(0xe8dfcf, 'artic', { opacity: .55, roughness: .6 });
+  M.palate = add(ribbon(.68, .92, 1.8, .12, palM), INFO.gaumen);
+  /* Gaumensegel (beweglich) */
+  M.velum = add(ribbon(.54, .68, 1.5, .1, mat(0xd4707e, 'artic', { opacity: .8, roughness: .5 })), INFO.velum);
+  M.uvula = add(new THREE.Mesh(new THREE.SphereGeometry(.28, 14, 10), M.velum.material), INFO.velum);
+
+  /* Nasenraum */
+  const nasal = new THREE.CatmullRomCurve3([V3(-.45, 2.55, 0), V3(-.1, 3.9, 0), V3(1.5, 4.6, 0), V3(4.5, 4.75, 0), V3(7.2, 4.2, 0), V3(8.9, 3.4, 0)], false, 'centripetal');
+  M.nasalCurve = nasal;
+  const nm = mat(0xebb052, 'tract', { opacity: .22, depthWrite: false, roughness: .35, emissive: 0x1c1204 });
+  M.nasal = add(new THREE.Mesh(new THREE.TubeGeometry(nasal, 60, .75, 14, false), nm), INFO.nase); M.nasal.scale.set(1, 1, 1.35); M.nasal.renderOrder = 2;
+  M.nasalPts = []; for (let i = 0; i <= 60; i++) M.nasalPts.push(nasal.getPointAt(i / 60));
+
+  /* Zähne */
+  const toothM = mat(0xf4f1e8, 'artic', { opacity: .9, roughness: .3 });
+  for (let k = -5; k <= 5; k++) {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(.24, .85, .32), toothM); t.position.set(7.05 - .085 * k * k, 2.4, .44 * k); t.rotation.y = -k * .12; add(t, INFO.zaehne);
+  }
+  /* Unterkiefer mit unteren Zähnen, dreht um das Kiefergelenk */
+  M.jaw = new THREE.Group(); const piv = V3(-1.2, 3.0, 0); M.jaw.position.copy(piv); scene.add(M.jaw);
+  const jawInner = new THREE.Group(); jawInner.position.copy(piv).multiplyScalar(-1); M.jaw.add(jawInner);
+  add(tubeAlong([V3(-1.3, 3, 3.3), V3(-1.4, -1.2, 3.4), V3(2.5, -1.6, 3), V3(5.8, -1.3, 1.9), V3(7.3, -.5, 0), V3(5.8, -1.3, -1.9), V3(2.5, -1.6, -3), V3(-1.4, -1.2, -3.4), V3(-1.3, 3, -3.3)], .38, mat(0xe0d8c8, 'artic', { opacity: .5, roughness: .7 }), false, 90, 8), INFO.kiefer, jawInner);
+  for (let k = -5; k <= 5; k++) {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(.22, .75, .3), toothM); t.position.set(6.85 - .09 * k * k, .95, .42 * k); t.rotation.y = -k * .12; add(t, INFO.zaehne, jawInner);
+  }
+
+  /* Luftteilchen */
+  buildParticles();
+  /* Beschriftungen */
+  buildLabels();
+}
+
+function ribbon(s0, s1, halfW, off, m) {
+  const I0 = Math.round(s0 * NS), I1 = Math.round(s1 * NS), W = 10, rows = I1 - I0 + 1;
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(rows * (W + 1) * 3), idx = [];
+  for (let i = 0; i < rows - 1; i++) for (let j = 0; j < W; j++) { const a = i * (W + 1) + j, b = a + 1, c = a + W + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setIndex(idx);
+  const mesh = new THREE.Mesh(g, m); mesh.userData.rib = { I0, I1, W, halfW, off, rows };
+  return mesh;
+}
+
+/* ---------- Ansatzrohr-Querschnitt (Flächenfunktion) ---------- */
+const Rout = s => lerp(.6, 1.1, smooth(0, .1, s));
+const D0 = s => lerp(1.2, 2.2, smooth(.03, .12, s));
+function lateralR(s) {
+  let b = lerp(.8, 1.5, smooth(.02, .14, s)); b = lerp(b, 1.9, smooth(.55, .75, s));
+  return lerp(b, 1.55 * (1 - .45 * A.round), smooth(.9, 1, s));
+}
+function widthAt(s) {
+  let d = D0(s);
+  d *= 1 + (A.ph - 1) * bump(s, .12, .46);
+  d *= 1 + (A.oc * (1 + .3 * A.jaw) - 1) * bump(s, .68, .94);
+  d *= 1 - A.k * gauss(s, A.c, .065);
+  if (A.cPl < .95) d *= 1 - A.cDeg * gauss(s, A.cPl, .03);
+  const lipD = (.22 + 1.45 * A.jaw) * (1 - .55 * A.round) * (1 - A.lip);
+  d = lerp(d, lipD, smooth(.93, .985, s));
+  return Math.max(d, .03);
+}
+const protrude = s => A.round * .55 * smooth(.86, 1, s);
+
+function updateTract(t) {
+  const pos = M.tract.geometry.attributes.position.array, col = M.tract.geometry.attributes.color.array;
+  const showWave = S.stage === 3 && S.wave > 0, n = S.wave, om = Math.cos(t * 2 * Math.PI * .7);
+  for (let i = 0; i <= NS; i++) {
+    const s = i / NS, d = widthAt(s), b = lateralR(s), N = tract.N[i], T = tract.T[i], C = tract.C[i];
+    const off = Rout(s) - d / 2, pr = protrude(s);
+    const cx = C.x + N.x * off + T.x * pr, cy = C.y + N.y * off + T.y * pr;
+    tract.d[i] = d; tract.a[i] = d / 2; tract.b[i] = b; tract.cen[i].set(cx, cy, 0);
+    let r = .92, g = .66, bl = .3;
+    if (showWave) {
+      const p = Math.cos((2 * n - 1) * Math.PI * s / 2) * om;
+      if (p > 0) { r = lerp(.55, 1, p); g = lerp(.42, .86, p); bl = lerp(.2, .45, p); }
+      else { const q = -p; r = lerp(.55, .3, q); g = lerp(.42, .62, q); bl = lerp(.2, 1, q); }
+    }
+    for (let j = 0; j < MR; j++) {
+      const th = j / MR * Math.PI * 2, ca = Math.cos(th) * d / 2, sb = Math.sin(th) * b, o = (i * MR + j) * 3;
+      pos[o] = cx + N.x * ca; pos[o + 1] = cy + N.y * ca; pos[o + 2] = sb;
+      col[o] = r; col[o + 1] = g; col[o + 2] = bl;
+    }
+  }
+  M.tract.geometry.attributes.position.needsUpdate = true; M.tract.geometry.attributes.color.needsUpdate = true;
+  M.tract.geometry.computeVertexNormals(); M.tract.geometry.computeBoundingSphere();
+
+  /* Zunge */
+  const { TK, TI0, TR } = M.tongue.userData.dims, zp = M.tongue.geometry.attributes.position.array;
+  for (let r = 0; r < TR; r++) {
+    const i = TI0 + r, s = i / NS, N = tract.N[i], T = tract.T[i], C = tract.C[i], d = tract.d[i], pr = protrude(s);
+    const wx = C.x + N.x * (Rout(s) - d) + T.x * pr, wy = C.y + N.y * (Rout(s) - d) + T.y * pr;
+    const th = 1.15 * lerp(.45, 1, smooth(.117, .22, s)) * (1 - .72 * smooth(.8, .917, s));
+    const w = 1.55 * (1 - .6 * smooth(.82, .917, s)) * lerp(.7, 1, smooth(.117, .2, s));
+    const cx = wx - N.x * th, cy = wy - N.y * th;
+    for (let j = 0; j < TK; j++) {
+      const a = j / TK * Math.PI * 2, o = (r * TK + j) * 3;
+      zp[o] = cx + N.x * Math.cos(a) * th; zp[o + 1] = cy + N.y * Math.cos(a) * th; zp[o + 2] = Math.sin(a) * w;
+    }
+    if (r === 0) { const o = TR * TK * 3; zp[o] = cx - T.x * .3; zp[o + 1] = cy - T.y * .3; zp[o + 2] = 0; }
+    if (r === TR - 1) { const o = (TR * TK + 1) * 3; zp[o] = cx + T.x * .35; zp[o + 1] = cy + T.y * .35; zp[o + 2] = 0; }
+  }
+  M.tongue.geometry.attributes.position.needsUpdate = true; M.tongue.geometry.computeVertexNormals(); M.tongue.geometry.computeBoundingSphere();
+
+  /* Lippen */
+  const C1 = tract.C[NS], N1 = tract.N[NS], T1 = tract.T[NS], d1 = tract.d[NS], pr1 = protrude(1), ang = Math.atan2(T1.y, T1.x);
+  const lw = lateralR(1) * 1.05;
+  M.lipU.position.set(C1.x + N1.x * (Rout(1) + .26) + T1.x * pr1, C1.y + N1.y * (Rout(1) + .26) + T1.y * pr1, 0);
+  M.lipL.position.set(C1.x + N1.x * (Rout(1) - d1 - .26) + T1.x * pr1, C1.y + N1.y * (Rout(1) - d1 - .26) + T1.y * pr1, 0);
+  [M.lipU, M.lipL].forEach(l => { l.scale.set(.52 + A.round * .12, .37, lw); l.rotation.z = ang; });
+
+  /* Gaumen und Gaumensegel */
+  updateRibbon(M.palate, 0);
+  updateRibbon(M.velum, A.velum);
+  const vr = M.velum.userData.rib, vp = M.velum.geometry.attributes.position.array, mid = Math.floor(vr.W / 2) * 3;
+  M.uvula.position.set(vp[mid], vp[mid + 1] - .15, 0);
+
+  /* Unterkiefer */
+  M.jaw.rotation.z = -A.jaw * .2;
+}
+function updateRibbon(mesh, open) {
+  const r = mesh.userData.rib, p = mesh.geometry.attributes.position.array;
+  for (let i = 0; i < r.rows; i++) {
+    const ii = r.I0 + i, s = ii / NS, C = tract.C[ii], N = tract.N[ii], f = 1 - i / (r.rows - 1);
+    const drop = open * 1.35 * Math.pow(f, 1.2);
+    for (let j = 0; j <= r.W; j++) {
+      const z = (j / r.W * 2 - 1) * r.halfW, vault = (z / r.halfW) ** 2 * .6, o = (i * (r.W + 1) + j) * 3;
+      const off = Rout(s) + r.off - vault - drop;
+      p[o] = C.x + N.x * off - (open ? f * open * .25 : 0); p[o + 1] = C.y + N.y * off; p[o + 2] = z;
+    }
+  }
+  mesh.geometry.attributes.position.needsUpdate = true; mesh.geometry.computeVertexNormals(); mesh.geometry.computeBoundingSphere();
+}
+
+function updateFolds() {
+  M.folds.forEach(mesh => {
+    const side = mesh.userData.side, U = mesh.userData.U, p = mesh.geometry.attributes.position.array;
+    for (let u = 0; u <= U; u++) {
+      const uu = u / U, x = 1.05 - 2.0 * uu, lat = side * (.25 + .8 * uu);
+      const up = side * (.02 + halfGap(uu, 'up')), lo = side * (.02 + halfGap(uu, 'lo'));
+      const ring = [[up, -7.92], [lat, -7.88], [lat, -8.6], [lo, -8.24]];
+      for (let k = 0; k < 4; k++) { const o = (u * 4 + k) * 3; p[o] = x; p[o + 1] = ring[k][1]; p[o + 2] = ring[k][0]; }
+    }
+    mesh.geometry.attributes.position.needsUpdate = true; mesh.geometry.computeVertexNormals(); mesh.geometry.computeBoundingSphere();
+  });
+  M.aryt.forEach((a, i) => { a.position.z = (i ? 1 : -1) * (.3 + A.abd * .5); a.rotation.x = (i ? -1 : 1) * A.abd * .3; });
+}
+
+/* ---------- Luftteilchen ---------- */
+const NP = 380, parts = [];
+let lowerPts = [[], []];
+function buildParticles() {
+  [-1, 1].forEach((z, k) => {
+    const c = new THREE.CatmullRomCurve3([V3(-.8, -25.5, z * 4.8), V3(-.8, -21.5, z * 3.3), V3(-.3, -18.6, z * .9), V3(-.1, -17.4, 0), V3(-.1, -13, 0), V3(0, -9.6, 0), V3(0, -8, 0)], false, 'centripetal');
+    for (let i = 0; i <= 100; i++) lowerPts[k].push(c.getPointAt(i / 100));
+  });
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(NP * 3), col = new Float32Array(NP * 3);
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d');
+  const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.35, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
+  const pm = new THREE.PointsMaterial({ size: .5, map: new THREE.CanvasTexture(cv), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  M.points = new THREE.Points(g, pm); M.points.frustumCulled = false; M.points.renderOrder = 5; scene.add(M.points);
+  for (let i = 0; i < NP; i++) { const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * .72; parts.push({ s: Math.random() * 2.35, side: i % 2, ox: Math.cos(a) * r, oz: Math.sin(a) * r, nasal: false, j: Math.random() }); }
+}
+function samplePts(arr, u) { const f = clamp(u, 0, 1) * (arr.length - 1), i = Math.min(Math.floor(f), arr.length - 2), t = f - i; return [lerp(arr[i].x, arr[i + 1].x, t), lerp(arr[i].y, arr[i + 1].y, t), lerp(arr[i].z, arr[i + 1].z, t)]; }
+function updateParticles(dt, t) {
+  const pos = M.points.geometry.attributes.position.array, col = M.points.geometry.attributes.color.array;
+  const speed = flowNow * 1.6, oralClosed = A.lip > .9 || (A.cDeg > .9 && A.cPl > .56);
+  const pN = A.velum * (oralClosed ? 1 : .35);
+  const air = [.47, .72, 1], pink = [1, .45, .66];
+  for (let i = 0; i < NP; i++) {
+    const p = parts[i];
+    p.s += speed * dt * (.85 + .3 * p.j);
+    if (p.s > 2.35) { p.s -= 2.35; p.nasal = false; }
+    if (p.s < 0) { p.s += 2.35; p.nasal = Math.random() < pN; }
+    if (p.s >= 1.5 && p.s < 1.56 && speed > 0 && !p.flagged) { p.nasal = Math.random() < pN; p.flagged = true; }
+    if (p.s < 1.5) p.flagged = false;
+    let x, y, z, fade = 1;
+    const s = p.s;
+    if (s < 1) {
+      const q = samplePts(lowerPts[p.side], s); const r = s < .3 ? lerp(3, .55, s / .3) : (s > .95 ? lerp(.55, .2, (s - .95) / .05) : .55);
+      x = q[0] + p.ox * r; y = q[1] + (s < .3 ? p.oz * r * .6 : 0); z = q[2] + p.oz * r;
+    } else if (s < 2) {
+      const q = s - 1;
+      if (p.nasal && q >= .56) {
+        const u = (q - .56) / .44, pt = samplePts(M.nasalPts, u); x = pt[0]; y = pt[1] + p.ox * .55; z = p.oz * .9;
+      } else {
+        const f = q * NS, i0 = Math.min(Math.floor(f), NS - 1), tt = f - i0, N = tract.N[i0];
+        const cx = lerp(tract.cen[i0].x, tract.cen[i0 + 1].x, tt), cy = lerp(tract.cen[i0].y, tract.cen[i0 + 1].y, tt);
+        const a = lerp(tract.a[i0], tract.a[i0 + 1], tt) * .85, b = lerp(tract.b[i0], tract.b[i0 + 1], tt) * .8;
+        x = cx + N.x * a * p.ox; y = cy + N.y * a * p.ox; z = b * p.oz;
+      }
+    } else {
+      const u = s - 2;
+      if (p.nasal) { const e = M.nasalPts[M.nasalPts.length - 1]; x = e.x + u * 10; y = e.y - u * 6 + p.ox * (.4 + u * 5); z = p.oz * (.6 + u * 6); }
+      else { const e = tract.cen[NS], T = tract.T[NS]; x = e.x + T.x * u * 12; y = e.y + T.y * u * 12 + p.ox * (.3 + u * 5); z = p.oz * (.6 + u * 7); }
+      fade = 1 - u / .35;
+    }
+    pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+    let c = air, br = .9;
+    if (s > 1 && voicedAmt > .1) {
+      const w = .5 + .5 * Math.cos(2 * Math.PI * (phaseV - (s - 1) * 4));
+      const m = voicedAmt * (.35 + .65 * w); c = [lerp(air[0], pink[0], m), lerp(air[1], pink[1], m), lerp(air[2], pink[2], m)]; br = .7 + .5 * w;
+    }
+    const k = br * clamp(fade, 0, 1) * (flowNow === 0 ? .55 : 1);
+    col[i * 3] = c[0] * k; col[i * 3 + 1] = c[1] * k; col[i * 3 + 2] = c[2] * k;
+  }
+  M.points.geometry.attributes.position.needsUpdate = true; M.points.geometry.attributes.color.needsUpdate = true;
+}
+
+/* ---------- Beschriftungen ---------- */
+const labelsEl = $('#labels');
+function buildLabels() {
+  const L = (text, stages, fn, col) => {
+    const el = document.createElement('div'); el.className = 'lbl'; el.innerHTML = '<i></i><span></span>'; el.querySelector('span').textContent = text;
+    el.style.setProperty('--lc', col); labelsEl.appendChild(el); labelDefs.push({ el, stages, fn, v: V3(0, 0, 0), shown: null });
+  };
+  const c1 = 'var(--v1)', c2 = 'var(--v2)', c3 = 'var(--v3)', c4 = 'var(--v4)';
+  L('Lunge', [1], v => v.set(-.8, -21, 8.3), c1);
+  L('Zwerchfell', [1], v => v.set(4.5, M.dia.position.y + 8.5 * M.dia.scale.y - .6, 5), c1);
+  L('Luftröhre', [1], v => v.set(-.1, -14, .9), c1);
+  L('Brustkorb', [1], v => v.set(4.8, -21, -6), c1);
+  L('Kehlkopf', [1, 3], v => v.set(1.3, -7.6, 1), c2);
+  L('Stimmlippen', [2], v => v.set(.3, -7.9, .35), c2);
+  L('Stimmritze (Glottis)', [2], v => v.set(-.6, -7.9, 0), c2);
+  L('Schildknorpel', [2], v => v.set(1.2, -6.6, .3), c2);
+  L('Ringknorpel', [2], v => v.set(.6, -9.35, 1), c2);
+  L('Stellknorpel', [2], v => v.set(-1, -7.2, -.7), c2);
+  L('Kehldeckel', [2], v => v.set(.95, -4.4, 0), c2);
+  L('Rachen', [3], v => v.set(tract.cen[40].x - 1.2, tract.cen[40].y, 0), c3);
+  L('Mundhöhle', [3], v => v.set(tract.cen[95].x, tract.cen[95].y, 1.9), c3);
+  L('Nasenhöhle', [3, 4], v => v.set(4.5, 4.9, 1), c3);
+  L('Gaumensegel', [3, 4], v => { const i = 66; v.set(tract.C[i].x + tract.N[i].x * 1.1, tract.C[i].y + tract.N[i].y * 1.1 - A.velum * .6, -1.4); }, c4);
+  L('Zunge', [4], v => { const i = 88; v.set(tract.C[i].x + tract.N[i].x * (Rout(.73) - tract.d[i]) - .2, tract.C[i].y + tract.N[i].y * (Rout(.73) - tract.d[i]) - .3, 1.4); }, c4);
+  L('Lippen', [4], v => v.copy(M.lipU.position).add(V3(.4, .3, 0)), c4);
+  L('Harter Gaumen', [4], v => { const i = 100; v.set(tract.C[i].x + tract.N[i].x * 1.25, tract.C[i].y + tract.N[i].y * 1.25, 1.2); }, c4);
+  L('Zähne', [4], v => v.set(7.1, 2.1, .5), c4);
+  L('Unterkiefer', [4], v => { v.set(4.5, -1.5, 2.6).applyMatrix4(M.jaw.matrixWorld.clone().multiply(new THREE.Matrix4().makeTranslation(1.2, -3, 0))); }, c4);
+}
+
+if (hasGL) buildModel();
+
+/* =====================================================================
+   Kamera
+   ===================================================================== */
+const VIEWS = {
+  1: { t: [0, -13.5, 0], r: 76, th: .55, ph: 1.4 },
+  2: { t: [.1, -8, 0], r: 7, th: -1.25, ph: .4 },
+  3: { t: [2.8, -1.8, 0], r: 36, th: .3, ph: 1.45 },
+  4: { t: [5, 1.8, 0], r: 19, th: .55, ph: 1.28 }
+};
+const cam = { t: [0, -15, 0], r: 70, th: .55, ph: 1.4, anim: true, goal: null };
+function setGoal(n, instant) {
+  const v = VIEWS[n]; cam.goal = { t: v.t.slice(), r: v.r, th: v.th, ph: v.ph }; cam.anim = true;
+  if (instant || reduceMotion) { Object.assign(cam, JSON.parse(JSON.stringify(cam.goal))); }
+}
+function updateCamera(dt) {
+  if (!camera) return;
+  if (cam.anim && cam.goal) {
+    const k = 1 - Math.exp(-dt * 3.2);
+    for (let i = 0; i < 3; i++) cam.t[i] = lerp(cam.t[i], cam.goal.t[i], k);
+    cam.r = lerp(cam.r, cam.goal.r, k); cam.th = lerp(cam.th, cam.goal.th, k); cam.ph = lerp(cam.ph, cam.goal.ph, k);
+    if (Math.abs(cam.r - cam.goal.r) < .01 && Math.abs(cam.th - cam.goal.th) < .001) cam.anim = false;
+  }
+  if (film.orbit) { cam.th += dt * film.orbit; if (cam.goal) cam.goal.th += dt * film.orbit; }
+  const asp = camera.aspect, r = cam.r * (asp < 1 ? Math.pow(1 / asp, .75) : 1);
+  camera.position.set(cam.t[0] + r * Math.sin(cam.ph) * Math.sin(cam.th), cam.t[1] + r * Math.cos(cam.ph), cam.t[2] + r * Math.sin(cam.ph) * Math.cos(cam.th));
+  camera.lookAt(cam.t[0], cam.t[1], cam.t[2]);
+}
+if (hasGL) {
+  const el = renderer.domElement, ptrs = new Map(); let down = null, pinch0 = 0, moved = 0;
+  el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); down = [e.clientX, e.clientY]; moved = 0; el.classList.add('drag');
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+  el.addEventListener('pointermove', e => {
+    if (!ptrs.has(e.pointerId)) { hover(e); return; }
+    const prev = ptrs.get(e.pointerId), dx = e.clientX - prev[0], dy = e.clientY - prev[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+    moved += Math.abs(dx) + Math.abs(dy); cam.anim = false;
+    if (ptrs.size === 1) { cam.th -= dx * .0065; cam.ph = clamp(cam.ph - dy * .0065, .12, 3.0); }
+    else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0) cam.r = clamp(cam.r * pinch0 / d, 4, 140); pinch0 = d; }
+  });
+  const up = e => {
+    if (ptrs.has(e.pointerId)) { ptrs.delete(e.pointerId); if (!ptrs.size) { el.classList.remove('drag'); if (moved < 6 && down) pick(e); down = null; } }
+  };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('wheel', e => { e.preventDefault(); cam.anim = false; cam.r = clamp(cam.r * Math.exp(e.deltaY * .0012), 4, 140); }, { passive: false });
+  el.addEventListener('dblclick', () => setGoal(S.stage));
+}
+const ray = hasGL ? new THREE.Raycaster() : null, mouse = hasGL ? new THREE.Vector2() : null;
+let hovered = null;
+function hit(e) {
+  const r = renderer.domElement.getBoundingClientRect(); mouse.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(mouse, camera);
+  const list = pickables.filter(m => m.material.opacity > .2);
+  const h = ray.intersectObjects(list, false); return h.length ? h[0].object : null;
+}
+let hoverT = 0;
+function hover(e) {
+  const now = performance.now(); if (now - hoverT < 50) return; hoverT = now;
+  const o = hit(e); renderer.domElement.classList.toggle('hot', !!o);
+  if (hovered !== o) { hovered = o; }
+}
+function pick(e) {
+  const o = hit(e); if (!o) { $('#info').hidden = true; return; }
+  $('#infoTitle').textContent = o.userData.info[0]; $('#infoText').textContent = o.userData.info[1]; $('#info').hidden = false;
+}
+$('#infoClose').addEventListener('click', () => { $('#info').hidden = true; });
+
+/* =====================================================================
+   Segmente: frei, gehaltener Konsonant, Silbe
+   ===================================================================== */
+function segment() {
+  if (S.syl) {
+    const e = clockNow() / 1000 - S.syl.t0, c = S.syl.c, dc = LEAD + MDUR[c.m];
+    if (e < dc) return { ph: 'C', c, e };
+    if (e < dc + VOWDUR) return { ph: 'V', c, e: e - dc };
+    if (e < dc + VOWDUR + .18) return { ph: 'end', c };
+    S.syl = null;
+  }
+  return S.cons ? { ph: 'hold', c: S.cons } : { ph: 'free' };
+}
+function artTarget(seg) {
+  const v = VOWELS[S.vowel];
+  const t = { c: v.c, k: v.k, ph: v.ph, oc: v.oc, jaw: v.jaw, round: v.round, lip: 0, cPl: .8, cDeg: 0, velum: 0, abd: 0 };
+  const c = seg.ph === 'C' || seg.ph === 'hold' ? seg.c : null;
+  if (seg.ph === 'free' && S.mode === 'rest') { t.k = .15; t.c = .6; t.ph = 1; t.oc = .9; t.jaw = .08; t.round = .05; t.lip = 1; t.velum = 1; }
+  if (c) {
+    const P = CPLACE[c.pl], deg = MDEG[c.m];
+    if (c.pl === 'bilabial') t.lip = deg; else if (c.pl === 'labiodental') t.lip = deg * .93;
+    else if (c.pl !== 'glottal') { t.cPl = P.s; t.cDeg = deg; }
+    if (P.round) t.round = Math.max(t.round, P.round);
+    if (c.pl !== 'glottal') t.jaw = Math.min(t.jaw, .28);
+    if (c.m === 'nasal') t.velum = 1;
+    if (c.m === 'vibrant') t.cDeg = deg * (.72 + .28 * Math.sin(clockNow() / 1000 * 2 * Math.PI * 6));
+    if (c.pl === 'palatal' || c.pl === 'postalveolar') { t.c = Math.max(t.c, .74); t.k = Math.max(t.k, .5); }
+  }
+  /* Glottis */
+  const b = breath, exhale = b.phase === 'out';
+  let voicing = voicingFor(seg, b);
+  if (voicing > .05) t.abd = 0;
+  else if (c && c.ipa === 'ʔ') t.abd = 0;
+  else if (c && c.ipa === 'h') t.abd = .6;
+  else if (seg.ph === 'C' || seg.ph === 'V' || (seg.ph === 'hold' && exhale)) t.abd = .45;
+  else t.abd = b.phase === 'in' ? (S.mode === 'speech' ? 1 : .85) : .7;
+  if (seg.ph === 'V' && seg.c.m === 'plosiv' && !seg.c.v && seg.e < .065) t.abd = .45;
+  if (film.abd !== null && seg.ph === 'free') t.abd = film.abd;
+  return t;
+}
+function voicingFor(seg, b) {
+  if (seg.ph === 'free') return b.phon;
+  if (seg.ph === 'hold') { const c = seg.c; if (!c.v || b.phase !== 'out') return 0; return (c.m === 'plosiv' ? .18 : c.m === 'frikativ' ? .45 : 1) * smooth(.02, .07, b.u) * (1 - smooth(.9, .96, b.u)); }
+  if (seg.ph === 'C') { const c = seg.c; if (!c.v || seg.e < LEAD * .6) return 0; return c.m === 'plosiv' ? .18 : c.m === 'frikativ' ? .45 : 1; }
+  if (seg.ph === 'V') { if (seg.c.m === 'plosiv' && !seg.c.v && seg.e < .065) return 0; return smooth(0, .03, seg.e); }
+  return 0;
+}
+function formTarget(seg) {
+  let F = VOWELS[S.vowel].F.concat([3500]), B = BW.slice(), nasal = 0;
+  const k = VK();
+  const c = seg.ph === 'C' || seg.ph === 'hold' ? seg.c : null;
+  if (c) {
+    if (c.m === 'nasal') { F = NASF[c.pl].concat([3500]); B = [100, 200, 260, 300]; nasal = 1; }
+    else if (c.ipa === 'l') F = [360, 1100, 2700, 3500];
+    else if (c.ipa === 'j') F = [260, 2150, 3000, 3500];
+    else if (c.pl === 'uvular') F = [450, 1250, 2400, 3500];
+    else if (LOCUS[c.pl]) { F[1] = lerp(F[1], LOCUS[c.pl], .65); F[0] = Math.min(F[0], 320); if (c.pl === 'bilabial' || c.pl === 'labiodental') F[2] *= .92; }
+  }
+  F = F.map(f => f * k);
+  return { F, B, nasal };
+}
+function audioTarget(seg) {
+  const c = seg.c, b = breath, exhale = b.phase === 'out' || seg.ph === 'C' || seg.ph === 'V';
+  const loud = .35 + .65 * (S.press - 3) / 22;
+  let voice = voicedAmt * loud, asp = voicedAmt * VOICES[S.voice].breathy + (b.phase === 'in' && seg.ph === 'free' ? .05 * Math.abs(b.flow) * (S.mode === 'speech' ? 1 : .4) : 0);
+  let fric = { type: 'bandpass', f: 3000, Q: 1, g: 0 }, trill = 0, fg = 1;
+  const active = seg.ph === 'C' || seg.ph === 'hold' ? c : null;
+  if (active) {
+    const airOn = seg.ph === 'C' ? (seg.e > LEAD * .6) : (b.phase === 'out');
+    if (active.m === 'frikativ' && FRIC[active.ipa] && airOn) { const f = FRIC[active.ipa]; fric = { type: f.type, f: f.f, Q: f.Q, g: f.g * .5 * (.6 + .4 * loud) }; }
+    if (active.ipa === 'h' && airOn) asp = .35 * loud;
+    if (active.m === 'vibrant') trill = 1;
+    if (active.m === 'plosiv' || active.m === 'nasal') fg = active.m === 'nasal' ? .55 : .5;
+  }
+  if (seg.ph === 'V' && c && c.m === 'plosiv' && !c.v && seg.e < .065) asp = .45 * loud;
+  if (!exhale && seg.ph === 'hold') fric.g = 0;
+  return { f0: S.f0, tilt: tiltNow(), voice, asp, F: FC.F, B: FC.B, nasal: FC.nasal, fg, fric, trill, master: S.sound ? .85 : 0 };
+}
+function flowFor(seg, b) {
+  if (seg.ph === 'C') { const c = seg.c; if (c.m === 'plosiv') return 0; if (c.ipa === 'ʔ') return 0; return c.m === 'frikativ' && !c.v ? .3 : .15; }
+  if (seg.ph === 'V' || seg.ph === 'end') return .15;
+  if (b.phase === 'in') return b.flow * (S.mode === 'speech' ? .95 : .4);
+  if (S.mode === 'rest' && seg.ph === 'free') return .25 * b.flow + .02;
+  if (seg.ph === 'hold') { const c = seg.c; if (c.m === 'plosiv') return 0; return c.m === 'frikativ' && !c.v ? .3 : c.ipa === 'h' ? .32 : .14; }
+  return b.phon > .5 ? .13 : .22;
+}
+
+function playSyllable(c) {
+  S.syl = { c, t0: clockNow() / 1000 };
+  if (!S.playing) setPlaying(true);
+  if (S.sound && AE.ctx && c.m === 'plosiv' && BURST[c.pl]) AE.burst(AE.ctx.currentTime + LEAD + MDUR[c.m], BURST[c.pl]);
+}
+
+/* =====================================================================
+   2D-Diagramme
+   ===================================================================== */
+let tok = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement), g = n => cs.getPropertyValue(n).trim();
+  tok = { ink: g('--ink'), muted: g('--muted'), line: g('--line'), surface: g('--surface'), s2: g('--surface-2'), c1: g('--c1'), c2: g('--c2'), c3: g('--c3'), c4: g('--c4'), mono: g('--f-mono'), body: g('--f-body'), ipa: g('--f-ipa') };
+}
+function fit(cv) {
+  const r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.max(10, Math.round(r.width)), h = Math.max(10, Math.round(r.height));
+  if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h); return { g, w, h };
+}
+function alpha(col, a) {
+  if (col.startsWith('#')) { const n = col.length === 4 ? col.slice(1).split('').map(c => c + c).join('') : col.slice(1); const v = parseInt(n, 16); return `rgba(${v >> 16 & 255},${v >> 8 & 255},${v & 255},${a})`; }
+  return col;
+}
+
+/* Atmung */
+const BUF = 300, bVol = new Float32Array(BUF), bPh = new Float32Array(BUF), bP = new Float32Array(BUF); let bHead = 0, bAcc = 0;
+function subPressure(b, seg) {
+  if (seg.ph === 'C' || seg.ph === 'V') return S.press;
+  if (b.phase === 'in') return -1.8 * Math.abs(b.flow) * (S.mode === 'speech' ? 1.4 : 1);
+  if (S.mode === 'rest') return 1.2 * b.flow;
+  return lerp(1.5, S.press, b.phon > 0 ? Math.max(b.phon, smooth(0, .05, b.u)) : 0);
+}
+function drawBreath() {
+  const cv = $('#cvBreath'); if (!cv.offsetParent) return;
+  const { g, w, h } = fit(cv), gw = 64, L = 34, R = w - gw - 12, T = 12, Bm = h - 22;
+  g.font = `11px ${tok.mono}`; g.textBaseline = 'middle';
+  const y = v => Bm - v / 1.5 * (Bm - T);
+  g.strokeStyle = tok.line; g.lineWidth = 1; g.fillStyle = tok.muted; g.textAlign = 'right';
+  [0, .5, 1, 1.5].forEach(v => { g.beginPath(); g.moveTo(L, y(v)); g.lineTo(R, y(v)); g.stroke(); g.fillText(fmt(v, 1), L - 5, y(v)); });
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  [['−10 s', L], ['−5 s', (L + R) / 2], ['jetzt', R]].forEach(([t, x]) => g.fillText(t, x, Bm + 6));
+  const xs = i => L + i / (BUF - 1) * (R - L);
+  g.fillStyle = alpha(tok.c2, .16);
+  for (let i = 0; i < BUF; i++) { const k = (bHead + i) % BUF; if (bPh[k] > .5) g.fillRect(xs(i) - .5, T, (R - L) / BUF + 1, Bm - T); }
+  g.beginPath(); for (let i = 0; i < BUF; i++) { const k = (bHead + i) % BUF; const X = xs(i), Y = y(bVol[k]); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }
+  g.lineTo(R, Bm); g.lineTo(L, Bm); g.closePath(); g.fillStyle = alpha(tok.c1, .13); g.fill();
+  g.beginPath(); for (let i = 0; i < BUF; i++) { const k = (bHead + i) % BUF; const X = xs(i), Y = y(bVol[k]); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }
+  g.strokeStyle = tok.c1; g.lineWidth = 2; g.stroke();
+  const lk = (bHead + BUF - 1) % BUF; g.fillStyle = tok.c1; g.beginPath(); g.arc(R, y(bVol[lk]), 3.5, 0, 7); g.fill();
+  g.fillStyle = tok.muted; g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText('Liter', L + 4, T);
+  /* Druckanzeige */
+  const gx = w - gw + 6, gy0 = T + 12, gy1 = Bm, pmin = -5, pmax = 30, py = p => gy1 - (p - pmin) / (pmax - pmin) * (gy1 - gy0);
+  g.fillStyle = tok.muted; g.textAlign = 'center'; g.fillText('cmH₂O', gx + 16, T - 2);
+  g.fillStyle = tok.s2; g.strokeStyle = tok.line; g.fillRect(gx + 8, gy0, 16, gy1 - gy0); g.strokeRect(gx + 8.5, gy0 + .5, 15, gy1 - gy0 - 1);
+  const p = bP[lk], ph = bPh[lk] > .5; g.fillStyle = ph ? tok.c2 : tok.c1;
+  const y0 = py(0), yp = py(clamp(p, pmin, pmax)); g.fillRect(gx + 9, Math.min(y0, yp), 14, Math.abs(yp - y0));
+  g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = tok.muted;
+  [0, 10, 20, 30].forEach(v => { g.fillRect(gx + 24, py(v), 4, 1); g.fillText(String(v), gx + 30, py(v)); });
+  g.strokeStyle = tok.ink; g.beginPath(); g.moveTo(gx + 6, y0 + .5); g.lineTo(gx + 26, y0 + .5); g.stroke();
+}
+
+/* Stimmlippen */
+function drawGlottis() {
+  const cv = $('#cvGlottis'); if (!cv.offsetParent) return;
+  const { g, w, h } = fit(cv);
+  const sz = Math.min(h - 30, w * .46), R = sz / 2, cx = R + 6, cy = h / 2;
+  g.save(); g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.clip();
+  const grd = g.createRadialGradient(cx, cy, R * .1, cx, cy, R); grd.addColorStop(0, '#b24e5c'); grd.addColorStop(1, '#3a1118'); g.fillStyle = grd; g.fillRect(cx - R, cy - R, 2 * R, 2 * R);
+  g.fillStyle = 'rgba(150,52,66,.95)';
+  [-1, 1].forEach(s => { g.beginPath(); g.ellipse(cx + s * R * .5, cy - R * .02, R * .2, R * .6, s * .12, 0, Math.PI * 2); g.fill(); });
+  g.fillStyle = '#d98a90'; g.beginPath(); g.ellipse(cx, cy - R * .86, R * .5, R * .2, 0, 0, Math.PI * 2); g.fill();
+  const Ay = cy - R * .62, Py = cy + R * .42, k = R * 1.05, U = 24;
+  const edge = s => { const a = []; for (let i = 0; i <= U; i++) { const u = i / U; a.push([cx + s * halfGap(u, 'up') * k, lerp(Ay, Py, u)]); } return a; };
+  const Le = edge(-1), Re = edge(1);
+  g.fillStyle = '#070304'; g.beginPath(); Le.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); for (let i = U; i >= 0; i--) g.lineTo(Re[i][0], Re[i][1]); g.closePath(); g.fill();
+  [[Le, -1], [Re, 1]].forEach(([E, s]) => {
+    g.beginPath(); E.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]));
+    for (let i = U; i >= 0; i--) { const u = i / U, wd = R * (.06 + .17 * Math.sin(Math.min(1, u * 1.25) * Math.PI / 2)); g.lineTo(E[i][0] + s * wd, E[i][1]); }
+    g.closePath(); const fg = g.createLinearGradient(cx, 0, cx + s * R * .3, 0); fg.addColorStop(0, '#fbf5ec'); fg.addColorStop(1, '#d9c9b8'); g.fillStyle = fg; g.fill();
+    g.strokeStyle = 'rgba(80,30,30,.35)'; g.lineWidth = 1; g.stroke();
+    const pe = E[U]; g.fillStyle = '#c96a76'; g.beginPath(); g.ellipse(pe[0] + s * R * .1, Py + R * .12, R * .13, R * .11, 0, 0, Math.PI * 2); g.fill();
+  });
+  g.restore();
+  g.strokeStyle = tok.line; g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.stroke();
+  g.fillStyle = tok.muted; g.font = `11px ${tok.mono}`; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText('vorn', cx, cy - R - 2);
+  g.textBaseline = 'top'; g.fillText('hinten', cx, cy + R + 3);
+  /* Glottis-Luftstrom */
+  const x0 = cx + R + 22, x1 = w - 10, top = 26, bot = h - 34;
+  if (x1 - x0 < 80) return;
+  g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = tok.ink; g.font = `600 12px ${tok.body}`; g.fillText('Luftstrom durch die Glottis', x0, 14);
+  const oq = oqNow(), T = 1000 / S.f0, xs = u => x0 + u / 3 * (x1 - x0), ys = v => bot - v * (bot - top);
+  g.strokeStyle = tok.line; g.lineWidth = 1; g.beginPath(); g.moveTo(x0, bot + .5); g.lineTo(x1, bot + .5); g.stroke();
+  const voiced = voicedAmt > .1;
+  if (voiced) {
+    g.fillStyle = alpha(tok.muted, .1);
+    for (let p = 0; p < 3; p++) g.fillRect(xs(p + oq), top, xs(p + 1) - xs(p + oq), bot - top);
+    g.beginPath(); g.moveTo(x0, bot);
+    for (let i = 0; i <= 240; i++) { const u = i / 80; g.lineTo(xs(u), ys(glot(u) * .9)); }
+    g.lineTo(x1, bot); g.closePath(); g.fillStyle = alpha(tok.c2, .22); g.fill();
+    g.beginPath(); for (let i = 0; i <= 240; i++) { const u = i / 80; i ? g.lineTo(xs(u), ys(glot(u) * .9)) : g.moveTo(xs(u), ys(glot(u) * .9)); }
+    g.strokeStyle = tok.c2; g.lineWidth = 2; g.stroke();
+    const cu = 1 + (phaseV - Math.floor(phaseV)); g.strokeStyle = tok.ink; g.lineWidth = 1; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(xs(cu), top - 4); g.lineTo(xs(cu), bot); g.stroke(); g.setLineDash([]);
+    g.fillStyle = tok.ink; g.beginPath(); g.arc(xs(cu), ys(glot(cu) * .9), 3.5, 0, 7); g.fill();
+    g.fillStyle = tok.muted; g.font = `10.5px ${tok.mono}`; g.textAlign = 'center';
+    g.fillText('offen', xs(oq / 2), top + 10); g.fillText('zu', xs(oq + (1 - oq) / 2), top + 10);
+  } else {
+    g.fillStyle = tok.muted; g.font = `12px ${tok.body}`; g.textAlign = 'center';
+    g.fillText(breath.phase === 'in' ? 'Einatmung: Glottis weit offen' : 'Glottis offen, keine Schwingung', (x0 + x1) / 2, (top + bot) / 2);
+  }
+  g.fillStyle = tok.muted; g.font = `10.5px ${tok.mono}`; g.textAlign = 'center'; g.textBaseline = 'top';
+  for (let p = 0; p <= 3; p++) { g.fillRect(xs(p) - .5, bot, 1, 4); g.fillText(fmt(p * T, 1), xs(p), bot + 6); }
+  g.textAlign = 'right'; g.fillText('ms', x1, bot + 19);
+}
+
+/* Spektrum */
+function drawSpec() {
+  const cv = $('#cvSpec'); if (!cv.offsetParent) return;
+  const { g, w, h } = fit(cv), L = 34, R = w - 10, T = 22, Bm = h - 24, FMAX = 5000;
+  const F = FC.F, B = FC.B, tilt = tiltNow(), fx = f => L + f / FMAX * (R - L);
+  const env = f => 20 * Math.log10(tractMag(f, F, B) * (FC.nasal ? .55 : 1));
+  const src = k => -6 * tilt * Math.log2(k);
+  let top = -1e9; for (let f = 0; f < FMAX; f += 20) top = Math.max(top, env(f)); top = Math.ceil((top + 6) / 10) * 10;
+  const bottom = top - 60, fy = db => T + (top - db) / 60 * (Bm - T);
+  g.font = `10.5px ${tok.mono}`; g.strokeStyle = tok.line; g.lineWidth = 1; g.fillStyle = tok.muted;
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (let d = top; d >= bottom; d -= 20) { g.beginPath(); g.moveTo(L, fy(d)); g.lineTo(R, fy(d)); g.stroke(); g.fillText(String(d), L - 5, fy(d)); }
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  for (let f = 0; f <= FMAX; f += 1000) { g.beginPath(); g.moveTo(fx(f), Bm); g.lineTo(fx(f), Bm + 4); g.stroke(); g.fillText(f ? (f / 1000) + ' kHz' : '0', fx(f), Bm + 7); }
+  g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText('dB', 6, 4);
+  for (let k = 1; k * S.f0 < FMAX; k++) {
+    const f = k * S.f0, X = fx(f), ys = fy(Math.max(src(k), bottom)), yo = fy(Math.max(src(k) + env(f), bottom));
+    g.strokeStyle = alpha(tok.muted, .55); g.lineWidth = 1.5; g.beginPath(); g.moveTo(X, Bm); g.lineTo(X, ys); g.stroke();
+    g.fillStyle = tok.c3; g.beginPath(); g.arc(X, yo, 2.6, 0, 7); g.fill();
+  }
+  g.beginPath(); for (let i = 0; i <= 300; i++) { const f = i / 300 * FMAX, Y = fy(Math.max(env(f), bottom)); i ? g.lineTo(fx(f), Y) : g.moveTo(fx(f), Y); }
+  g.strokeStyle = tok.c3; g.lineWidth = 2; g.stroke();
+  g.fillStyle = tok.ink; g.font = `600 11px ${tok.mono}`; g.textAlign = 'center'; g.textBaseline = 'bottom';
+  for (let i = 0; i < 3; i++) { const X = fx(F[i]); if (X < R - 8) g.fillText('F' + (i + 1), X, fy(env(F[i])) - 4); }
+}
+
+/* Vokalviereck */
+const VCH = { f2: [2500, 600], f1: [200, 850] };
+function vcMap(w, h) {
+  const k = VK(), VCH = { f2: [2500 * k, 600 * k], f1: [200 * k, 850 * k] };
+  const L = 14, R = w - 44, T = 24, Bm = h - 12;
+  return { L, R, T, Bm, x: f2 => L + (VCH.f2[0] - f2) / (VCH.f2[0] - VCH.f2[1]) * (R - L), y: f1 => T + (f1 - VCH.f1[0]) / (VCH.f1[1] - VCH.f1[0]) * (Bm - T) };
+}
+function drawVowel() {
+  const cv = $('#cvVowel'); if (!cv.offsetParent) return;
+  const { g, w, h } = fit(cv), m = vcMap(w, h);
+  g.font = `10.5px ${tok.mono}`; g.strokeStyle = tok.line; g.lineWidth = 1; g.fillStyle = tok.muted;
+  g.textAlign = 'center'; g.textBaseline = 'bottom';
+  const k = VK();
+  [3000, 2500, 2000, 1500, 1000].filter(f => f <= 2500 * k && f >= 700 * k).forEach(f => { const X = m.x(f); g.beginPath(); g.moveTo(X, m.T); g.lineTo(X, m.Bm); g.stroke(); g.fillText(String(f), X, m.T - 4); });
+  g.textAlign = 'left'; g.textBaseline = 'middle';
+  [300, 500, 700, 900].filter(f => f >= 230 * k && f <= 820 * k).forEach(f => { const Y = m.y(f); g.beginPath(); g.moveTo(m.L, Y); g.lineTo(m.R, Y); g.stroke(); g.fillText(String(f), m.R + 5, Y); });
+  g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText('F2 Hz', m.R, 11); g.textAlign = 'left'; g.fillText('F1', m.R + 5, m.Bm + 2);
+  const poly = ['i', 'e', 'ɛ', 'a', 'o', 'u']; g.beginPath(); poly.forEach((v, i) => { const F = VOWELS[v].F.map(x => x * k), X = m.x(F[1]), Y = m.y(F[0]); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.closePath();
+  g.fillStyle = alpha(tok.c3, .07); g.fill(); g.strokeStyle = alpha(tok.c3, .35); g.stroke();
+  VORDER.forEach(v => {
+    const F = VOWELS[v].F.map(x => x * k), X = m.x(F[1]), Y = m.y(F[0]), sel = v === S.vowel;
+    g.fillStyle = sel ? tok.c3 : tok.s2; g.strokeStyle = sel ? tok.c3 : tok.muted; g.lineWidth = 1.2;
+    g.beginPath(); g.arc(X, Y, 11, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = sel ? tok.surface : tok.ink; g.font = `500 14px ${tok.ipa}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(v, X, Y + .5);
+  });
+  if (!FC.nasal) { const X = m.x(clamp(FC.F[1], 600 * k, 2500 * k)), Y = m.y(clamp(FC.F[0], 200 * k, 850 * k)); g.strokeStyle = tok.ink; g.lineWidth = 1.5; g.beginPath(); g.arc(X, Y, 16, 0, 7); g.stroke(); }
+}
+$('#cvVowel').addEventListener('click', e => {
+  const cv = e.currentTarget, r = cv.getBoundingClientRect(), m = vcMap(r.width, r.height), x = e.clientX - r.left, y = e.clientY - r.top;
+  let best = null, bd = 30; VORDER.forEach(v => { const F = VOWELS[v].F.map(x => x * VK()), d = Math.hypot(m.x(F[1]) - x, m.y(F[0]) - y); if (d < bd) { bd = d; best = v; } });
+  if (best) setVowel(best);
+});
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+const app = $('#app');
+const STAGE_NAMES = { 1: 'Atmung', 2: 'Stimmlippen', 3: 'Resonanz', 4: 'Artikulation' }, STAGE_HASH = { 1: 'atmung', 2: 'stimmlippen', 3: 'resonanz', 4: 'artikulation' };
+function setStage(n, instant) {
+  S.stage = n; app.dataset.stage = n;
+  $$('.step').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.stage === n)));
+  [1, 2, 3, 4].forEach(i => { $('#p' + i).hidden = i !== n; });
+  $('#chipStageTxt').textContent = STAGE_NAMES[n]; $('#chipDot').style.background = `var(--v${n})`;
+  setGoal(n, instant); $('#info').hidden = true; store.set('stimme.stage', String(n));
+  if (n === 2 && S.mode === 'rest') setMode('speech');
+}
+$$('.step').forEach(b => {
+  b.addEventListener('click', () => setStage(+b.dataset.stage));
+  b.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const n = ((S.stage - 1 + (e.key === 'ArrowRight' ? 1 : 3)) % 4) + 1; setStage(n); $('#tab' + n).focus(); e.preventDefault();
+  });
+});
+function setPlaying(p) {
+  S.playing = p; const b = $('#btnPlay');
+  b.querySelector('span').textContent = p ? 'Anhalten' : 'Weiter';
+  b.setAttribute('aria-label', p ? 'Animation anhalten' : 'Animation fortsetzen');
+  b.querySelector('svg').innerHTML = p ? '<rect x="2.5" y="2" width="3" height="10" fill="currentColor"/><rect x="8.5" y="2" width="3" height="10" fill="currentColor"/>' : '<path d="M3 2l9 5-9 5z" fill="currentColor"/>';
+}
+$('#btnPlay').addEventListener('click', () => setPlaying(!S.playing));
+$('#btnSound').addEventListener('click', () => {
+  if (!AE.ctx && !AE.init()) return;
+  S.sound = !S.sound; if (S.sound && AE.ctx.state !== 'running') AE.ctx.resume();
+  const b = $('#btnSound'); b.setAttribute('aria-pressed', String(S.sound)); b.querySelector('span').textContent = S.sound ? 'Ton aus' : 'Ton an';
+  if (S.sound && !S.playing) setPlaying(true);
+});
+function setF0(f) { S.f0 = f; $('#f0').value = sliderFromF0(f); $('#f0Out').textContent = `${Math.round(f)} Hz · ${noteName(f)}`; }
+$('#f0').addEventListener('input', e => setF0(f0FromSlider(+e.target.value)));
+function setVoice(v) {
+  S.voice = v; const V = VOICES[v]; setF0(V.f0);
+  $$('[data-voice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.voice === v)));
+  const r = n => Math.round((2 * n - 1) * 35000 / (4 * V.L) / 10) * 10;
+  $('#tubeTxt').textContent = `${V.name}: L ≈ ${fmt(V.L, V.L % 1 ? 1 : 0)} cm, also etwa ${r(1)}, ${r(2)} und ${r(3)} Hz.`;
+  store.set('stimme.voice', v); updateSel();
+}
+$$('[data-voice]').forEach(b => b.addEventListener('click', () => setVoice(b.dataset.voice)));
+function setPress(p) { S.press = p; $('#pressOut').textContent = `${fmt(p, p % 1 ? 1 : 0)} cmH₂O · ca. ${Math.round(splFromP(p))} dB`; }
+$('#press').addEventListener('input', e => setPress(+e.target.value));
+function setMode(m) { S.mode = m; $('#modeSpeech').setAttribute('aria-pressed', String(m === 'speech')); $('#modeRest').setAttribute('aria-pressed', String(m === 'rest')); simT = 0; }
+$('#modeSpeech').addEventListener('click', () => setMode('speech'));
+$('#modeRest').addEventListener('click', () => setMode('rest'));
+$('#chkLabels').addEventListener('change', e => { S.labels = e.target.checked; });
+$('#btnView').addEventListener('click', () => setGoal(S.stage));
+$('#slow').addEventListener('input', e => { S.slow = +e.target.value; $('#slowOut').textContent = S.slow + '×'; });
+$$('[data-mode]').forEach(b => b.addEventListener('click', () => { S.wave = +b.dataset.mode; $$('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); }));
+
+/* Vokale */
+$$('[data-vowels]').forEach(row => {
+  VORDER.forEach(v => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'vbtn'; b.dataset.v = v; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<span class="ipa"></span><small></small>`; b.querySelector('.ipa').textContent = v; b.querySelector('small').textContent = VOWELS[v].w;
+    b.setAttribute('aria-label', `Vokal ${v} wie in ${VOWELS[v].w}`);
+    b.addEventListener('click', () => { setVowel(v); if (S.stage === 4) clearCons(); });
+    row.appendChild(b);
+  });
+});
+function setVowel(v) {
+  S.vowel = v; $$('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  if (S.mode === 'rest') setMode('speech');
+  updateSel();
+}
+/* Konsonanten-Tabelle */
+(function buildTable() {
+  const t = $('#consTable');
+  let html = '<thead><tr><th scope="col"><span class="cap" style="font-size:10.5px">Art \\ Stelle</span></th>' + PLACES.map(p => `<th scope="col" title="${p[0]}: ${p[3]}">${p[1]}</th>`).join('') + '</tr></thead><tbody>';
+  MANNERS.forEach(([m, mn]) => {
+    html += `<tr><th scope="row">${mn}</th>`;
+    PLACES.forEach(([pl]) => {
+      const cell = CONS.filter(c => c.pl === pl && c.m === m);
+      const vl = cell.find(c => !c.v), vd = cell.find(c => c.v);
+      const btn = c => c ? `<button type="button" class="cbtn" data-c="${c.ipa}" aria-pressed="false" title="[${c.ipa}] wie in ${c.w}">${c.ipa}</button>` : '<span class="cbtn ph"></span>';
+      html += `<td>${cell.length ? btn(vl) + btn(vd) : ''}</td>`;
+    });
+    html += '</tr>';
+  });
+  t.innerHTML = html + '</tbody>';
+  $$('.cbtn[data-c]', t).forEach(b => b.addEventListener('click', () => {
+    const c = CONS.find(x => x.ipa === b.dataset.c); S.cons = c; updateSel();
+    if (S.mode === 'rest') setMode('speech');
+    if (S.sound) playSyllable(c);
+  }));
+})();
+function clearCons() { S.cons = null; updateSel(); }
+$('#btnClear').addEventListener('click', clearCons);
+$('#btnSyl').addEventListener('click', () => { const c = S.cons || CONS[0]; if (!S.cons) { S.cons = c; updateSel(); } playSyllable(c); });
+function describe(c) {
+  const pl = PLACES.find(p => p[0] === c.pl), mn = MANNERS.find(m => m[0] === c.m)[1];
+  const kind = c.m === 'lateral' ? 'lateraler Approximant' : mn;
+  return `${c.v ? 'stimmhafter' : 'stimmloser'} ${pl[2]} ${kind}`;
+}
+function updateSel() {
+  $$('.cbtn[data-c]').forEach(b => b.setAttribute('aria-pressed', String(S.cons && b.dataset.c === S.cons.ipa)));
+  if (S.cons) {
+    const c = S.cons, pl = PLACES.find(p => p[0] === c.pl);
+    $('#selIpa').textContent = c.ipa; $('#selDesc').textContent = describe(c).replace(/^./, m => m.toUpperCase());
+    $('#selEx').textContent = `Beispiel: ${c.w} · ${pl[3]}${c.m === 'nasal' ? ', Gaumensegel gesenkt' : ''}`;
+    $('#btnSylTxt').textContent = `Silbe [${c.ipa}${S.vowel}] abspielen`;
+  } else {
+    $('#selIpa').textContent = S.vowel; $('#selDesc').textContent = `Vokal [${S.vowel}]: ${VNAME[S.vowel]}`;
+    $('#selEx').textContent = `Beispiel: ${VOWELS[S.vowel].w} · F1 ${Math.round(VOWELS[S.vowel].F[0] * VK())} Hz, F2 ${Math.round(VOWELS[S.vowel].F[1] * VK())} Hz`;
+    $('#btnSylTxt').textContent = `Silbe [p${S.vowel}] abspielen`;
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea,select')) return;
+  if (['1', '2', '3', '4'].includes(e.key)) setStage(+e.key);
+  else if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); setPlaying(!S.playing); }
+});
+
+/* =====================================================================
+   Hauptschleife
+   ===================================================================== */
+const FOCUS = {
+  1: { breath: 1, larynx: .8, tract: .45, artic: .45, skel: .55 },
+  2: { breath: .22, larynx: 1, tract: .12, artic: .12, skel: .15 },
+  3: { breath: .25, larynx: .55, tract: 1, artic: .55, skel: .3 },
+  4: { breath: .25, larynx: .45, tract: .55, artic: 1, skel: .45 }
+};
+let last = performance.now(), frame = 0, lastChip = '', uiT = 0;
+function resize() {
+  if (!renderer) return;
+  const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix();
+}
+if (hasGL) { new ResizeObserver(resize).observe(view); resize(); }
+
+function tick(now) {
+  if (manualNow !== null && now !== manualNow) return;
+  const dt = clamp((now - last) / 1000, 0, .05); last = now; frame++;
+  if (frame % 30 === 1) readTokens();
+  if (S.playing) { simT += dt; phaseV += dt * S.f0 / S.slow; }
+  breath = film.hold ? { phase: 'out', u: .4, vol: .6, flow: 1, phon: 1 } : breathState(simT);
+  const seg = segNow = segment();
+  const tv = (film.voice !== null && seg.ph === 'free') ? film.voice : voicingFor(seg, breath);
+  voicedAmt = lerp(voicedAmt, tv, 1 - Math.exp(-dt * 25));
+  const at = artTarget(seg), kA = 1 - Math.exp(-dt * (seg.ph === 'C' || seg.ph === 'V' ? 22 : 9));
+  for (const key in at) A[key] = lerp(A[key], at[key], kA);
+  const ft = formTarget(seg), kF = 1 - Math.exp(-dt * 16);
+  for (let i = 0; i < 4; i++) { FC.F[i] = lerp(FC.F[i], ft.F[i], kF); FC.B[i] = lerp(FC.B[i], ft.B[i], kF); }
+  FC.nasal = ft.nasal;
+  flowNow = (S.playing || S.syl) ? flowFor(seg, breath) : 0;
+  if (AE.ctx) AE.apply(audioTarget(seg));
+
+  if (S.playing) {
+    bAcc += dt;
+    while (bAcc >= 1 / 30) { bAcc -= 1 / 30; bVol[bHead] = breath.vol; bPh[bHead] = voicedAmt > .3 ? 1 : 0; bP[bHead] = subPressure(breath, seg); bHead = (bHead + 1) % BUF; }
+  }
+
+  if (hasGL) {
+    const vol = breath.vol;
+    M.lungs.forEach(l => { const s = 1 + vol * .06; l.scale.set(s, 1 + vol * .07, .85 * s); l.position.y = -24.2 - vol * .5; });
+    M.dia.position.y = -36.2 - vol * 1.5; M.dia.scale.y = .55 - vol * .1;
+    M.ribs.scale.set(1 + vol * .045, 1, 1 + vol * .06); M.ribs.position.y = -24 + vol * .35;
+    M.points.visible = film.particles;
+    updateTract(now / 1000); updateFolds(); updateParticles((S.playing || S.syl) ? dt : 0, now / 1000);
+    const fo = FOCUS[S.stage], kO = 1 - Math.exp(-dt * 5);
+    mats.forEach(m => {
+      let f = fo[m.userData.group] ?? 1;
+      if (m === M.nasal.material) f *= .35 + .65 * A.velum;
+      m.opacity = lerp(m.opacity, m.userData.base * f, kO);
+      m.visible = m.opacity > .015;
+    });
+    M.skinMat.uniforms.op.value = S.stage === 2 ? .25 : .55;
+    const col = hovered && hovered.material;
+    mats.forEach(m => m.emissive && m.emissive.copy(m.userData.emis));
+    if (col && col.emissive) col.emissive.setHex(0x3a3a3a);
+    if (film.hi) { const p = .55 + .45 * Math.sin(now / 1000 * 5); (PARTS[film.hi] || []).forEach(o => { const m = o.material; if (m.emissive) m.emissive.setRGB(.5 * p, .42 * p, .18 * p); m.opacity = Math.max(m.opacity, .75 * m.userData.base); }); }
+    updateCamera(dt);
+    renderer.render(scene, camera);
+    /* Beschriftungen */
+    const r = view.getBoundingClientRect();
+    labelDefs.forEach(L => {
+      const on = S.labels && L.stages.includes(S.stage);
+      if (on) {
+        L.fn(L.v); L.v.project(camera);
+        const vis = L.v.z < 1 && Math.abs(L.v.x) < 1.05 && Math.abs(L.v.y) < 1.05;
+        if (vis) L.el.style.transform = `translate(${((L.v.x + 1) / 2 * r.width - 3.5).toFixed(1)}px,${((1 - L.v.y) / 2 * r.height - 7).toFixed(1)}px)`;
+        if (L.shown !== vis) { L.el.hidden = !vis; L.shown = vis; }
+      } else if (L.shown !== false) { L.el.hidden = true; L.shown = false; }
+    });
+  }
+
+  /* Status + Diagramme */
+  let chip;
+  if (seg.ph === 'C' || seg.ph === 'V' || seg.ph === 'end') chip = `Silbe [${seg.c.ipa}${S.vowel}]`;
+  else if (breath.phase === 'in') chip = S.mode === 'speech' ? 'Einatmung durch den Mund' : 'Einatmung durch die Nase';
+  else if (voicedAmt > .3) chip = `Ausatmung · Stimme ${Math.round(S.f0)} Hz`;
+  else chip = S.mode === 'rest' ? 'Ausatmung (Ruhe)' : 'Ausatmung';
+  if (!S.playing && seg.ph === 'free') chip += ' · angehalten';
+  if (chip !== lastChip) { $('#chipState').textContent = chip; lastChip = chip; }
+
+  if (S.stage === 1) drawBreath();
+  else if (S.stage === 2) drawGlottis();
+  else if (S.stage === 3) { drawSpec(); drawVowel(); }
+
+  if (now - uiT > 120) {
+    uiT = now;
+    if (S.stage === 1) {
+      $('#r1Phase').textContent = breath.phase === 'in' ? 'Einatmen' : voicedAmt > .3 ? 'Ausatmen + Stimme' : 'Ausatmen';
+      $('#r1Vol').textContent = `${fmt(breath.vol, 2)} l`;
+      $('#r1P').textContent = `${fmt(subPressure(breath, seg), 1)} cmH₂O`;
+    } else if (S.stage === 2) {
+      $('#r2F0').textContent = `${Math.round(S.f0)} Hz`; $('#r2T').textContent = `${fmt(1000 / S.f0, 1)} ms`;
+      $('#r2OQ').textContent = `${Math.round(oqNow() * 100)} %`; $('#r2Slow').textContent = `${fmt(S.f0 / S.slow, 1)} Hz sichtbar`;
+    } else if (S.stage === 3) {
+      $('#r3F1').textContent = `${Math.round(FC.F[0])} Hz`; $('#r3F2').textContent = `${Math.round(FC.F[1])} Hz`; $('#r3F3').textContent = `${Math.round(FC.F[2])} Hz`;
+    }
+  }
+  if (manualNow === null) requestAnimationFrame(tick);
+}
+
+window.Stimmapparat = {
+  S, A, FC, film, cam, VIEWS, CONS, VOICES, PARTS,
+  setStage, setVowel, setVoice, setMode, setF0, setPress, setPlaying, playSyllable,
+  setCons(ipa) { S.cons = ipa ? CONS.find(c => c.ipa === ipa) : null; updateSel(); },
+  setWave(n) { S.wave = n; $$('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(+x.dataset.mode === n))); },
+  setSlow(n) { S.slow = n; $('#slow').value = n; $('#slowOut').textContent = n + '×'; },
+  setLabels(on) { S.labels = on; $('#chkLabels').checked = on; },
+  renderAt(ms) { manualNow = ms; tick(ms); },
+  camGoal(g, instant) { cam.goal = { t: g.t.slice(), r: g.r, th: g.th, ph: g.ph }; cam.anim = true; if (instant) Object.assign(cam, JSON.parse(JSON.stringify(cam.goal))); }
+};
+
+/* Start */
+readTokens();
+setPress(7); setPlaying(S.playing); setVowel('a');
+setVoice(VOICES[store.get('stimme.voice')] ? store.get('stimme.voice') : 'f'); S.mode = 'speech';
+const hashStage = Object.entries(STAGE_HASH).find(([, v]) => location.hash === '#' + v);
+const saved = +store.get('stimme.stage');
+setStage(hashStage ? +hashStage[0] : (saved >= 1 && saved <= 4 ? saved : 1), true);
+phaseV = .3;
+(function prefill() { /* Verlauf der letzten 10 s vorberechnen, damit das Diagramm sofort gefüllt ist */
+  const t0 = 12; for (let i = 0; i < BUF; i++) { const b = breathState(t0 - (BUF - 1 - i) / 30); bVol[i] = b.vol; bPh[i] = b.phon > .3 ? 1 : 0; bP[i] = b.phase === 'in' ? -2 : (b.phon > .3 ? S.press : 1.5); }
+  bHead = 0; simT = t0;
+})();
+requestAnimationFrame(tick);
+})();
+</script>

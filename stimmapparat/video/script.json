@@ -1,0 +1,1235 @@
+{
+ "title": "Der Stimmapparat",
+ "subtitle": "Wie aus Atemluft Ton, Stimme und Sprache werden",
+ "voice": "de-thorsten-vits",
+ "lengthScale": 1.0,
+ "gap": 0.5,
+ "scenePad": [
+  0.6,
+  0.9
+ ],
+ "chapters": [
+  {
+   "id": "intro",
+   "label": "Einführung"
+  },
+  {
+   "id": "atmung",
+   "label": "Atmung",
+   "color": "#78B4F5"
+  },
+  {
+   "id": "kehlkopf",
+   "label": "Kehlkopf",
+   "color": "#F07CA2"
+  },
+  {
+   "id": "schwingung",
+   "label": "Stimmlippen",
+   "color": "#F07CA2"
+  },
+  {
+   "id": "resonanz",
+   "label": "Resonanz",
+   "color": "#EBB052"
+  },
+  {
+   "id": "artikulation",
+   "label": "Artikulation",
+   "color": "#57CDA7"
+  },
+  {
+   "id": "fazit",
+   "label": "Zusammenfassung"
+  }
+ ],
+ "scenes": [
+  {
+   "chapter": "intro",
+   "reset": {
+    "stage": 1,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "shot": "overview",
+    "orbit": 0.06,
+    "labels": false,
+    "card": null,
+    "title": null,
+    "intro": true
+   },
+   "lines": [
+    {
+     "text": "Haben Sie sich schon einmal gefragt, was in Ihrem Körper passiert, wenn Sie einfach nur „Hallo“ sagen?",
+     "say": "Haben Sie sich schon einmal gefragt, was in Ihrem Körper passiert, wenn Sie einfach nur Hallo sagen?"
+    },
+    {
+     "text": "Es ist ein kleines Wunder! In Sekundenbruchteilen arbeiten Dutzende Muskeln perfekt zusammen."
+    },
+    {
+     "text": "Begleiten Sie mich auf eine Reise mit der Atemluft: von der Lunge über den Kehlkopf bis zu den Lippen."
+    },
+    {
+     "text": "Vier Systeme spielen dabei zusammen.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Die Atmung liefert die Energie.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Die Stimmlippen erzeugen den Ton.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Das Ansatzrohr gibt ihm seinen Klang.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Und die Artikulation formt daraus Sprache.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       4
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "atmung",
+   "num": 1,
+   "role": "Energiequelle",
+   "reset": {
+    "stage": 1,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "shot": "torso",
+    "orbit": 0.03,
+    "labels": true,
+    "card": "breath",
+    "intro": false,
+    "bullets": [
+     "Zwerchfell: Hauptatemmuskel",
+     "Sprechatmung: kurz ein, lang aus",
+     "Atemstütze hält den Druck konstant",
+     "Subglottischer Druck: 5–10 cmH₂O"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Alles beginnt mit einem Atemzug."
+    },
+    {
+     "text": "Beim Einatmen spannt sich das Zwerchfell an und flacht ab, wie ein Kolben, der nach unten gleitet.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Zwerchfell"
+      ],
+      [
+       "0",
+       "bullet",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Gleichzeitig heben die Zwischenrippenmuskeln den Brustkorb an.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Brustkorb und Rippen"
+      ]
+     ]
+    },
+    {
+     "text": "Der Brustraum dehnt sich aus, in der Lunge entsteht ein Sog, und die Luft strömt hinein.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Lunge"
+      ]
+     ]
+    },
+    {
+     "text": "In Ruhe geschieht das ganz nebenbei: zwölf- bis sechzehnmal pro Minute, leise und meist durch die Nase.",
+     "say": "In Ruhe geschieht das ganz nebenbei: zwölf bis sechzehn mal pro Minute, leise und meist durch die Nase.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ],
+      [
+       "0",
+       "mode",
+       "rest"
+      ]
+     ]
+    },
+    {
+     "text": "Doch sobald wir sprechen, ändert sich alles! Wir holen kurz und schnell Luft, durch den Mund, und atmen dann lange und kontrolliert wieder aus.",
+     "cues": [
+      [
+       "0",
+       "mode",
+       "speech"
+      ],
+      [
+       "40%",
+       "bullet",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Jetzt arbeiten Zwerchfell und Bauchmuskeln gegeneinander. Diese Atemstütze hält den Luftdruck unter den Stimmlippen erstaunlich konstant.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Zwerchfell"
+      ],
+      [
+       "30%",
+       "bullet",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Man nennt ihn den subglottischen Druck. Er ist der Motor unserer Stimme!",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ],
+      [
+       "0",
+       "bullet",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Im Gespräch sind das nur fünf bis zehn Zentimeter Wassersäule. Wollen wir lauter werden, erhöhen wir einfach den Druck.",
+     "cues": [
+      [
+       "30%",
+       "pressTo",
+       [
+        16,
+        1.5
+       ]
+      ],
+      [
+       "85%",
+       "pressTo",
+       [
+        7,
+        1.5
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "kehlkopf",
+   "num": 2,
+   "role": "Schallquelle",
+   "reset": {
+    "stage": 2,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "shot": "neck",
+    "orbit": 0.04,
+    "labels": true,
+    "card": "glottis",
+    "hold": false,
+    "bullets": [
+     "Ringknorpel und Schildknorpel bilden das Gerüst",
+     "Stellknorpel öffnen und schließen die Glottis",
+     "Atmen: Glottis offen",
+     "Sprechen: Glottis geschlossen"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Die Atemluft steigt nun durch die Luftröhre nach oben, direkt zum Kehlkopf.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Luftröhre (Trachea)"
+      ]
+     ]
+    },
+    {
+     "text": "Sein Gerüst besteht aus Knorpeln: ganz unten der Ringknorpel,",
+     "cues": [
+      [
+       "0",
+       "shot",
+       "larynxSide"
+      ],
+      [
+       "0",
+       "hi",
+       "Ringknorpel"
+      ],
+      [
+       "0",
+       "bullet",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "darüber der Schildknorpel, den Sie vorn am Hals als Adamsapfel ertasten können,",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Schildknorpel"
+      ]
+     ]
+    },
+    {
+     "text": "und hinten zwei kleine, aber sehr wichtige Stellknorpel.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Stellknorpel (Aryknorpel)"
+      ],
+      [
+       "0",
+       "bullet",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Ganz oben sitzt der Kehldeckel. Beim Schlucken klappt er über den Kehlkopf, damit nichts in die Luftröhre gerät.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Kehldeckel (Epiglottis)"
+      ]
+     ]
+    },
+    {
+     "text": "Und hier, mitten im Luftweg, liegen die Hauptdarsteller: die beiden Stimmlippen! Den Spalt zwischen ihnen nennt man Stimmritze oder Glottis.",
+     "cues": [
+      [
+       "0",
+       "shot",
+       "larynxTop"
+      ],
+      [
+       "0",
+       "hi",
+       "Stimmlippen"
+      ],
+      [
+       "0",
+       "glottis",
+       0.25
+      ],
+      [
+       "0",
+       "vforce",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Beim Atmen ziehen die Stellknorpel die Stimmlippen weit auseinander. Die Glottis öffnet sich wie ein V.",
+     "say": "Beim Atmen ziehen die Stellknorpel die Stimmlippen weit auseinander. Die Glottis öffnet sich wie ein Vau.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ],
+      [
+       "0",
+       "glottis",
+       1
+      ],
+      [
+       "0",
+       "bullet",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Zum Sprechen legen die Stellknorpel die Stimmlippen aneinander. Jetzt kann sich darunter Druck aufbauen.",
+     "cues": [
+      [
+       "0",
+       "glottis",
+       0
+      ],
+      [
+       "0",
+       "bullet",
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "schwingung",
+   "num": 3,
+   "role": "Schallquelle",
+   "reset": {
+    "stage": 2,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "shot": "larynxTop",
+    "orbit": 0,
+    "labels": true,
+    "card": "glottis",
+    "hold": true,
+    "glottis": null,
+    "vforce": 1,
+    "slow": 110,
+    "bullets": [
+     "Druck öffnet die Glottis von unten nach oben",
+     "Bernoulli-Effekt und Elastizität schließen sie",
+     "Jeder Schluss erzeugt einen Schallimpuls",
+     "Frau ≈ 210 Hz · Mann ≈ 115 Hz · Kind ≈ 300 Hz"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Und jetzt kommt der wichtigste Moment: Der Ton entsteht!"
+    },
+    {
+     "text": "Der Luftdruck unter den geschlossenen Stimmlippen steigt und steigt, bis er sie auseinanderdrückt. Sie öffnen sich von unten nach oben.",
+     "cues": [
+      [
+       "0",
+       "bullet",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Die Luft strömt mit hoher Geschwindigkeit durch den schmalen Spalt. Dabei sinkt dort der Druck, das ist der Bernoulli-Effekt. Zusammen mit ihrer Elastizität zieht er die Stimmlippen blitzschnell wieder zusammen.",
+     "say": "Die Luft strömt mit hoher Geschwindigkeit durch den schmalen Spalt. Dabei sinkt dort der Druck, das ist der Bernoulli Effekt. Zusammen mit ihrer Elastizität zieht er die Stimmlippen blitzschnell wieder zusammen.",
+     "cues": [
+      [
+       "0",
+       "bullet",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Die Glottis geht wieder zu, der Druck steigt erneut, und alles beginnt von vorn."
+    },
+    {
+     "text": "Sehen Sie, wie die Schleimhaut dabei wie eine Welle über den Rand der Stimmlippen läuft? Wir zeigen das hier stark verlangsamt, wie bei einer Stroboskopie.",
+     "cues": [
+      [
+       "0",
+       "shot",
+       "larynxClose"
+      ],
+      [
+       "0",
+       "hi",
+       "Stimmlippen"
+      ]
+     ]
+    },
+    {
+     "text": "In Wirklichkeit geschieht das bei einer Frauenstimme rund zweihundertmal pro Sekunde! Und jeder einzelne Verschluss erzeugt einen kleinen Schallimpuls.",
+     "say": "In Wirklichkeit geschieht das bei einer Frauenstimme rund zweihundert mal pro Sekunde! Und jeder einzelne Verschluss erzeugt einen kleinen Schallimpuls.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ],
+      [
+       "0",
+       "shot",
+       "larynxTop"
+      ],
+      [
+       "30%",
+       "bullet",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "So klingt dieser Rohklang direkt an den Stimmlippen: ein summender, obertonreicher Ton.",
+     "demo": [
+      {
+       "sound": "buzz",
+       "at": 0
+      }
+     ]
+    },
+    {
+     "text": "Wie hoch dieser Ton ist, hängt davon ab, wie lang, schwer und gespannt die Stimmlippen sind.",
+     "cues": [
+      [
+       "0",
+       "bullet",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Frauenstimmen schwingen im Gespräch um 210 Hertz, Männerstimmen um 115 und Kinderstimmen um 300 Hertz. Hören Sie den Unterschied!",
+     "say": "Frauenstimmen schwingen im Gespräch um zweihundertzehn Hertz, Männerstimmen um hundertfünfzehn, und Kinderstimmen um dreihundert Hertz. Hören Sie den Unterschied!",
+     "cues": [
+      [
+       "0",
+       "voice",
+       "f"
+      ],
+      [
+       "35%",
+       "voice",
+       "m"
+      ],
+      [
+       "60%",
+       "voice",
+       "c"
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "a_f",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "voice",
+         "f"
+        ]
+       ]
+      },
+      {
+       "sound": "a_m",
+       "at": 1.3,
+       "cues": [
+        [
+         "0",
+         "voice",
+         "m"
+        ]
+       ]
+      },
+      {
+       "sound": "a_c",
+       "at": 2.6,
+       "cues": [
+        [
+         "0",
+         "voice",
+         "c"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Für höhere Töne kippt ein kleiner Muskel den Schildknorpel nach vorn. Die Stimmlippen werden gedehnt: länger, dünner und straffer.",
+     "cues": [
+      [
+       "0",
+       "voice",
+       "f"
+      ],
+      [
+       "0",
+       "hi",
+       "Schildknorpel"
+      ],
+      [
+       "0",
+       "shot",
+       "larynxSide"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "resonanz",
+   "num": 4,
+   "role": "Filter",
+   "reset": {
+    "stage": 3,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "ə",
+    "shot": "tract",
+    "orbit": 0.025,
+    "labels": true,
+    "card": "spec",
+    "hold": true,
+    "vforce": 1,
+    "glottis": null,
+    "wave": 0,
+    "bullets": [
+     "Ansatzrohr: Rachen, Mund- und Nasenraum",
+     "Formanten = Eigenresonanzen des Rohres",
+     "Quelle-Filter-Prinzip",
+     "F1 und F2 bestimmen den Vokal"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Doch dieser Rohklang allein klingt noch lange nicht nach Sprache. Erst der Raum über dem Kehlkopf verwandelt ihn."
+    },
+    {
+     "text": "Rachen, Mundhöhle und manchmal auch die Nasenhöhle bilden zusammen das Ansatzrohr: bei Frauen etwa fünfzehn, bei Männern etwa siebzehn Zentimeter lang.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Ansatzrohr"
+      ],
+      [
+       "0",
+       "bullet",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Wie jeder Hohlraum hat dieses Rohr seine eigenen Resonanzen. Wir nennen sie Formanten.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ],
+      [
+       "0",
+       "wave",
+       1
+      ],
+      [
+       "55%",
+       "wave",
+       2
+      ],
+      [
+       "0",
+       "bullet",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Die Formanten verstärken bestimmte Obertöne des Rohklangs und dämpfen andere.",
+     "cues": [
+      [
+       "0",
+       "wave",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Genau das ist das Quelle-Filter-Prinzip: Die Stimmlippen liefern die Quelle, das Ansatzrohr ist der Filter.",
+     "say": "Genau das ist das Quelle Filter Prinzip: Die Stimmlippen liefern die Quelle, das Ansatzrohr ist der Filter.",
+     "cues": [
+      [
+       "0",
+       "wave",
+       0
+      ],
+      [
+       "0",
+       "bullet",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Und jetzt wird es spannend: Ändern wir die Form des Rohres, verschieben sich die Formanten, und wir hören einen ganz anderen Vokal!",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "a"
+      ],
+      [
+       "0",
+       "shot",
+       "tractClose"
+      ]
+     ]
+    },
+    {
+     "text": "Hören Sie selbst.",
+     "demo": [
+      {
+       "sound": "v_a",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "a"
+        ]
+       ]
+      },
+      {
+       "sound": "v_i",
+       "at": 1.3,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "i"
+        ]
+       ]
+      },
+      {
+       "sound": "v_u",
+       "at": 2.6,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "u"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Schon die ersten beiden Formanten reichen aus, um die Vokale zu unterscheiden.",
+     "cues": [
+      [
+       "0",
+       "card",
+       "vowel"
+      ],
+      [
+       "0",
+       "vowel",
+       "a"
+      ],
+      [
+       "0",
+       "bullet",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Beim a ist der Mund weit geöffnet. Deshalb liegt der erste Formant hoch.",
+     "say": "Beim A ist der Mund weit geöffnet. Deshalb liegt der erste Formant hoch.",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "a"
+      ]
+     ]
+    },
+    {
+     "text": "Beim i schiebt sich die Zunge weit nach vorn und oben. Der zweite Formant klettert ganz nach oben.",
+     "say": "Beim I schiebt sich die Zunge weit nach vorn und oben. Der zweite Formant klettert ganz nach oben.",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "i"
+      ]
+     ]
+    },
+    {
+     "text": "Und beim u runden sich die Lippen, die Zunge rutscht nach hinten, und beide Formanten sinken.",
+     "say": "Und beim Uh runden sich die Lippen, die Zunge rutscht nach hinten, und beide Formanten sinken.",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "u"
+      ]
+     ]
+    },
+    {
+     "text": "Der Klang einer Stimme entsteht also nicht nur im Kehlkopf, sondern genauso in der Form und Weite des Ansatzrohrs.",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "a"
+      ],
+      [
+       "0",
+       "card",
+       "spec"
+      ],
+      [
+       "0",
+       "shot",
+       "tract"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "artikulation",
+   "num": 5,
+   "role": "Lautbildung",
+   "reset": {
+    "stage": 4,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "cons": null,
+    "shot": "mouth",
+    "orbit": 0.02,
+    "labels": true,
+    "card": "cons",
+    "hold": true,
+    "vforce": 1,
+    "glottis": null,
+    "bullets": [
+     "Plosive: Verschluss und Sprengung",
+     "Frikative: Enge mit Rauschen",
+     "Nasale: Gaumensegel gesenkt",
+     "Stimmhaft oder stimmlos: die Glottis entscheidet"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Nun zum letzten Schritt: Aus dem Klang werden Sprachlaute."
+    },
+    {
+     "text": "Dafür sorgen die Zunge,",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Zunge"
+      ]
+     ]
+    },
+    {
+     "text": "die Lippen,",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Lippen"
+      ]
+     ]
+    },
+    {
+     "text": "der Unterkiefer",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Unterkiefer"
+      ]
+     ]
+    },
+    {
+     "text": "und das Gaumensegel.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Gaumensegel (Velum)"
+      ]
+     ]
+    },
+    {
+     "text": "Zähne und harter Gaumen sind dabei die festen Gegenspieler.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       "Harter Gaumen"
+      ]
+     ]
+    },
+    {
+     "text": "Bei Vokalen bleibt der Weg frei. Bei Konsonanten dagegen stellt sich der Luft etwas in den Weg: eine Enge oder sogar ein vollständiger Verschluss.",
+     "cues": [
+      [
+       "0",
+       "hi",
+       null
+      ]
+     ]
+    },
+    {
+     "text": "Bei p, t und k versperren Lippen, Zungenspitze oder Zungenrücken den Weg. Der Druck staut sich und wird dann schlagartig gesprengt.",
+     "say": "Bei Peh, Teh und Kah versperren Lippen, Zungenspitze oder Zungenrücken den Weg. Der Druck staut sich, und wird dann schlagartig gesprengt.",
+     "cues": [
+      [
+       "0",
+       "cons",
+       "p"
+      ],
+      [
+       "20%",
+       "cons",
+       "t"
+      ],
+      [
+       "40%",
+       "cons",
+       "k"
+      ],
+      [
+       "0",
+       "bullet",
+       0
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "pa",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "p"
+        ]
+       ]
+      },
+      {
+       "sound": "ta",
+       "at": 1.0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "t"
+        ]
+       ]
+      },
+      {
+       "sound": "ka",
+       "at": 2.0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "k"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Bei Reibelauten, wie in „Fisch“ oder „Sonne“, bleibt nur eine schmale Enge, und die Luft rauscht hörbar hindurch.",
+     "say": "Bei Reibelauten, wie in Fisch oder Sonne, bleibt nur eine schmale Enge, und die Luft rauscht hörbar hindurch.",
+     "cues": [
+      [
+       "0",
+       "cons",
+       "f"
+      ],
+      [
+       "45%",
+       "cons",
+       "s"
+      ],
+      [
+       "75%",
+       "cons",
+       "ʃ"
+      ],
+      [
+       "0",
+       "bullet",
+       1
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "fa",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "f"
+        ]
+       ]
+      },
+      {
+       "sound": "sa",
+       "at": 1.15,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "s"
+        ]
+       ]
+      },
+      {
+       "sound": "scha",
+       "at": 2.3,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "ʃ"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Bei den Nasenlauten m und n ist der Mund verschlossen. Das Gaumensegel senkt sich, und der Klang entweicht durch die Nase.",
+     "say": "Bei den Nasenlauten Emm und Enn ist der Mund verschlossen. Das Gaumensegel senkt sich, und der Klang entweicht durch die Nase.",
+     "cues": [
+      [
+       "0",
+       "cons",
+       "m"
+      ],
+      [
+       "0",
+       "shot",
+       "mouthNose"
+      ],
+      [
+       "50%",
+       "cons",
+       "n"
+      ],
+      [
+       "0",
+       "bullet",
+       2
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "ma",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "m"
+        ]
+       ]
+      },
+      {
+       "sound": "na",
+       "at": 1.05,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "n"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Und ob ein Laut stimmhaft oder stimmlos klingt, entscheidet wieder die Glottis: Bei weichen Lauten wie in Ball, Dach und Gast schwingen die Stimmlippen mit, bei p, t und k bleiben sie still.",
+     "say": "Und ob ein Laut stimmhaft oder stimmlos klingt, entscheidet wieder die Glottis: Bei weichen Lauten wie in Ball, Dach und Gast schwingen die Stimmlippen mit, bei Peh, Teh und Kah bleiben sie still.",
+     "cues": [
+      [
+       "0",
+       "shot",
+       "mouth"
+      ],
+      [
+       "0",
+       "cons",
+       "b"
+      ],
+      [
+       "30%",
+       "cons",
+       "d"
+      ],
+      [
+       "45%",
+       "cons",
+       "g"
+      ],
+      [
+       "70%",
+       "cons",
+       "p"
+      ],
+      [
+       "0",
+       "bullet",
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "fazit",
+   "reset": {
+    "stage": 1,
+    "mode": "speech",
+    "voice": "f",
+    "vowel": "a",
+    "cons": null,
+    "shot": "overview",
+    "orbit": 0.06,
+    "labels": false,
+    "card": null,
+    "hold": false,
+    "vforce": null,
+    "glottis": null,
+    "intro": true,
+    "chainAll": false
+   },
+   "lines": [
+    {
+     "text": "Was für ein Zusammenspiel! Fassen wir zusammen.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       0
+      ]
+     ]
+    },
+    {
+     "text": "Die Atmung liefert mit dem Luftdruck die Energie.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Die Stimmlippen verwandeln den Luftstrom in einen schwingenden Ton.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Das Ansatzrohr filtert diesen Ton und schenkt ihm seine Klangfarbe.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Und Zunge, Lippen, Kiefer und Gaumensegel formen daraus die Laute unserer Sprache.",
+     "cues": [
+      [
+       "0",
+       "chain",
+       4
+      ]
+     ]
+    },
+    {
+     "text": "Nur wenn alle vier Systeme fein zusammenspielen, klingt eine Stimme mühelos, klar und ausdrucksstark. Passen Sie gut auf Ihre Stimme auf!",
+     "cues": [
+      [
+       "0",
+       "chain",
+       5
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "demoNote": "Demo-Klänge folgen auf den Sprechertext; 'at' = Sekunden nach Ende des Satzes (+0,35 s).",
+ "engine": "coqui",
+ "respell": {
+  "Mundhöhle": "Mund Höhle",
+  "Nasenhöhle": "Nasen Höhle",
+  "Frauenstimme": "Frauen Stimme",
+  "Frauenstimmen": "Frauen Stimmen",
+  "Männerstimmen": "Männer Stimmen",
+  "Kinderstimmen": "Kinder Stimmen",
+  "Atemstütze": "Atem Stütze",
+  "Zungenspitze": "Zungen Spitze",
+  "Luftstrom": "Luft Strom",
+  "Zusammenspiel": "Zusammen Spiel",
+  "zusammenspielen": "zusammen spielen",
+  "Stroboskopie": "Stroboskopi",
+  "Quelle": "Kwelle",
+  "Bernoulli": "Bernulli"
+ },
+ "respellNote": "Nur für die Sprachsynthese: Schreibweisen, die der Phonemizer (gruut) sonst falsch ausspricht.",
+ "model": "tts_models--de--thorsten--vits",
+ "prosody": {
+  "noise": 0.75,
+  "noiseDuration": 0.9
+ },
+ "lively": {
+  "spread": 1.6,
+  "shift": 2.0,
+  "tempo": 1.07
+ },
+ "livelyNote": "Nachbearbeitung der Sprecherstimme (WORLD-Vocoder): Tonhöhenspreizung, Anhebung in Halbtönen, Tempofaktor. Entfernen für die unbearbeitete Stimme."
+}

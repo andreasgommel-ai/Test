@@ -1,0 +1,551 @@
+<title>Stimme aus Bausteinen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=IBM+Plex+Mono:wght@500&family=Noto+Sans:wght@500&display=swap">
+<style>
+/* Bewusst ein einziges, helles Erscheinungsbild: angelehnt an gedruckte Bauanleitungen. */
+:root{
+  color-scheme:light;
+  --page:#D9E5EE; --page-2:#C9D9E5; --paper:#FFFFFF; --ink:#18222D; --muted:#4F5D6B; --rule:#A9C0D3;
+  --red:#C91A09; --yellow:#F2CD37; --blue:#0055BF; --green:#237841; --pink:#C870A0; --orange:#E07A12;
+  --f-ui:"Archivo", "Segoe UI", system-ui, sans-serif; --f-num:"IBM Plex Mono", ui-monospace, Menlo, monospace; --f-ipa:"Noto Sans", "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto;padding-inline:16px;padding-block:14px 26px;display:grid;gap:14px}
+.cover{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px}
+.cover h1{margin:0;font-weight:900;font-size:clamp(1.7rem,3vw,2.5rem);letter-spacing:-.02em;line-height:1}
+.cover p{margin:.35rem 0 0;color:var(--muted);max-width:58ch}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-weight:800;font-size:13px;padding:6px 10px;border-radius:6px;background:var(--paper);border:2px solid var(--ink)}
+.badge.age{background:var(--yellow)}
+.steps{display:flex;gap:8px;flex-wrap:wrap}
+.step{appearance:none;cursor:pointer;border:2px solid var(--ink);background:var(--paper);border-radius:8px;padding:6px 12px 6px 8px;display:flex;align-items:center;gap:8px;font-weight:800}
+.step b{font-family:var(--f-num);font-size:18px;width:30px;height:30px;display:grid;place-items:center;border-radius:6px;background:var(--page-2)}
+.step[aria-selected="true"]{background:var(--ink);color:#fff}
+.step[aria-selected="true"] b{background:var(--yellow);color:var(--ink)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);gap:14px;align-items:start}
+@media (max-width:960px){.layout{grid-template-columns:1fr}}
+.viewer{border:2px solid var(--ink);border-radius:10px;overflow:hidden;background:var(--paper)}
+.stage{position:relative;height:clamp(420px,70vh,760px);background:linear-gradient(180deg,#EAF2F8 0%,#CFDFEA 100%);touch-action:none;user-select:none}
+.stage canvas{display:block;width:100%;height:100%;cursor:grab}
+.stage canvas.drag{cursor:grabbing}
+.tag{position:absolute;left:12px;top:12px;font-weight:800;font-size:13px;background:var(--paper);border:2px solid var(--ink);border-radius:6px;padding:4px 9px}
+.hint{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--muted)}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+.bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:10px 12px;border-top:2px solid var(--ink)}
+.btn{appearance:none;cursor:pointer;border:2px solid var(--ink);background:var(--paper);border-radius:7px;padding:6px 12px;font-weight:800;font-size:14px}
+.btn.dark{background:var(--ink);color:#fff}
+.btn[aria-pressed="true"]{background:var(--yellow)}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:7px;overflow:hidden}
+.seg button{appearance:none;border:0;background:var(--paper);padding:6px 11px;cursor:pointer;font-weight:700;font-size:14px}
+.seg button+button{border-left:2px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--yellow)}
+.panel{background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:16px;display:grid;gap:14px}
+.panel section{display:grid;gap:14px}
+.head{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center}
+.num{grid-row:span 2;font-family:var(--f-num);font-size:64px;line-height:.9;font-weight:500}
+.head small{font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-size:12px}
+.head h2{margin:0;font-weight:900;font-size:1.7rem;line-height:1.05}
+.parts{border:2px solid var(--rule);border-radius:8px;padding:10px 12px;background:#F5F9FC;display:grid;gap:6px}
+.parts h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.parts ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.parts li{display:grid;grid-template-columns:34px 22px 1fr;align-items:center;gap:8px;font-size:14px}
+.parts .q{font-family:var(--f-num);font-weight:500}
+.sw{width:22px;height:16px;border-radius:3px;border:1.5px solid rgba(0,0,0,.35);position:relative}
+.sw::after{content:"";position:absolute;left:6px;top:-5px;width:8px;height:4px;border-radius:2px 2px 0 0;background:inherit;border:1.5px solid rgba(0,0,0,.35);border-bottom:0}
+.text{margin:0;max-width:62ch}
+.facts{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cap{font-size:12.5px;color:var(--muted)}
+.kb{appearance:none;cursor:pointer;min-width:44px;border:2px solid var(--ink);background:var(--paper);border-radius:7px;padding:4px 8px;font-family:var(--f-ipa);font-size:18px;font-weight:500;line-height:1.2}
+.kb small{display:block;font-family:var(--f-ui);font-size:10.5px;color:var(--muted)}
+.kb[aria-pressed="true"]{background:var(--yellow)}
+input[type=range]{accent-color:var(--red);width:100%}
+.field{display:grid;gap:2px;min-width:200px;flex:1}
+.field label{display:flex;justify-content:space-between;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.field output{font-family:var(--f-num);color:var(--ink);text-transform:none}
+.foot{font-size:12.5px;color:var(--muted);max-width:110ch;margin:0}
+</style>
+
+<div class="wrap" id="app">
+  <header class="cover">
+    <div>
+      <h1>Stimme aus Bausteinen</h1>
+      <p>Der menschliche Stimmapparat als Klemmbaustein-Modell: Stein für Stein gebaut, mit atmender Lunge, schwingenden Stimmlippen, Ansatzrohr und beweglicher Zunge.</p>
+    </div>
+    <div class="badges"><span class="badge age">10+</span><span class="badge">4 Bauschritte</span><span class="badge" id="brickCount">– Steine</span></div>
+    <nav class="steps" role="tablist" aria-label="Bauschritte">
+      <button class="step" role="tab" data-step="1" aria-selected="true"><b>1</b>Atmung</button>
+      <button class="step" role="tab" data-step="2" aria-selected="false"><b>2</b>Kehlkopf</button>
+      <button class="step" role="tab" data-step="3" aria-selected="false"><b>3</b>Ansatzrohr</button>
+      <button class="step" role="tab" data-step="4" aria-selected="false"><b>4</b>Artikulation</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="viewer" aria-label="3D-Baustein-Modell">
+      <div class="stage" id="stage">
+        <span class="tag" id="tag">Ausatmen · Stimme</span>
+        <span class="hint">Ziehen: drehen · Mausrad/Pinch: zoomen</span>
+      </div>
+      <div class="bar">
+        <button class="btn dark" id="btnPlay" type="button">Anhalten</button>
+        <button class="btn" id="btnSound" type="button" aria-pressed="false">Ton an</button>
+        <button class="btn" id="btnBuild" type="button">Neu bauen</button>
+        <div class="seg" role="group" aria-label="Atemmodus">
+          <button type="button" data-mode="speech" aria-pressed="true">Sprechatmung</button>
+          <button type="button" data-mode="rest" aria-pressed="false">Ruheatmung</button>
+        </div>
+        <div class="seg" role="group" aria-label="Stimme">
+          <button type="button" data-voice="f" aria-pressed="true">Frau</button>
+          <button type="button" data-voice="m" aria-pressed="false">Mann</button>
+        </div>
+        <button class="btn" id="btnView" type="button">Ansicht zurücksetzen</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <section data-panel="1">
+        <div class="head"><span class="num">1</span><small>Energiequelle</small><h2>Atmung</h2></div>
+        <div class="parts"><h3>Bauteile</h3><ul>
+          <li><span class="q">2×</span><span class="sw" style="background:#E4ADC8"></span>Lungenflügel aus hellrosa Steinen</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#C91A09"></span>Zwerchfell aus roten Platten</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#F4F4F4"></span>Luftröhre mit Knorpelringen</li>
+        </ul></div>
+        <p class="text">Beim Einatmen senkt sich das rote Zwerchfell, die Lunge wird größer und bekommt Stein für Stein Volumen dazu. Zum Sprechen atmen wir kurz ein und lange aus. Die Luft, hier hellblaue runde Platten, strömt nach oben zum Kehlkopf.</p>
+        <ul class="facts"><li>Ruhe: 12–16 Atemzüge pro Minute, durch die Nase</li><li>Sprechen: kurz ein, lang aus (bis 1 : 10)</li><li>Druck unter den Stimmlippen: etwa 5–10 cmH₂O</li></ul>
+      </section>
+      <section data-panel="2" hidden>
+        <div class="head"><span class="num">2</span><small>Schallquelle</small><h2>Kehlkopf</h2></div>
+        <div class="parts"><h3>Bauteile</h3><ul>
+          <li><span class="q">1×</span><span class="sw" style="background:#6C6E68"></span>Ringknorpel als Fundament</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#A0A5A9"></span>Schildknorpel</li>
+          <li><span class="q">2×</span><span class="sw" style="background:#F4F4F4"></span>Stimmlippen aus weißen Platten</li>
+          <li><span class="q">2×</span><span class="sw" style="background:#C91A09"></span>Stellknorpel (rote Kegel)</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#F2CD37"></span>Kehldeckel</li>
+        </ul></div>
+        <p class="text">Die beiden weißen Stimmlippen-Reihen öffnen sich zum Atmen V-förmig. Zum Sprechen schieben die roten Stellknorpel sie zusammen. Der Luftdruck drückt sie auf, sie schnappen zurück, immer wieder: hier stark verlangsamt, in Wirklichkeit 100- bis 300-mal pro Sekunde. Jeder Puls schickt einen Schallring los.</p>
+        <div class="field"><label for="slow">Zeitlupe <output id="slowOut">90×</output></label><input type="range" id="slow" min="30" max="300" step="10" value="90"></div>
+      </section>
+      <section data-panel="3" hidden>
+        <div class="head"><span class="num">3</span><small>Filter</small><h2>Ansatzrohr</h2></div>
+        <div class="parts"><h3>Bauteile</h3><ul>
+          <li><span class="q">1×</span><span class="sw" style="background:#F08F1C;opacity:.7"></span>Rachen und Mundraum (transparent orange, vorne offen)</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#F5CD2F;opacity:.7"></span>Nasenraum (transparent gelb)</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#F4F4F4"></span>Harter Gaumen</li>
+        </ul></div>
+        <p class="text">Über dem Kehlkopf liegt ein Rohr aus Rachen und Mundraum. Seine Form verstärkt bestimmte Obertöne, die Formanten. Bewegt sich die Zunge, ändert sich die Form, und wir hören einen anderen Vokal.</p>
+        <div class="row" data-vowels></div>
+        <p class="cap" id="formantInfo">[a]: F1 ≈ 880 Hz, F2 ≈ 1520 Hz</p>
+      </section>
+      <section data-panel="4" hidden>
+        <div class="head"><span class="num">4</span><small>Lautbildung</small><h2>Artikulation</h2></div>
+        <div class="parts"><h3>Bauteile</h3><ul>
+          <li><span class="q">1×</span><span class="sw" style="background:#C91A09"></span>Zunge aus roten Platten (beweglich)</li>
+          <li><span class="q">2×</span><span class="sw" style="background:#B40000"></span>Lippen</li>
+          <li><span class="q">6×</span><span class="sw" style="background:#F4F4F4"></span>Zähne (Fliesen)</li>
+          <li><span class="q">1×</span><span class="sw" style="background:#E4ADC8"></span>Gaumensegel mit Scharnier</li>
+        </ul></div>
+        <p class="text">Bei Konsonanten baut die Zunge oder die Lippe ein Hindernis: einen Verschluss (p, t, k), eine Enge (f, s, sch) oder sie schließt den Mund und öffnet über das Gaumensegel den Nasenweg (m, n).</p>
+        <div class="row" data-vowels></div>
+        <div class="row" id="consRow"></div>
+        <p class="cap" id="consInfo">Wähle einen Laut. Mit „Ton an“ hörst du die Silbe.</p>
+      </section>
+    </aside>
+  </main>
+  <p class="foot">Lernmodell im Klemmbaustein-Stil, Proportionen stark vereinfacht. Die Stimmlippenschwingung ist verlangsamt, der Klang entsteht synthetisch im Browser (Quelle-Filter-Prinzip). Tasten 1–4 wechseln den Bauschritt.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const H = 1.2, P = 0.4; // Höhe Stein, Höhe Platte
+
+/* ------------------------------------------------------------ Zustand */
+const S = { step: 1, playing: !reduce, sound: false, mode: 'speech', voice: 'f', vowel: 'a', cons: null, syl: null, slow: 90 };
+const film = { voice: null, abd: null, hold: false, orbit: 0, focus: null };
+let manualNow = null; const now = () => (manualNow !== null ? manualNow : performance.now());
+let simT = 0, phaseV = 0, vol = 0, voiced = 0, flow = 0, breath = { phase: 'out', u: .3, phon: 1 };
+
+const VOW = { // Zungenhöhe in Platten über x = 1..6 (hinten → vorn), Kieferöffnung, Lippenrundung, Rachenenge, Formanten (Männerwerte)
+  a: { h: [3, 3, 2, 2, 2, 2], jaw: 1, round: 0, root: 1, F: [750, 1300, 2550] },
+  e: { h: [4, 5, 7, 7, 6, 3], jaw: .35, round: 0, root: 0, F: [370, 2100, 2750] },
+  i: { h: [4, 6, 8, 8, 7, 4], jaw: .15, round: 0, root: 0, F: [280, 2250, 2950] },
+  o: { h: [5, 7, 6, 4, 3, 2], jaw: .4, round: .8, root: .4, F: [390, 780, 2500] },
+  u: { h: [6, 8, 7, 5, 3, 2], jaw: .15, round: 1, root: .2, F: [300, 700, 2300] }
+};
+const CONS = {
+  p: { m: 'plosiv', lip: 1, v: 0, word: 'Pass', d: 'Lippen verschließen den Weg' },
+  t: { m: 'plosiv', col: 5, v: 0, word: 'Tal', d: 'Zungenspitze am Zahndamm' },
+  k: { m: 'plosiv', col: 1, v: 0, word: 'Kamm', d: 'Zungenrücken am Gaumensegel' },
+  m: { m: 'nasal', lip: 1, velum: 1, v: 1, word: 'Mann', d: 'Lippen zu, Gaumensegel offen' },
+  n: { m: 'nasal', col: 5, velum: 1, v: 1, word: 'Name', d: 'Zungenspitze oben, Gaumensegel offen' },
+  f: { m: 'frikativ', lip: .75, v: 0, word: 'Fass', d: 'Unterlippe an den oberen Zähnen', fric: [1600, 7000, .25] },
+  s: { m: 'frikativ', col: 5, deg: 8, v: 0, word: 'Haus', d: 'enge Rille an der Zungenspitze', fric: [5000, 8500, 1] },
+  'ʃ': { m: 'frikativ', col: 4, deg: 8, round: .6, v: 0, word: 'Schal', d: 'Zungenblatt hinter dem Zahndamm, Lippen gerundet', fric: [2300, 4200, .9] }
+};
+const VOICES = { f: { f0: 210, k: 1.17 }, m: { f0: 115, k: 1 } };
+
+/* ------------------------------------------------------------ Farben */
+const C = {
+  red: 0xC91A09, darkred: 0x9A0B00, lip: 0xB40000, pink: 0xE4ADC8, dpink: 0xC870A0, white: 0xF4F4F4, lgray: 0xA0A5A9, dgray: 0x6C6E68,
+  yellow: 0xF2CD37, black: 0x1B2A34, green: 0x237841, lgreen: 0x4B9F4A, nougat: 0xF6D7B3, mnougat: 0xAA7D55, hair: 0x582A12,
+  tOrange: 0xF08F1C, tBlue: 0x8FE3F0, tClear: 0xEAF6FF, tYellow: 0xF5CD2F
+};
+
+/* ------------------------------------------------------------ Steine sammeln */
+const bricks = []; // {kind, x,y,z, color, trans, group, dyn?, rot?}
+function add(kind, x, y, z, color, group, extra) { const b = Object.assign({ kind, x, y, z, color, group, trans: false, base: [x, y, z] }, extra || {}); bricks.push(b); return b; }
+const GROUPS = ['platte', 'wand', 'atmung', 'kehlkopf', 'ansatz', 'artik'];
+
+// Grundplatte
+for (let x = -12; x <= 14; x++) for (let z = -12; z <= 12; z++) add('plate', x, -36.8, z, (x + z) % 9 === 0 ? C.lgreen : C.green, 'platte');
+// Mosaik-Wand mit Profil (Kopf, Hals, Rumpf)
+const inSil = (x, y) => {
+  const head = ((x - 1.3) / 7.6) ** 2 + ((y - 3.4) / 9.6) ** 2 < 1;
+  const nose = x > 8.2 && x < 10.4 && y > 2.4 && y < 6 && (x - 8.2) < (6 - y) * .65;
+  const neck = x > -4.6 && x < 3.4 && y > -17 && y < -3;
+  const torso = ((x + 1) / 8.2) ** 2 + ((y + 27) / 14) ** 2 < 1 && y > -36;
+  return head || nose || neck || torso;
+};
+for (let x = -10; x <= 11; x++) for (let j = -30; j <= 11; j++) {
+  const y = j * H; if (y < -36.2 || !inSil(x, y)) continue;
+  const edge = !inSil(x + 1, y) || !inSil(x - 1, y) || !inSil(x, y + H) || !inSil(x, y - H);
+  let col = edge ? C.mnougat : C.nougat;
+  if (!edge && y > 8 && ((x - 1.3) / 7.6) ** 2 + ((y - 3.4) / 9.6) ** 2 < 1 && x < 5) col = C.hair;
+  if (x === 5 && j === 5) col = C.black;
+  add('brick', x, y, -10, col, 'wand');
+}
+// Lungen (Volumen-Steine mit Schwelle rho)
+[-1, 1].forEach(side => {
+  for (let x = -6; x <= 4; x++) for (let j = -27; j <= -15; j++) for (let z = 1; z <= 9; z++) {
+    const y = j * H, zz = side * z;
+    const rho = Math.sqrt(((x + 1) / 4.6) ** 2 + ((y + 24.6) / 8.2) ** 2 + ((z - 5) / 3.9) ** 2);
+    if (rho > 1) continue;
+    const shade = ((x * 7 + j * 3 + z * 5) % 5 === 0) ? C.dpink : C.pink;
+    add('brick', x, y, zz, shade, 'atmung', { lung: rho });
+  }
+});
+// Zwerchfell (Kuppel aus Platten, bewegt sich)
+for (let x = -7; x <= 5; x++) for (let z = -9; z <= 9; z++) {
+  const r2 = ((x + 1) / 7) ** 2 + (z / 9.5) ** 2; if (r2 > 1) continue;
+  add('plate', x, -33.6 + Math.round(2.4 * (1 - r2) / P) * P, z, C.red, 'atmung', { dia: 1 });
+}
+// Luftröhre: Ringe, Bronchien
+for (let k = 0; k < 7; k++) { const y = -11.4 - k * H; for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) if (x || z) add('brick', x, y, z, k % 2 ? C.lgray : C.white, 'atmung', { trach: 1 }); }
+[-1, 1].forEach(s => { for (let k = 1; k <= 4; k++) add('brick', -Math.round(k * .3), -19.8 - k * H, s * k, C.white, 'atmung'); });
+// Kehlkopf
+for (let x = -2; x <= 2; x++) for (let z = -2; z <= 2; z++) if (Math.abs(x) === 2 || Math.abs(z) === 2) add('brick', x, -10.2, z, C.dgray, 'kehlkopf', { info: 'Ringknorpel' });
+for (const y of [-9, -7.8]) {
+  for (let z = -1; z <= 1; z++) add('brick', 2, y, z, C.lgray, 'kehlkopf');
+  for (let x = -1; x <= 1; x++) { add('brick', x, y, 2, C.lgray, 'kehlkopf'); add('brick', x, y, -2, C.lgray, 'kehlkopf'); }
+}
+const folds = [];
+[-1, 1].forEach(side => { for (let x = -1; x <= 1; x++) folds.push(add('plate', x, -8.2, side * .5, C.white, 'kehlkopf', { fold: side, u: (1 - x) / 2 })); });
+const aryt = [-1, 1].map(side => add('cone', -2, -8.0, side * .6, C.red, 'kehlkopf', { aryt: side }));
+for (let k = 0; k < 3; k++) for (let z = -1; z <= 1; z++) add('plate', 2.4 - k * .25, -6.6 + k * .6, z, C.yellow, 'kehlkopf'); // Kehldeckel vorn, damit die Glottis von oben sichtbar bleibt
+// Ansatzrohr (transparent orange): Rachen, Mundraum; Nasenraum transparent gelb
+// Schnittmodell: die vordere Wand (z = +2) fehlt absichtlich, damit man hineinsehen kann
+for (let j = -6; j <= 3; j++) { const y = j * H; for (let x = -2; x <= 1; x++) add('brick', x, y, -2, C.tOrange, 'ansatz', { trans: true }); for (let z = -1; z <= 1; z++) add('brick', -2, y, z, C.tOrange, 'ansatz', { trans: true }); }
+for (let x = 2; x <= 7; x++) for (const y of [.6, 1.8, 3.0]) add('brick', x, y, -2, C.tOrange, 'ansatz', { trans: true });
+for (let x = 2; x <= 7; x++) for (let z = -1; z <= 1; z++) add('plate', x, 3.8, z, C.white, 'ansatz', { info: 'Gaumen' });
+for (let x = -1; x <= 8; x++) for (const y of [4.8, 6.0]) add('brick', x, y, -2, C.tYellow, 'ansatz', { trans: true });
+for (let x = -1; x <= 8; x++) for (let z = -1; z <= 1; z++) add('plate', x, 7.0, z, C.tYellow, 'ansatz', { trans: true });
+// Artikulation: Zunge (Plattensäulen), Zungenwurzel, Lippen, Zähne, Gaumensegel, Unterkiefer
+const tongue = [];
+for (let x = 1; x <= 6; x++) for (let z = -1; z <= 1; z++) for (let k = 0; k < 9; k++) tongue.push(add('plate', x, .2 + k * P, z, k === 0 ? C.darkred : C.red, 'artik', { tcol: x, tk: k }));
+for (let j = -5; j <= -1; j++) for (let z = -1; z <= 1; z++) add('brick', 1, j * H, z, C.red, 'artik');
+const root = []; for (let j = -4; j <= -1; j++) for (let z = -1; z <= 1; z++) root.push(add('brick', 0, j * H, z, C.red, 'artik', { root: j }));
+for (let x = 1; x <= 7; x++) for (let z = -1; z <= 1; z++) add('plate', x, -.2, z, C.dgray, 'artik', { jawp: 1 });
+const lips = [];
+for (let z = -1; z <= 1; z++) { lips.push(add('plate', 8, 3.4, z, C.lip, 'artik', { lip: 'u' })); lips.push(add('plate', 8, 3.0, z, C.lip, 'artik', { lip: 'u' })); lips.push(add('plate', 8, .6, z, C.lip, 'artik', { lip: 'l' })); lips.push(add('plate', 8, .2, z, C.lip, 'artik', { lip: 'l' })); }
+for (let z = -1; z <= 1; z++) { add('tile', 7, 3.2, z, C.white, 'artik'); add('tile', 7, .8, z, C.white, 'artik', { jawp: 1 }); }
+const velum = []; for (let i = 0; i < 3; i++) for (let z = -1; z <= 1; z++) velum.push(add('plate', 1 - i, 3.8, z, C.pink, 'artik', { vel: i }));
+
+/* ------------------------------------------------------------ 3D */
+const stage = $('#stage');
+const hasGL = typeof THREE !== 'undefined' && (() => { try { return !!document.createElement('canvas').getContext('webgl'); } catch (e) { return false; } })();
+let renderer, scene, camera, meshes = {};
+if (!hasGL) { const d = document.createElement('div'); d.className = 'nogl'; d.textContent = 'Für das Baustein-Modell braucht der Browser WebGL und die Three.js-Bibliothek.'; stage.appendChild(d); }
+
+function brickGeo(h, stud = true, round = false) {
+  const parts = [];
+  parts.push(round ? new THREE.CylinderGeometry(.47, .47, h - .04, 20) : new THREE.BoxGeometry(.96, h - .04, .96));
+  if (stud) { const s = new THREE.CylinderGeometry(.24, .24, .17, 16); s.translate(0, h / 2 + .065, 0); parts.push(s); }
+  return merge(parts);
+}
+function merge(geos) {
+  const pos = [], nor = [];
+  geos.forEach(g => { const n = g.index ? g.toNonIndexed() : g; pos.push(...n.attributes.position.array); nor.push(...n.attributes.normal.array); });
+  const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); return out;
+}
+const KINDS = {
+  brick: () => brickGeo(H), plate: () => brickGeo(P), tile: () => brickGeo(P, false),
+  round: () => brickGeo(P, true, true), cone: () => { const g = new THREE.CylinderGeometry(.12, .45, 1, 16); const s = new THREE.CylinderGeometry(.1, .1, .15, 10); s.translate(0, .55, 0); return merge([g, s]); }
+};
+const dummy = hasGL ? new THREE.Object3D() : null, tmpC = hasGL ? new THREE.Color() : null;
+const AIR = 90, RINGS = 6, RING_N = 12;
+let airMesh, ringMesh;
+if (hasGL) {
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.setClearColor(0xDCE8F0, 1);
+  stage.insertBefore(renderer.domElement, stage.firstChild);
+  scene = new THREE.Scene(); scene.fog = new THREE.Fog(0xDCE8F0, 120, 260);
+  camera = new THREE.PerspectiveCamera(32, 1, .1, 600);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, .75));
+  const d1 = new THREE.DirectionalLight(0xffffff, .75); d1.position.set(25, 40, 30); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff, .3); d2.position.set(-30, 10, -10); scene.add(d2);
+  const mOpaque = new THREE.MeshStandardMaterial({ roughness: .32, metalness: 0 });
+  const mTrans = new THREE.MeshStandardMaterial({ roughness: .15, metalness: 0, transparent: true, opacity: .42, depthWrite: false });
+  Object.keys(KINDS).forEach(k => {
+    const g = KINDS[k]();
+    ['o', 't'].forEach(t => {
+      const n = bricks.filter(b => b.kind === k && (b.trans ? 't' : 'o') === t).length; if (!n) return;
+      const m = new THREE.InstancedMesh(g, t === 't' ? mTrans : mOpaque, n); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      m.frustumCulled = false; if (t === 't') m.renderOrder = 2; scene.add(m); meshes[k + t] = { mesh: m, i: 0 };
+    });
+  });
+  bricks.forEach(b => { const M = meshes[b.kind + (b.trans ? 't' : 'o')]; b.mesh = M.mesh; b.idx = M.i++; b.mesh.setColorAt(b.idx, tmpC.setHex(b.color)); });
+  Object.values(meshes).forEach(M => { M.mesh.instanceColor.needsUpdate = true; });
+  airMesh = new THREE.InstancedMesh(KINDS.round(), new THREE.MeshStandardMaterial({ color: C.tBlue, roughness: .1, transparent: true, opacity: .8 }), AIR); airMesh.frustumCulled = false; scene.add(airMesh);
+  ringMesh = new THREE.InstancedMesh(KINDS.round(), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .1, transparent: true, opacity: .55, depthWrite: false }), RINGS * RING_N); ringMesh.frustumCulled = false; ringMesh.renderOrder = 3; scene.add(ringMesh);
+}
+$('#brickCount').textContent = `${bricks.length.toLocaleString('de-DE')} Steine`;
+
+/* Bau-Reihenfolge: je Gruppe von unten nach oben */
+const build = {};
+GROUPS.forEach(g => { const list = bricks.filter(b => b.group === g).sort((a, b) => a.y - b.y || a.x - b.x || a.z - b.z); list.forEach((b, i) => { b.order = i / list.length; }); build[g] = { t0: -1e9, dur: 1 }; });
+function buildGroups(groups, t0, durEach = 1.4, gap = .25) { let t = t0; groups.forEach(g => { build[g] = { t0: t, dur: durEach }; t += durEach + gap; }); }
+
+/* ------------------------------------------------------------ Kamera */
+const VIEWS = { 0: { t: [1, -12, 0], r: 98, th: .35, ph: 1.35 }, 1: { t: [0, -20, 0], r: 64, th: .3, ph: 1.36 }, 2: { t: [0, -8.4, 0], r: 11, th: .35, ph: .38 }, 3: { t: [3, -1, 0], r: 34, th: .3, ph: 1.35 }, 4: { t: [4.5, 2, 0], r: 20, th: .32, ph: 1.3 } };
+const cam = { t: [1, -12, 0], r: 92, th: .55, ph: 1.32, goal: null };
+function camGoal(g, instant) { cam.goal = { t: g.t.slice(), r: g.r, th: g.th, ph: g.ph }; if (instant) Object.assign(cam, JSON.parse(JSON.stringify(cam.goal))); }
+function updCam(dt) {
+  if (cam.goal) { const k = 1 - Math.exp(-dt * 2.8); for (let i = 0; i < 3; i++) cam.t[i] = lerp(cam.t[i], cam.goal.t[i], k); cam.r = lerp(cam.r, cam.goal.r, k); cam.th = lerp(cam.th, cam.goal.th, k); cam.ph = lerp(cam.ph, cam.goal.ph, k); }
+  if (film.orbit) { cam.th += dt * film.orbit; if (cam.goal) cam.goal.th += dt * film.orbit; }
+  const a = camera.aspect, r = cam.r * (a < 1 ? Math.pow(1 / a, .7) : 1);
+  camera.position.set(cam.t[0] + r * Math.sin(cam.ph) * Math.sin(cam.th), cam.t[1] + r * Math.cos(cam.ph), cam.t[2] + r * Math.sin(cam.ph) * Math.cos(cam.th));
+  camera.lookAt(cam.t[0], cam.t[1], cam.t[2]);
+}
+if (hasGL) {
+  const el = renderer.domElement, ptr = new Map(); let pinch = 0;
+  el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); ptr.set(e.pointerId, [e.clientX, e.clientY]); el.classList.add('drag'); if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+  el.addEventListener('pointermove', e => {
+    if (!ptr.has(e.pointerId)) return; const p = ptr.get(e.pointerId), dx = e.clientX - p[0], dy = e.clientY - p[1]; ptr.set(e.pointerId, [e.clientX, e.clientY]); cam.goal = null;
+    if (ptr.size === 1) { cam.th -= dx * .0065; cam.ph = clamp(cam.ph - dy * .0065, .12, 3); }
+    else { const [a, b] = [...ptr.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) cam.r = clamp(cam.r * pinch / d, 5, 160); pinch = d; }
+  });
+  const up = e => { ptr.delete(e.pointerId); if (!ptr.size) el.classList.remove('drag'); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('wheel', e => { e.preventDefault(); cam.goal = null; cam.r = clamp(cam.r * Math.exp(e.deltaY * .0012), 5, 160); }, { passive: false });
+  const resize = () => { const r = stage.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix(); };
+  new ResizeObserver(resize).observe(stage); resize();
+}
+
+/* ------------------------------------------------------------ Simulation */
+function breathState(t) {
+  if (film.hold) return { phase: 'out', u: .4, vol: .6, flow: 1, phon: 1 };
+  const sp = S.mode === 'speech', Ti = sp ? .8 : 1.7, Te = sp ? 5 : 2.6, Vt = sp ? 1.1 : .5, x = t % (Ti + Te);
+  if (x < Ti) { const u = x / Ti; return { phase: 'in', u, vol: Vt * (1 - Math.cos(Math.PI * u)) / 2, flow: -Math.sin(Math.PI * u), phon: 0 }; }
+  const u = (x - Ti) / Te;
+  return sp ? { phase: 'out', u, vol: Vt * (1 - u), flow: 1, phon: smooth(.02, .07, u) * (1 - smooth(.9, .96, u)) }
+            : { phase: 'out', u, vol: Vt * (1 + Math.cos(Math.PI * u)) / 2, flow: Math.sin(Math.PI * u), phon: 0 };
+}
+const glot = p => { p -= Math.floor(p); const oq = .6, tp = .36; return p < tp ? .5 * (1 - Math.cos(Math.PI * p / tp)) : p < oq ? Math.cos(Math.PI / 2 * (p - tp) / (oq - tp)) : 0; };
+const A = { h: VOW.a.h.slice(), jaw: 1, round: 0, root: 1, lip: 0, velum: 0, abd: 0 };
+function segment() {
+  if (S.syl) { const e = now() / 1000 - S.syl.t0; if (e < .28) return { ph: 'C', c: S.syl.c, e }; if (e < .8) return { ph: 'V', c: S.syl.c, e: e - .28 }; S.syl = null; }
+  return S.cons ? { ph: 'hold', c: S.cons } : { ph: 'free' };
+}
+function targets(seg) {
+  const v = VOW[S.vowel], T = { h: v.h.slice(), jaw: v.jaw, round: v.round, root: v.root, lip: 0, velum: S.mode === 'rest' && seg.ph === 'free' ? 1 : 0 };
+  if (S.mode === 'rest' && seg.ph === 'free') { T.lip = 1; T.jaw = .05; T.h = [5, 5, 5, 5, 5, 4]; T.root = 0; }
+  const c = (seg.ph === 'C' || seg.ph === 'hold') ? CONS[seg.c] : null;
+  if (c) {
+    T.jaw = Math.min(T.jaw, .25);
+    if (c.lip) T.lip = c.lip;
+    if (c.col !== undefined) { const deg = c.deg || 9; T.h[c.col] = deg; if (c.col > 0) T.h[c.col - 1] = Math.max(T.h[c.col - 1], deg - 2); if (c.col < 5) T.h[c.col + 1] = Math.max(T.h[c.col + 1], deg - 2); }
+    if (c.velum) T.velum = 1; if (c.round) T.round = Math.max(T.round, c.round);
+  }
+  let vt = seg.ph === 'free' ? (film.voice !== null ? film.voice : breath.phon) : seg.ph === 'hold' ? (c && c.v && breath.phase === 'out' ? (c.m === 'nasal' ? 1 : .4) : 0)
+    : seg.ph === 'C' ? (c.v ? (c.m === 'plosiv' ? .2 : 1) : 0) : 1;
+  T.voice = vt;
+  T.abd = vt > .05 ? 0 : (seg.ph !== 'free' ? .45 : breath.phase === 'in' ? 1 : .7);
+  if (film.abd !== null && seg.ph === 'free') T.abd = film.abd;
+  return T;
+}
+
+/* ------------------------------------------------------------ Klang (Quelle-Filter, stark vereinfacht) */
+const AE = {
+  ctx: null,
+  init() {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    const c = this.ctx = new AC(), g = v => { const n = c.createGain(); n.gain.value = v; return n; };
+    this.master = g(0); const comp = c.createDynamicsCompressor(); this.master.connect(comp); comp.connect(c.destination);
+    this.osc = c.createOscillator(); const n = 64, re = new Float32Array(n), im = new Float32Array(n); for (let k = 1; k < n; k++) im[k] = Math.pow(k, -1.15);
+    this.osc.setPeriodicWave(c.createPeriodicWave(re, im)); this.voice = g(0); this.osc.connect(this.voice);
+    this.bp = []; this.bg = [];
+    for (let i = 0; i < 3; i++) { const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 8; const gg = g(0); this.voice.connect(f); f.connect(gg); gg.connect(this.master); this.bp.push(f); this.bg.push(gg); }
+    const len = c.sampleRate, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    this.noise = c.createBufferSource(); this.noise.buffer = buf; this.noise.loop = true;
+    this.ff = c.createBiquadFilter(); this.ff.type = 'bandpass'; this.fric = g(0); this.noise.connect(this.ff); this.ff.connect(this.fric); this.fric.connect(this.master);
+    this.osc.start(); this.noise.start(); return true;
+  },
+  apply(T, F, f0, fric) {
+    if (!this.ctx) return; const t = this.ctx.currentTime, st = (p, v, k = .015) => p.setTargetAtTime(v, t, k);
+    st(this.osc.frequency, f0, .03); st(this.voice.gain, T.voice * .5);
+    const gains = [1, .55, .25]; for (let i = 0; i < 3; i++) { st(this.bp[i].frequency, F[i]); st(this.bp[i].Q, F[i] / [80, 100, 140][i]); st(this.bg[i].gain, gains[i] * (T.nasal && i ? .3 : 1)); }
+    if (fric) { st(this.ff.frequency, Math.sqrt(fric[0] * fric[1])); st(this.ff.Q, Math.sqrt(fric[0] * fric[1]) / (fric[1] - fric[0])); }
+    st(this.fric.gain, fric ? fric[2] * .25 : 0); st(this.master.gain, S.sound ? .9 : 0, .04);
+  }
+};
+
+/* ------------------------------------------------------------ Luft und Schallringe */
+const air = Array.from({ length: AIR }, (_, i) => ({ s: Math.random() * 3, o: [Math.random() - .5, Math.random() - .5], nasal: false }));
+function airPos(p) {
+  const s = p.s, ox = p.o[0] * .7, oz = p.o[1] * 1.2;
+  if (s < 1) return [ox * .6, lerp(-18.5, -8.6, s), oz * .6];                       // Luftröhre bis Glottis
+  if (s < 2) {
+    const u = s - 1;
+    if (p.nasal && u > .55) { const v = (u - .55) / .45; return [lerp(-.6, 8.5, v), 5.4 + ox * .5, oz]; }  // Nasenraum
+    if (u < .7) return [-.6 + ox * .6, lerp(-7.6, 2.2, u / .7), oz];                                         // Rachen
+    return [lerp(-.6, 7.6, (u - .7) / .3), 1.9 + ox * .4, oz];                                                // Mundraum
+  }
+  const u = s - 2; return p.nasal ? [8.5 + u * 6, 5.2 - u * 2 + ox, oz * (1 + u * 3)] : [7.6 + u * 7, 1.7 + ox * (1 + u * 2), oz * (1 + u * 3)];
+}
+const rings = Array.from({ length: RINGS }, () => ({ t0: -99 })); let ringNext = 0, lastPulse = 0;
+
+/* ------------------------------------------------------------ Hauptschleife */
+let last = performance.now(), segNow = { ph: 'free' };
+const F = [750, 1300, 2550];
+function tick(tms) {
+  if (manualNow !== null && tms !== manualNow) return;
+  const dt = clamp((tms - last) / 1000, 0, .05); last = tms; const tsec = tms / 1000;
+  if (S.playing) { simT += dt; phaseV += dt * VOICES[S.voice].f0 / S.slow; }
+  breath = breathState(simT); vol = breath.vol;
+  const seg = segNow = segment(), T = targets(seg), k = 1 - Math.exp(-dt * (seg.ph === 'free' ? 8 : 20));
+  for (let i = 0; i < 6; i++) A.h[i] = lerp(A.h[i], T.h[i], k);
+  ['jaw', 'round', 'root', 'lip', 'velum', 'abd'].forEach(n => { A[n] = lerp(A[n], T[n], k); });
+  voiced = lerp(voiced, T.voice, 1 - Math.exp(-dt * 20));
+  flow = (S.playing || S.syl) ? (breath.phase === 'in' ? breath.flow * .9 : (A.lip > .9 && A.velum < .5) || Math.max(...T.h) >= 9 ? 0 : .3) : 0;
+  const vk = VOICES[S.voice].k, vf = VOW[S.vowel].F; for (let i = 0; i < 3; i++) F[i] = lerp(F[i], vf[i] * vk, 1 - Math.exp(-dt * 12));
+  const cc = (seg.ph === 'C' || seg.ph === 'hold') ? CONS[seg.c] : null;
+  if (AE.ctx) AE.apply(Object.assign({}, T, { nasal: cc && cc.m === 'nasal', voice: voiced * (cc && cc.m === 'plosiv' && seg.ph === 'C' ? 0 : 1) }), cc && cc.m === 'nasal' ? [250, 1100 * vk, 2300 * vk] : F, VOICES[S.voice].f0, cc && cc.fric && (seg.ph === 'C' || breath.phase === 'out') ? cc.fric : null);
+
+  if (hasGL) {
+    const focus = film.focus || ({ 1: 'atmung', 2: 'kehlkopf', 3: 'ansatz', 4: 'artik' })[S.step];
+    const lungLevel = .74 + .26 * clamp(vol / 1.1, 0, 1), diaY = -vol * 1.2;
+    const gapOf = (u, side) => A.abd * .55 * u + .22 * voiced * Math.sin(Math.PI * clamp(u * .85 + .15, 0, 1)) * glot(phaseV + (side > 0 ? 0 : 0));
+    for (const b of bricks) {
+      let x = b.base[0], y = b.base[1], z = b.base[2], vis = true, sx = 1, sy = 1, sz = 1;
+      if (b.lung !== undefined) { vis = b.lung <= lungLevel; y += -vol * .4; }
+      else if (b.dia) y += diaY;
+      else if (b.fold) z = b.fold * (.5 + gapOf(b.u, b.fold));
+      else if (b.aryt) z = b.aryt * (.6 + gapOf(1, b.aryt) * .9);
+      else if (b.tcol !== undefined) { vis = b.tk < Math.round(A.h[b.tcol - 1]); y -= A.jaw * .8; }
+      else if (b.root !== undefined) vis = A.root > (b.root + 5) / 4.2;
+      else if (b.jawp) y -= A.jaw * .8;
+      else if (b.lip === 'l') { y = b.base[1] + lerp(-A.jaw * 1.2, 1.9, A.lip); x += A.round * .6; z *= 1 - .3 * A.round; }
+      else if (b.lip === 'u') { x += A.round * .6; z *= 1 - .3 * A.round; }
+      else if (b.vel !== undefined) { const d = 1.5 + b.vel, a = A.velum * .75; x = 2 - d * Math.cos(a); y = 3.8 - d * Math.sin(a); }
+      // Bau-Animation
+      const B = build[b.group], ta = B.t0 + b.order * B.dur, e = tsec - ta;
+      if (e < 0) vis = false; else if (e < .35) { const q = e / .35; y += (1 - q) * (1 - q) * 6; }
+      if (!vis) { sx = sy = sz = 0; }
+      dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0);
+      if (b.vel !== undefined) dummy.rotation.z = -A.velum * .75;
+      dummy.scale.set(sx, sy, sz); dummy.updateMatrix(); b.mesh.setMatrixAt(b.idx, dummy.matrix);
+      // Fokus: Bauteile anderer Schritte heller
+      const dim = !(b.group === focus || b.group === 'platte' || b.group === 'wand') ? .45 : 0;
+      if (b.dim !== dim) { tmpC.setHex(b.color).lerp(new THREE.Color(0xffffff), dim); b.mesh.setColorAt(b.idx, tmpC); b.mesh.instanceColor.needsUpdate = true; b.dim = dim; }
+    }
+    Object.values(meshes).forEach(M => { M.mesh.instanceMatrix.needsUpdate = true; });
+    // Luft
+    const pN = A.velum * ((A.lip > .9 || Math.max(...A.h) > 8.5) ? 1 : .3);
+    air.forEach((p, i) => {
+      p.s += flow * dt * .55 * (.8 + .4 * (i % 5) / 5);
+      if (p.s > 3) { p.s -= 3; p.nasal = Math.random() < pN; } if (p.s < 0) { p.s += 3; p.nasal = Math.random() < pN; }
+      const q = airPos(p), fade = p.s > 2 ? 1 - (p.s - 2) : 1;
+      dummy.position.set(q[0], q[1], q[2]); dummy.scale.setScalar(.55 * fade); dummy.rotation.set(0, 0, 0); dummy.updateMatrix(); airMesh.setMatrixAt(i, dummy.matrix);
+    });
+    airMesh.instanceMatrix.needsUpdate = true;
+    // Schallringe: je ein Ring pro (verlangsamtem) Stimmlippenschluss
+    const pulse = Math.floor(phaseV + .6);
+    if (voiced > .4 && pulse !== lastPulse && !(A.lip > .9 && A.velum < .5)) { rings[ringNext].t0 = tsec; rings[ringNext].nasal = A.velum > .5; ringNext = (ringNext + 1) % RINGS; }
+    lastPulse = pulse;
+    rings.forEach((r, ri) => {
+      const age = tsec - r.t0, on = age >= 0 && age < 2.2;
+      for (let j = 0; j < RING_N; j++) {
+        const a = j / RING_N * Math.PI * 2, rad = .8 + age * 2.4, sc = on ? .5 * (1 - age / 2.2) : 0;
+        const ox = r.nasal ? 9.5 : 8.8, oy = r.nasal ? 5 : 1.8;
+        dummy.position.set(ox + age * 4.5, oy + Math.cos(a) * rad, Math.sin(a) * rad); dummy.rotation.set(0, 0, Math.PI / 2); dummy.scale.setScalar(sc); dummy.updateMatrix(); ringMesh.setMatrixAt(ri * RING_N + j, dummy.matrix);
+      }
+    });
+    ringMesh.instanceMatrix.needsUpdate = true;
+    updCam(dt); renderer.render(scene, camera);
+  }
+  const tag = S.syl ? `Silbe [${S.syl.c === 'ʃ' ? 'ʃ' : S.syl.c}a]` : breath.phase === 'in' ? (S.mode === 'speech' ? 'Einatmen durch den Mund' : 'Einatmen durch die Nase') : voiced > .3 ? `Ausatmen · Stimme ${VOICES[S.voice].f0} Hz` : 'Ausatmen';
+  if ($('#tag').textContent !== tag) $('#tag').textContent = tag;
+  if (manualNow === null) requestAnimationFrame(tick);
+}
+
+/* ------------------------------------------------------------ Bedienung */
+function setStep(n, instant) {
+  S.step = n; $$('.step').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.step === n)));
+  $$('[data-panel]').forEach(p => { p.hidden = +p.dataset.panel !== n; });
+  camGoal(VIEWS[n], instant);
+}
+$$('.step').forEach(b => b.addEventListener('click', () => setStep(+b.dataset.step)));
+function setPlaying(p) { S.playing = p; $('#btnPlay').textContent = p ? 'Anhalten' : 'Weiter'; }
+$('#btnPlay').addEventListener('click', () => setPlaying(!S.playing));
+$('#btnSound').addEventListener('click', e => { if (!AE.ctx && !AE.init()) return; S.sound = !S.sound; if (S.sound) AE.ctx.resume(); e.currentTarget.setAttribute('aria-pressed', String(S.sound)); e.currentTarget.textContent = S.sound ? 'Ton aus' : 'Ton an'; });
+$('#btnBuild').addEventListener('click', () => buildGroups(GROUPS.slice(2), performance.now() / 1000, .9, .1));
+$('#btnView').addEventListener('click', () => camGoal(VIEWS[S.step]));
+function setMode(m) { S.mode = m; $$('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); simT = 0; }
+$$('[data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+function setVoice(v) { S.voice = v; $$('[data-voice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.voice === v))); info(); }
+$$('[data-voice]').forEach(b => b.addEventListener('click', () => setVoice(b.dataset.voice)));
+$('#slow').addEventListener('input', e => { S.slow = +e.target.value; $('#slowOut').textContent = S.slow + '×'; });
+const VW = { a: 'Bahn', e: 'Beet', i: 'Biene', o: 'Boot', u: 'Hut' };
+$$('[data-vowels]').forEach(row => Object.keys(VOW).forEach(v => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'kb'; b.dataset.v = v; b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = `${v}<small>${VW[v]}</small>`; b.addEventListener('click', () => { setVowel(v); setCons(null); }); row.appendChild(b);
+}));
+Object.keys(CONS).forEach(c => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'kb'; b.dataset.c = c; b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = `${c}<small>${CONS[c].word}</small>`; b.addEventListener('click', () => { setCons(c); playSyl(c); }); $('#consRow').appendChild(b);
+});
+function setVowel(v) { S.vowel = v; if (S.mode === 'rest') setMode('speech'); $$('[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); info(); }
+function setCons(c) { S.cons = c; $$('[data-c]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === c))); if (S.mode === 'rest' && c) setMode('speech'); info(); }
+function playSyl(c) { S.syl = { c, t0: now() / 1000 }; if (!S.playing) setPlaying(true); }
+function info() {
+  const k = VOICES[S.voice].k, F0 = VOW[S.vowel].F; $('#formantInfo').textContent = `[${S.vowel}]: F1 ≈ ${Math.round(F0[0] * k)} Hz, F2 ≈ ${Math.round(F0[1] * k)} Hz (${S.voice === 'f' ? 'Frauenstimme' : 'Männerstimme'})`;
+  if (S.cons) { const c = CONS[S.cons]; $('#consInfo').textContent = `[${S.cons}] wie in „${c.word}“: ${c.d}. ${c.v ? 'Stimmhaft.' : 'Stimmlos.'}`; }
+}
+document.addEventListener('keydown', e => { if (['1', '2', '3', '4'].includes(e.key) && !e.target.closest('input')) setStep(+e.key); });
+
+window.Bausteine = {
+  S, A, film, VIEWS, cam, setStep, setMode, setVoice, setVowel, setCons, playSyl, setPlaying, camGoal, buildGroups, GROUPS,
+  setSlow(n) { S.slow = n; },
+  renderAt(ms) { manualNow = ms; tick(ms); },
+  reset(ms) { simT = 0; last = ms; }
+};
+setVowel('a'); setStep(1, true); setPlaying(S.playing);
+camGoal(VIEWS[0], true); setTimeout(() => camGoal(VIEWS[1]), 50);
+buildGroups(GROUPS, performance.now() / 1000 - (reduce ? 99 : 0), .8, .05);
+requestAnimationFrame(tick);
+})();
+</script>
