@@ -23,9 +23,9 @@
   const SHOTS = {
     overview: { t: [1, -12, 0], r: 98, th: .35, ph: 1.35, shift: 0 },
     cover: { t: [1, -12, 0], r: 98, th: .35, ph: 1.35, shift: -15 },
-    atmung: { t: [0, -20, 0], r: 60, th: .3, ph: 1.36, shift: 9 },
-    kehlkopfSeite: { t: [0, -8.4, 0], r: 17, th: .45, ph: 1.15, shift: 2.6 },
-    kehlkopf: { t: [0, -8.4, 0], r: 11, th: .35, ph: .38, shift: 1.7 },
+    atmung: { t: [0, -19, 0], r: 68, th: .3, ph: 1.36, shift: 10 },
+    kehlkopfSeite: { t: [0, -8.4, 0], r: 15, th: .25, ph: .78, shift: 2.4 },
+    kehlkopf: { t: [-.2, -8.4, 0], r: 13, th: -1.4, ph: .42, shift: 1.8 },
     ansatz: { t: [3, -1, 0], r: 34, th: .3, ph: 1.35, shift: 5.5 },
     mund: { t: [4.5, 2, 0], r: 20, th: .32, ph: 1.3, shift: 3.2 },
     mundNase: { t: [4.5, 3.2, 0], r: 22, th: .3, ph: 1.3, shift: 3.4 }
