@@ -1225,5 +1225,11 @@
  "prosody": {
   "noise": 0.75,
   "noiseDuration": 0.9
- }
+ },
+ "lively": {
+  "spread": 1.6,
+  "shift": 2.0,
+  "tempo": 1.07
+ },
+ "livelyNote": "Nachbearbeitung der Sprecherstimme (WORLD-Vocoder): Tonhöhenspreizung, Anhebung in Halbtönen, Tempofaktor. Entfernen für die unbearbeitete Stimme."
 }

@@ -34,7 +34,7 @@ Voraussetzungen: Python 3.10+, Node.js 18+, Playwright mit Chromium.
 
 ```bash
 python -m venv venv
-venv/bin/pip install coqui-tts torchcodec "gruut[de]" "transformers>=4.57,<4.58" scipy imageio-ffmpeg
+venv/bin/pip install coqui-tts pyworld torchcodec "gruut[de]" "transformers>=4.57,<4.58" scipy imageio-ffmpeg
 # Männliche deutsche Stimme Thorsten (Coqui VITS, 22 kHz) herunterladen und entpacken:
 curl -L -o thorsten.zip https://github.com/coqui-ai/TTS/releases/download/v0.7.0_models/tts_models--de--thorsten--vits.zip
 mkdir -p voices && (cd voices && python -m zipfile -e ../thorsten.zip .)
@@ -51,7 +51,8 @@ venv/bin/python make_video.py                              # MP4 mit Kapitelmark
 
 - `text` ist der Untertitel. `say` ist eine optionale Sprechfassung, zum Beispiel „Peh, Teh und Kah“ für „p, t und k“.
 - `respell` ersetzt Wörter, die der Phonemizer gruut sonst falsch ausspricht, etwa „Quelle“ durch „Kwelle“ oder „Frauenstimme“ durch „Frauen Stimme“. Das gilt nur für die Sprachsynthese.
-- `prosody` steuert die Lebendigkeit der Stimme: `noise` für die Tonhöhenvariation, `noiseDuration` für die Variation der Lautlängen.
+- `prosody` steuert die Variation des Modells: `noise` für die Tonhöhe, `noiseDuration` für die Lautlängen.
+- `lively` macht die Sprechweise begeisterter (Nachbearbeitung mit dem WORLD-Vocoder, `pip install pyworld`): `spread` spreizt die Satzmelodie, `shift` hebt die Stimmlage in Halbtönen an, `tempo` beschleunigt. Ohne diesen Eintrag bleibt die Stimme unbearbeitet.
 - Für die frühere weibliche Piper-Stimme setzt du `"engine": "piper"` und `"voice": "de-kerstin-low"`.
 
 ## Hinweise

@@ -59,13 +59,29 @@ def coqui_engine(script, voice_dir):
     m.inference_noise_scale = p.get("noise", 0.667)
     m.inference_noise_scale_dp = p.get("noiseDuration", 0.8)
     sr = syn.output_sample_rate
+    lv = script.get("lively")
     def synth(text, path):
         torch_seed(text)
         w = np.array(syn.tts(text), dtype=np.float64)
+        if lv:
+            w = lively(w, sr, lv.get("spread", 1.6), lv.get("shift", 2.0), lv.get("tempo", 1.07))
         with wave.open(path, "wb") as wf:
             wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(sr)
             wf.writeframes((np.clip(w / (np.max(np.abs(w)) + 1e-9) * 0.9, -1, 1) * 32767).astype(np.int16).tobytes())
-    return synth, f"coqui|{d}|{m.length_scale}|{m.inference_noise_scale}|{m.inference_noise_scale_dp}"
+    return synth, f"coqui|{d}|{m.length_scale}|{m.inference_noise_scale}|{m.inference_noise_scale_dp}|{json.dumps(lv, sort_keys=True)}"
+
+def lively(x, sr, spread, shift, tempo):
+    """Lebhaftere Sprechweise per WORLD-Vocoder: Tonhöhenverlauf um den Median spreizen,
+    Stimmlage um `shift` Halbtöne anheben und das Tempo um den Faktor `tempo` erhöhen."""
+    import pyworld as pw
+    f0, t = pw.harvest(x, sr, f0_floor=60, f0_ceil=400, frame_period=5)
+    sp = pw.cheaptrick(x, f0, t, sr); ap = pw.d4c(x, f0, t, sr)
+    v = f0 > 0
+    if v.any():
+        lf = np.log(f0[v]); med = np.median(lf)
+        f0 = f0.copy(); f0[v] = np.exp(med + (lf - med) * spread + shift * np.log(2) / 12)
+    idx = np.clip(np.round(np.arange(0, len(f0), tempo)).astype(int), 0, len(f0) - 1)
+    return pw.synthesize(f0[idx], np.ascontiguousarray(sp[idx]), np.ascontiguousarray(ap[idx]), sr, 5)
 
 def torch_seed(text):
     import torch  # gleiche Eingabe -> gleiche Aufnahme
