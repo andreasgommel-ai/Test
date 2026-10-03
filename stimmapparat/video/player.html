@@ -1,0 +1,71 @@
+<title>Stimmapparat im Film</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Bewusst dunkel wie ein Vorführraum; Farben stammen aus dem Stimmapparat-Modell. */
+:root{
+  color-scheme:dark;
+  --bg:#0B1113; --surface:#141C1F; --line:#26323A; --ink:#E3EBE9; --muted:#93A29E;
+  --c1:#78B4F5; --c2:#F07CA2; --c3:#EBB052; --c4:#57CDA7;
+  --f-d:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --f-b:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif; --f-m:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 32px;display:grid;gap:16px}
+h1{font-family:var(--f-d);font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.05;margin:0;letter-spacing:-.01em}
+.lead{margin:.3rem 0 0;color:var(--muted);max-width:70ch}
+.player{background:#000;border:1px solid var(--line);border-radius:12px;overflow:hidden;aspect-ratio:16/9;max-width:100%}
+video{display:block;width:100%;height:100%;background:#000}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-m);font-size:12px;padding:4px 9px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ch{appearance:none;cursor:pointer;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font:inherit;display:grid;gap:2px}
+.ch:hover{border-color:var(--cc)}
+.ch[aria-current="true"]{border-color:var(--cc);box-shadow:inset 3px 0 0 var(--cc)}
+.ch time{font-family:var(--f-m);font-size:12px;color:var(--muted)}
+.ch b{font-family:var(--f-d);font-size:15px}
+:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);margin:0;max-width:90ch}
+.err{padding:20px;color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Der Stimmapparat</h1>
+    <p class="lead">Erklärvideo für Trainings: Wie aus Atemluft Ton, Stimme und Sprache werden. Atmung, Kehlkopf, Stimmlippen, Resonanz und Artikulation am animierten 3D-Modell, mit Sprecher, Hörbeispielen und Untertiteln.</p>
+  </header>
+  <div class="player">
+    <video id="vid" controls playsinline preload="metadata">
+      <source id="src" src="/_blob/a35dcc73c8a7351ce4e4a239e8091877" type="video/mp4">
+    </video>
+  </div>
+  <div class="meta"><span class="chip">6:30 min</span><span class="chip">Sprecher: Thorsten (synthetisch)</span><span class="chip">Untertitel im Bild</span><span class="chip">Webfassung 720p</span></div>
+  <nav class="chapters" id="chapters" aria-label="Kapitel"></nav>
+  <p class="note">Kapitel anklicken springt an die Stelle. Die Fassung in voller Qualität (1080p) und die Untertitel als SRT- und VTT-Datei gibt es separat für Lernplattformen.</p>
+</div>
+
+<script>
+(() => {
+  const CH = [
+    ['Einführung', 0, '--muted'], ['1 Atmung', 32.1, '--c1'], ['2 Kehlkopf', 86.8, '--c2'], ['3 Stimmlippen', 134.3, '--c2'],
+    ['4 Resonanz', 216.4, '--c3'], ['5 Artikulation', 291.4, '--c4'], ['Zusammenfassung', 357.8, '--muted']
+  ];
+  const v = document.getElementById('vid'), nav = document.getElementById('chapters');
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const btns = CH.map(([name, t, c]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ch'; b.style.setProperty('--cc', `var(${c})`);
+    b.innerHTML = `<time>${fmt(t)}</time><b></b>`; b.querySelector('b').textContent = name;
+    b.addEventListener('click', () => { v.currentTime = t + .05; v.play().catch(() => {}); });
+    nav.appendChild(b); return b;
+  });
+  v.addEventListener('timeupdate', () => {
+    let i = 0; CH.forEach((c, k) => { if (v.currentTime >= c[1]) i = k; });
+    btns.forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+  });
+  v.addEventListener('error', () => { document.querySelector('.player').innerHTML = '<p class="err">Das Video konnte nicht geladen werden. Bitte die Seite neu laden.</p>'; }, true);
+})();
+</script>
