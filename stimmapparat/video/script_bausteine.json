@@ -1,0 +1,616 @@
+{
+ "title": "Stimme aus Bausteinen",
+ "subtitle": "Der Stimmapparat als Klemmbaustein-Modell",
+ "page": "bausteine.html",
+ "engine": "coqui",
+ "voice": "de-thorsten-vits",
+ "model": "tts_models--de--thorsten--vits",
+ "prosody": {
+  "noise": 0.75,
+  "noiseDuration": 0.9
+ },
+ "lively": {
+  "spread": 1.6,
+  "shift": 2.0,
+  "tempo": 1.07
+ },
+ "lengthScale": 1.0,
+ "gap": 0.45,
+ "scenePad": [
+  0.6,
+  0.9
+ ],
+ "respell": {
+  "Mundhöhle": "Mund Höhle",
+  "Nasenhöhle": "Nasen Höhle",
+  "Frauenstimme": "Frauen Stimme",
+  "Frauenstimmen": "Frauen Stimmen",
+  "Männerstimmen": "Männer Stimmen",
+  "Kinderstimmen": "Kinder Stimmen",
+  "Atemstütze": "Atem Stütze",
+  "Zungenspitze": "Zungen Spitze",
+  "Luftstrom": "Luft Strom",
+  "Zusammenspiel": "Zusammen Spiel",
+  "zusammenspielen": "zusammen spielen",
+  "Stroboskopie": "Stroboskopi",
+  "Quelle": "Kwelle",
+  "Bernoulli": "Bernulli"
+ },
+ "chapters": [
+  {
+   "id": "intro",
+   "label": "Start"
+  },
+  {
+   "id": "atmung",
+   "label": "Atmung"
+  },
+  {
+   "id": "kehlkopf",
+   "label": "Kehlkopf"
+  },
+  {
+   "id": "ansatz",
+   "label": "Ansatzrohr"
+  },
+  {
+   "id": "artik",
+   "label": "Artikulation"
+  },
+  {
+   "id": "fertig",
+   "label": "Fertig"
+  }
+ ],
+ "scenes": [
+  {
+   "chapter": "intro",
+   "reset": {
+    "step": 1,
+    "shot": "overview",
+    "orbit": 0.08,
+    "intro": true,
+    "build": [
+     "platte",
+     "wand"
+    ],
+    "unbuilt": [
+     "atmung",
+     "kehlkopf",
+     "ansatz",
+     "artik"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Heute bauen wir etwas ganz Besonderes: eine menschliche Stimme, Stein für Stein!"
+    },
+    {
+     "text": "Wir brauchen vier Bauschritte: Atmung, Kehlkopf, Ansatzrohr und Artikulation. Fangen wir an!"
+    }
+   ]
+  },
+  {
+   "chapter": "atmung",
+   "num": 1,
+   "role": "Energiequelle",
+   "reset": {
+    "step": 1,
+    "shot": "atmung",
+    "orbit": 0.03,
+    "build": [
+     "atmung"
+    ],
+    "unbuilt": [
+     "kehlkopf",
+     "ansatz",
+     "artik"
+    ],
+    "parts": [
+     [
+      "2×",
+      "#E4ADC8",
+      "Lungenflügel"
+     ],
+     [
+      "1×",
+      "#C91A09",
+      "Zwerchfell"
+     ],
+     [
+      "1×",
+      "#F4F4F4",
+      "Luftröhre"
+     ]
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bauschritt eins: das Fundament, unsere Atmung."
+    },
+    {
+     "text": "Zwei Lungenflügel aus rosa Steinen, darunter das rote Zwerchfell.",
+     "cues": [
+      [
+       "0",
+       "part",
+       0
+      ],
+      [
+       "55%",
+       "part",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Beim Einatmen senkt sich das Zwerchfell, und die Lunge wächst. Sehen Sie, wie neue Steine dazukommen?"
+    },
+    {
+     "text": "Beim Ausatmen strömt die Luft, hier die kleinen blauen Steine, durch die Luftröhre nach oben.",
+     "cues": [
+      [
+       "0",
+       "part",
+       2
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "kehlkopf",
+   "num": 2,
+   "role": "Schallquelle",
+   "reset": {
+    "step": 2,
+    "shot": "kehlkopfSeite",
+    "build": [
+     "kehlkopf"
+    ],
+    "unbuilt": [
+     "ansatz",
+     "artik"
+    ],
+    "glottis": 1,
+    "vforce": 0,
+    "parts": [
+     [
+      "1×",
+      "#6C6E68",
+      "Ringknorpel"
+     ],
+     [
+      "1×",
+      "#A0A5A9",
+      "Schildknorpel"
+     ],
+     [
+      "2×",
+      "#F4F4F4",
+      "Stimmlippen"
+     ],
+     [
+      "2×",
+      "#C91A09",
+      "Stellknorpel"
+     ],
+     [
+      "1×",
+      "#F2CD37",
+      "Kehldeckel"
+     ]
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bauschritt zwei: der Kehlkopf, direkt auf der Luftröhre."
+    },
+    {
+     "text": "Ringknorpel, Schildknorpel, Kehldeckel, und ganz wichtig: die beiden hellen Stimmlippen!",
+     "cues": [
+      [
+       "0",
+       "part",
+       0
+      ],
+      [
+       "20%",
+       "part",
+       1
+      ],
+      [
+       "45%",
+       "part",
+       4
+      ],
+      [
+       "70%",
+       "part",
+       2
+      ]
+     ]
+    },
+    {
+     "text": "Zum Atmen stehen sie weit offen. Zum Sprechen schieben die roten Stellknorpel sie zusammen.",
+     "cues": [
+      [
+       "0",
+       "shot",
+       "kehlkopf"
+      ],
+      [
+       "0",
+       "glottis",
+       1
+      ],
+      [
+       "55%",
+       "glottis",
+       0
+      ],
+      [
+       "55%",
+       "part",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Jetzt drückt die Luft sie auseinander, sie schnappen zurück, immer wieder! Jeder Puls schickt einen Schallring los.",
+     "cues": [
+      [
+       "0",
+       "glottis",
+       null
+      ],
+      [
+       "0",
+       "hold",
+       true
+      ],
+      [
+       "0",
+       "vforce",
+       1
+      ],
+      [
+       "40%",
+       "shot",
+       "kehlkopfSeite"
+      ]
+     ]
+    },
+    {
+     "text": "So klingt das direkt an den Stimmlippen:",
+     "demo": [
+      {
+       "sound": "buzz",
+       "at": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "ansatz",
+   "num": 3,
+   "role": "Filter",
+   "reset": {
+    "step": 3,
+    "shot": "ansatz",
+    "build": [
+     "ansatz"
+    ],
+    "unbuilt": [
+     "artik"
+    ],
+    "hold": true,
+    "vforce": 1,
+    "vowel": "a",
+    "parts": [
+     [
+      "1×",
+      "#F08F1C",
+      "Rachen und Mundraum"
+     ],
+     [
+      "1×",
+      "#F5CD2F",
+      "Nasenraum"
+     ],
+     [
+      "1×",
+      "#F4F4F4",
+      "Harter Gaumen"
+     ]
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bauschritt drei: das Ansatzrohr. Rachen und Mundraum bilden ein Rohr, darüber liegt der Nasenraum.",
+     "cues": [
+      [
+       "0",
+       "part",
+       0
+      ],
+      [
+       "60%",
+       "part",
+       1
+      ]
+     ]
+    },
+    {
+     "text": "Dieses Rohr formt den Klang. Ändert sich seine Form, hören wir einen anderen Vokal.",
+     "cues": [
+      [
+       "0",
+       "part",
+       2
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "artik",
+   "num": 4,
+   "role": "Lautbildung",
+   "reset": {
+    "step": 4,
+    "shot": "mund",
+    "build": [
+     "artik"
+    ],
+    "hold": true,
+    "vforce": 1,
+    "vowel": "a",
+    "parts": [
+     [
+      "1×",
+      "#C91A09",
+      "Zunge"
+     ],
+     [
+      "2×",
+      "#B40000",
+      "Lippen"
+     ],
+     [
+      "6×",
+      "#F4F4F4",
+      "Zähne"
+     ],
+     [
+      "1×",
+      "#E4ADC8",
+      "Gaumensegel"
+     ]
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bauschritt vier: Zunge, Lippen, Zähne und das Gaumensegel.",
+     "cues": [
+      [
+       "0",
+       "part",
+       0
+      ],
+      [
+       "25%",
+       "part",
+       1
+      ],
+      [
+       "50%",
+       "part",
+       2
+      ],
+      [
+       "70%",
+       "part",
+       3
+      ]
+     ]
+    },
+    {
+     "text": "Jetzt kann die Zunge Vokale formen. Hören Sie selbst.",
+     "demo": [
+      {
+       "sound": "v_a",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "a"
+        ]
+       ]
+      },
+      {
+       "sound": "v_i",
+       "at": 1.3,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "i"
+        ]
+       ]
+      },
+      {
+       "sound": "v_u",
+       "at": 2.6,
+       "cues": [
+        [
+         "0",
+         "vowel",
+         "u"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Bei p gehen die Lippen zu, bei t und k drückt die Zunge nach oben.",
+     "say": "Bei Peh gehen die Lippen zu, bei Teh und Kah drückt die Zunge nach oben.",
+     "cues": [
+      [
+       "0",
+       "vowel",
+       "a"
+      ],
+      [
+       "0",
+       "cons",
+       "p"
+      ],
+      [
+       "40%",
+       "cons",
+       "t"
+      ],
+      [
+       "70%",
+       "cons",
+       "k"
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "pa",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "cons",
+         "p"
+        ],
+        [
+         "0",
+         "syl",
+         "p"
+        ]
+       ]
+      },
+      {
+       "sound": "ta",
+       "at": 1.0,
+       "cues": [
+        [
+         "0",
+         "cons",
+         "t"
+        ],
+        [
+         "0",
+         "syl",
+         "t"
+        ]
+       ]
+      },
+      {
+       "sound": "ka",
+       "at": 2.0,
+       "cues": [
+        [
+         "0",
+         "cons",
+         "k"
+        ],
+        [
+         "0",
+         "syl",
+         "k"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Bei m geht der Mund zu, das Gaumensegel klappt auf, und der Klang nimmt den Weg durch die Nase.",
+     "say": "Bei Emm geht der Mund zu, das Gaumensegel klappt auf, und der Klang nimmt den Weg durch die Nase.",
+     "cues": [
+      [
+       "0",
+       "cons",
+       "m"
+      ],
+      [
+       "0",
+       "shot",
+       "mundNase"
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "ma",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "m"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Und bei s zischt die Luft durch eine schmale Rille.",
+     "say": "Und bei Ess zischt die Luft durch eine schmale Rille.",
+     "cues": [
+      [
+       "0",
+       "cons",
+       "s"
+      ],
+      [
+       "0",
+       "shot",
+       "mund"
+      ]
+     ],
+     "demo": [
+      {
+       "sound": "sa",
+       "at": 0,
+       "cues": [
+        [
+         "0",
+         "syl",
+         "s"
+        ]
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": "fertig",
+   "reset": {
+    "step": 1,
+    "shot": "overview",
+    "orbit": 0.08,
+    "intro": true,
+    "outro": true,
+    "hold": false,
+    "vforce": null,
+    "cons": null,
+    "vowel": "a"
+   },
+   "lines": [
+    {
+     "text": "Fertig ist unser Stimmapparat! Atmung, Kehlkopf, Ansatzrohr und Artikulation: Erst zusammen entstehen Stimme und Sprache."
+    },
+    {
+     "text": "Viel Freude beim Nachbauen!"
+    }
+   ]
+  }
+ ]
+}
